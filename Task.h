@@ -66,6 +66,10 @@ public:
 
     void setOptional(const bool &optional);
 
+    void addTag(const TagID &tagID);
+
+    void removeTag(const TagID &tagID);
+
 private:
 
     const ID taskID;
@@ -174,6 +178,18 @@ void Task<ID, GroupID, TagID>::setOptional(const bool &optional) {
 template<typename ID, typename GroupID, typename TagID>
 const std::set<GroupID> &Task<ID, GroupID, TagID>::getGroups() const {
     return groups;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+void Task<ID, GroupID, TagID>::addTag(const TagID &tagID) {
+
+    tags[tagID] = 1;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+void Task<ID, GroupID, TagID>::removeTag(const TagID &tagID) {
+
+    tags.erase(tagID);
 }
 
 

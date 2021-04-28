@@ -1,38 +1,18 @@
 #ifndef OMTSCHED_OMTSCHED_H
 #define OMTSCHED_OMTSCHED_H
 
-#include <string>
-#include "Task.h"
-#include "Timeslot.h"
+#include "Problem.h"
 
 void hello();
 
 namespace omtsched {
 
-    using Timepoint = boost::posix_time::ptime;
-    using Duration = boost::posix_time::time_duration;
 
-    template<typename ID, typename GroupID, typename TagID>
-    Task<ID, GroupID, TagID>* addTask(const ID &id);
+    template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+    void saveEncoding(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem);
 
-    template<typename ID>
-    bool deleteTask(const ID &id);
-
-    template<typename groupID>
-    void addGroup(const groupID &);
-
-    template<typename groupID>
-    void deleteGroup(const groupID &);
-
-    template<typename tagID>
-    void addTag(const tagID &id);
-
-    template<typename tagID>
-    void deleteTag(const tagID &id);
-
-    void saveEncoding();
-
-    bool solve();
+    template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+    bool solve(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem);
 
     // getSchedule();
     // getExplanation();

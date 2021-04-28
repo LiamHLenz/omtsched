@@ -21,7 +21,29 @@ public:
 
     Timeslot(const ID &tsID, const Timepoint &startTime, const Duration &duration);
 
-    const ID &getID() const;
+    [[nodiscard]] const ID getID() const;
+
+    [[nodiscard]] const Timepoint &getStartPoint() const;
+
+    void setStartPoint(const Timepoint &startPoint);
+
+    [[nodiscard]] const Duration &getDuration() const;
+
+    void setDuration(const Duration &duration);
+
+    void addGroup(const GroupID &group);
+
+    bool removeGroup(const GroupID &group);
+
+    [[nodiscard]] const std::set<GroupID> &getGroups() const;
+
+    void setTagPriority(const TagID &tag, const unsigned int &priority);
+
+    [[nodiscard]] const int &getTagPriority(const TagID &tag) const;
+
+    void addTag(const TagID &tagID);
+
+    void removeTag(const TagID &tagID);
 
 
 
@@ -30,9 +52,87 @@ private:
     const ID timeslotID;
     boost::posix_time::ptime start;
     boost::posix_time::time_duration duration;
-    std::map<GroupID, int> tags;
+    std::map<GroupID, unsigned int> tags;
     std::set<TagID> groups;
 };
 
+template<typename ID, typename GroupID, typename TagID>
+Timeslot<ID, GroupID, TagID>::Timeslot(const ID &tsID, const Timeslot::Timepoint &startTime,
+                                       const Timeslot::Duration &duration)
+                                       : timeslotID{tsID}, start{startTime}, duration{duration} {}
+
+template<typename ID, typename GroupID, typename TagID>
+const ID Timeslot<ID, GroupID, TagID>::getID() const {
+    return timeslotID;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+const boost::posix_time::ptime &Timeslot<ID, GroupID, TagID>::getStartPoint() const {
+    return start;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+void Timeslot<ID, GroupID, TagID>::setStartPoint(const Timeslot::Timepoint &startPoint) {
+    start = startPoint;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+const boost::posix_time::time_duration &Timeslot<ID, GroupID, TagID>::getDuration() const {
+    return duration;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+void Timeslot<ID, GroupID, TagID>::setDuration(const Timeslot::Duration &duration) {
+
+    this->duration = duration;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+void Timeslot<ID, GroupID, TagID>::addGroup(const GroupID &group) {
+
+    groups.insert(group);
+}
+
+template<typename ID, typename GroupID, typename TagID>
+bool Timeslot<ID, GroupID, TagID>::removeGroup(const GroupID &group) {
+
+    if(!groups.count(group))
+        return false;
+    else
+        groups.erase(group);
+
+    return true;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+const std::set<GroupID> &Timeslot<ID, GroupID, TagID>::getGroups() const {
+    return groups;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+void Timeslot<ID, GroupID, TagID>::setTagPriority(const TagID &tag, const unsigned int &priority) {
+
+    tags.at(tag) = priority;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+const int &Timeslot<ID, GroupID, TagID>::getTagPriority(const TagID &tag) const {
+    return tags.at(tag);
+}
+
+template<typename ID, typename GroupID, typename TagID>
+void Timeslot<ID, GroupID, TagID>::addTag(const TagID &tagID) {
+
+    // Todo: Tag already exists
+    //if(tags.count(tagID))
+
+    tags[tagID] = 1;
+}
+
+template<typename ID, typename GroupID, typename TagID>
+void Timeslot<ID, GroupID, TagID>::removeTag(const TagID &tagID) {
+
+    tags.erase(tagID);
+}
 
 #endif //OMTSCHED_TIMESLOT_H
