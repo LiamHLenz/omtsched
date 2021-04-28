@@ -7,24 +7,37 @@
 
 void hello();
 
-template<typename ID, typename groupID, typename tagID>
-bool addTask(const ID &id);
+namespace omtsched {
 
-template<typename groupID>
-void addGroup(const groupID&);
+    using Timepoint = boost::posix_time::ptime;
+    using Duration = boost::posix_time::time_duration;
 
-template <typename groupID>
-void deleteGroup(const groupID&);
+    template<typename ID, typename GroupID, typename TagID>
+    Task<ID, GroupID, TagID>* addTask(const ID &id);
 
-template <typename tagID>
-void addTag(const tagID &id);
+    template<typename ID>
+    bool deleteTask(const ID &id);
 
-template <typename tagID>
-void deleteTag(const tagID &id);
+    template<typename groupID>
+    void addGroup(const groupID &);
 
-void saveEncoding();
+    template<typename groupID>
+    void deleteGroup(const groupID &);
 
+    template<typename tagID>
+    void addTag(const tagID &id);
 
+    template<typename tagID>
+    void deleteTag(const tagID &id);
+
+    void saveEncoding();
+
+    bool solve();
+
+    // getSchedule();
+    // getExplanation();
+
+}
 
 
 

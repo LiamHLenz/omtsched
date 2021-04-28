@@ -8,10 +8,7 @@ int main() {
 
     hello();
 
-    addGroup("Linear Algebra");
-    addGroup("Exercise");
 
-    addTag("Studying");
 
 
     return 0;
