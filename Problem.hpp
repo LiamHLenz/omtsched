@@ -10,18 +10,19 @@ Task<TaskID, GroupID, TagID>& Problem<TaskID, TimeslotID, GroupID, TagID>::addTa
         const TaskID &id, const Timepoint &start, const Duration &duration,
         const Timepoint &deadline, bool optional) {
 
-    auto res = tasks.insert( std::pair(id, Task {id, start, duration, deadline, optional}) );
+    auto res = tasks.insert( std::pair(id, Task<TaskID, GroupID, TagID> {id, start, duration, deadline, optional}) );
 
     // Todo: Error handling
     // Case: Key already exists
-    if(!res.second)
-        return tasks.end();
+    //if(!res.second)
+
+    Task<TaskID, GroupID, TagID>& task = res.first->second;
 
     // Add all tags (at normal priority 1)
     for(auto &tag : tags)
-        res.first->addTag(tag);
+        task.addTag(tag);
 
-    return res.first;
+    return task;
 }
 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
@@ -52,16 +53,18 @@ bool Problem<TaskID, TimeslotID, GroupID, TagID>::deleteTask(const TaskID &id) {
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 Timeslot<TimeslotID, GroupID, TagID> &Problem<TaskID, TimeslotID, GroupID, TagID>::addTimeslot(const TimeslotID &tsID, const Timepoint &startTime, const Duration &duration) {
 
-    auto res = timeslots.insert( std::pair(tsID, Timeslot {tsID, startTime, duration}) );
+    auto res = timeslots.insert( std::pair(tsID, Timeslot <TimeslotID, GroupID, TagID> {tsID, startTime, duration}) );
 
     // Case: Key already existed
     //if(!res.second)
 
+    Timeslot <TimeslotID, GroupID, TagID>& ts = res.first->second;
+
     // Add all tags (at normal priority 1)
     for(auto &tag : tags)
-        res.first->addTag(tag);
+        ts.addTag(tag);
 
-    return res.first;
+    return ts;
 }
 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>

@@ -3,10 +3,19 @@ project(omtsched)
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(Boost REQUIRED COMPONENTS date_time)
-
 add_library(omtsched SHARED omtsched.cpp omtsched.h Task.h Timeslot.h Problem.hpp Problem.h)
 
-add_executable(tester tester/testMain.cpp)
+find_package(Boost REQUIRED COMPONENTS "date_time")
 
-target_link_libraries(tester omtsched)
+if(Boost_FOUND)
+    include_directories(${BOOST_INCLUDE_DIRS})
+
+    add_executable(
+            tester tester/testMain.cpp
+    )
+
+    target_link_libraries(tester ${Boost_DATE_TIME_LIBRARY} omtsched)
+
+else()
+    message(FATAL_ERROR "boost libraries not found")
+endif()
