@@ -5,6 +5,11 @@
 #include "Problem.h"
 
 
+template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+Problem<TaskID, TimeslotID, GroupID, TagID>::
+Problem(const std::string &name, const Unit &unit, const boost::posix_time::ptime &startPoint)
+    : problemName(name), unit(unit), startPoint(startPoint) {};
+
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 Task<TaskID, GroupID, TagID>& Problem<TaskID, TimeslotID, GroupID, TagID>::addTask(
         const TaskID &id, const Timepoint &start, const Duration &duration,
@@ -26,16 +31,15 @@ Task<TaskID, GroupID, TagID>& Problem<TaskID, TimeslotID, GroupID, TagID>::addTa
 }
 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-Task<TaskID, GroupID, TagID>& Problem<TaskID, TimeslotID, GroupID, TagID>::getTask(const TaskID &id) {
+const Task<TaskID, GroupID, TagID>& Problem<TaskID, TimeslotID, GroupID, TagID>::getTask(const TaskID &id) const {
 
     return tasks.at(id);
 }
 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-typename std::map<TaskID, Task<TaskID, GroupID, TagID>>::iterator
-Problem<TaskID, TimeslotID, GroupID, TagID>::getAllTasks() const {
+const typename std::map<TaskID, Task<TaskID, GroupID, TagID>>& Problem<TaskID, TimeslotID, GroupID, TagID>::getAllTasks() const {
 
-    return tasks.begin();
+    return tasks;
 
 }
 
@@ -58,7 +62,9 @@ Timeslot<TimeslotID, GroupID, TagID> &Problem<TaskID, TimeslotID, GroupID, TagID
     // Case: Key already existed
     //if(!res.second)
 
-    Timeslot <TimeslotID, GroupID, TagID>& ts = res.first->second;
+    Timeslot <TimeslotID, GroupID, TagID> &ts = res.first->second;
+
+
 
     // Add all tags (at normal priority 1)
     for(auto &tag : tags)
@@ -68,15 +74,15 @@ Timeslot<TimeslotID, GroupID, TagID> &Problem<TaskID, TimeslotID, GroupID, TagID
 }
 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-Timeslot<TimeslotID, GroupID, TagID> &Problem<TaskID, TimeslotID, GroupID, TagID>::getTimeslot(const TimeslotID &id) {
+const Timeslot<TimeslotID, GroupID, TagID> &Problem<TaskID, TimeslotID, GroupID, TagID>::getTimeslot(const TimeslotID &id) const {
     return timeslots.at(id);
 }
 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-typename std::map<TimeslotID, Timeslot<TimeslotID, GroupID, TagID>>::iterator
+const typename std::map<TimeslotID, Timeslot<TimeslotID, GroupID, TagID>>&
 Problem<TaskID, TimeslotID, GroupID, TagID>::getAllTimeslots() const {
 
-    return timeslots.first();
+    return timeslots;
 }
 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
@@ -138,4 +144,33 @@ void Problem<TaskID, TimeslotID, GroupID, TagID>::deleteTag(const TagID &id) {
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 const std::set<TagID> &Problem<TaskID, TimeslotID, GroupID, TagID>::getAllTags() const {
     return tags;
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+void Problem<TaskID, TimeslotID, GroupID, TagID>::bind(Task<TaskID, GroupID, TagID> &task, Timeslot<TimeslotID, GroupID, TagID> &timeslot, const TagID& tag) {
+
+    addTag(tag);
+    task.setTagPriority(tag, 1);
+    timeslot.setTagPriority(tag, 1);
+
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+Unit Problem<TaskID, TimeslotID, GroupID, TagID>::getUnit() const {
+    return unit;
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+void Problem<TaskID, TimeslotID, GroupID, TagID>::setUnit(Unit unit) {
+    Problem::unit = unit;
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+const typename Problem<TaskID, TimeslotID, GroupID, TagID>::Timepoint &Problem<TaskID, TimeslotID, GroupID, TagID>::getStartPoint() const {
+    return startPoint;
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+void Problem<TaskID, TimeslotID, GroupID, TagID>::setStartPoint(const Problem::Timepoint &startPoint) {
+    Problem::startPoint = startPoint;
 }

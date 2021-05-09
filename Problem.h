@@ -12,10 +12,20 @@
 #include "Timeslot.h"
 
 
+enum class Unit {
+    HOURS,
+    MINUTES,
+    SECONDS
+};
+
 template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 class Problem {
 
 public:
+
+    std::string problemName;
+
+    Problem(const std::string &name, const Unit &unit, const boost::posix_time::ptime &startPoint);
 
     using Timepoint = boost::posix_time::ptime;
     using Duration = boost::posix_time::time_duration;
@@ -23,18 +33,18 @@ public:
     Task<TaskID, GroupID, TagID>& addTask(const TaskID &id, const Timepoint &start, const Duration &duration,
                                           const Timepoint &deadline = boost::date_time::neg_infin, bool optional = false);
 
-    Task<TaskID, GroupID, TagID>& getTask(const TaskID &id);
+    const Task<TaskID, GroupID, TagID>& getTask(const TaskID &id) const;
 
-    typename std::map<TaskID, Task<TaskID, GroupID, TagID>>::iterator getAllTasks() const;
+    const typename std::map<TaskID, Task<TaskID, GroupID, TagID>>& getAllTasks() const;
 
     bool deleteTask(const TaskID &id);
 
 
     Timeslot<TimeslotID, GroupID, TagID>& addTimeslot(const TimeslotID &tsID, const Timepoint &startTime, const Duration &duration);
 
-    Timeslot<TimeslotID, GroupID, TagID>& getTimeslot(const TimeslotID &id);
+    const Timeslot<TimeslotID, GroupID, TagID>& getTimeslot(const TimeslotID &id) const;
 
-    typename std::map<TimeslotID, Timeslot<TimeslotID, GroupID, TagID>>::iterator getAllTimeslots() const;
+    const typename std::map<TimeslotID, Timeslot<TimeslotID, GroupID, TagID>>& getAllTimeslots() const;
 
     bool deleteTimeslot(const TimeslotID &id);
 
@@ -52,6 +62,19 @@ public:
 
     const std::set<TagID>& getAllTags() const;
 
+
+    Unit getUnit() const;
+
+    void setUnit(Unit unit);
+
+
+    const Timepoint &getStartPoint() const;
+
+    void setStartPoint(const Timepoint &startPoint);
+
+
+    void bind(Task<TaskID, GroupID, TagID> &task, Timeslot<TimeslotID, GroupID, TagID> &timeslot, const TagID& tag);
+
 private:
 
     std::map<TaskID, Task<TaskID, GroupID, TagID>> tasks;
@@ -61,6 +84,10 @@ private:
     std::set<TagID> tags;
 
     std::set<GroupID> groups;
+
+    Unit unit;
+
+    Timepoint startPoint;
 
 };
 

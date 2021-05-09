@@ -23,11 +23,11 @@ public:
 
     [[nodiscard]] const ID getID() const;
 
-    [[nodiscard]] const Timepoint &getStartPoint() const;
+    [[nodiscard]] const Timepoint getStartPoint() const;
 
     void setStartPoint(const Timepoint &startPoint);
 
-    [[nodiscard]] const Duration &getDuration() const;
+    [[nodiscard]] const Duration getDuration() const;
 
     void setDuration(const Duration &duration);
 
@@ -35,11 +35,13 @@ public:
 
     bool removeGroup(const GroupID &group);
 
+    bool inGroup(const GroupID &group) const;
+
     [[nodiscard]] const std::set<GroupID> &getGroups() const;
 
     void setTagPriority(const TagID &tag, const unsigned int &priority);
 
-    [[nodiscard]] const int &getTagPriority(const TagID &tag) const;
+    [[nodiscard]] const int getTagPriority(const TagID &tag) const;
 
     void addTag(const TagID &tagID);
 
@@ -52,8 +54,8 @@ private:
     const ID timeslotID;
     boost::posix_time::ptime start;
     boost::posix_time::time_duration duration;
-    std::map<GroupID, unsigned int> tags;
-    std::set<TagID> groups;
+    std::map<TagID, unsigned int> tags;
+    std::set<GroupID> groups;
 };
 
 template<typename ID, typename GroupID, typename TagID>
@@ -67,7 +69,7 @@ const ID Timeslot<ID, GroupID, TagID>::getID() const {
 }
 
 template<typename ID, typename GroupID, typename TagID>
-const boost::posix_time::ptime &Timeslot<ID, GroupID, TagID>::getStartPoint() const {
+const boost::posix_time::ptime Timeslot<ID, GroupID, TagID>::getStartPoint() const {
     return start;
 }
 
@@ -77,7 +79,7 @@ void Timeslot<ID, GroupID, TagID>::setStartPoint(const Timeslot::Timepoint &star
 }
 
 template<typename ID, typename GroupID, typename TagID>
-const boost::posix_time::time_duration &Timeslot<ID, GroupID, TagID>::getDuration() const {
+const boost::posix_time::time_duration Timeslot<ID, GroupID, TagID>::getDuration() const {
     return duration;
 }
 
@@ -110,14 +112,21 @@ const std::set<GroupID> &Timeslot<ID, GroupID, TagID>::getGroups() const {
 }
 
 template<typename ID, typename GroupID, typename TagID>
+bool Timeslot<ID, GroupID, TagID>::inGroup(const GroupID &group) const {
+    return groups.count(group);
+}
+
+template<typename ID, typename GroupID, typename TagID>
 void Timeslot<ID, GroupID, TagID>::setTagPriority(const TagID &tag, const unsigned int &priority) {
 
     tags.at(tag) = priority;
 }
 
 template<typename ID, typename GroupID, typename TagID>
-const int &Timeslot<ID, GroupID, TagID>::getTagPriority(const TagID &tag) const {
-    return tags.at(tag);
+const int Timeslot<ID, GroupID, TagID>::getTagPriority(const TagID &tag) const {
+    int test = tags.at(tag);
+    return test;
+    //return tags.at(tag);
 }
 
 template<typename ID, typename GroupID, typename TagID>
@@ -126,7 +135,7 @@ void Timeslot<ID, GroupID, TagID>::addTag(const TagID &tagID) {
     // Todo: Tag already exists
     //if(tags.count(tagID))
 
-    tags[tagID] = 1;
+    tags.insert(std::pair(tagID, 0));
 }
 
 template<typename ID, typename GroupID, typename TagID>

@@ -42,11 +42,13 @@ public:
 
     bool removeGroup(const GroupID &group);
 
+    bool inGroup(const GroupID &group) const;
+
     [[nodiscard]] const std::set<GroupID> &getGroups() const;
 
     bool setTagPriority(const TagID &tag, const unsigned int &priority);
 
-    [[nodiscard]] const int &getTagPriority(const TagID &tag) const;
+    [[nodiscard]] const int getTagPriority(const TagID &tag) const;
 
     [[nodiscard]] const ID getTaskId() const;
 
@@ -122,12 +124,12 @@ bool Task<ID, GroupID, TagID>::setTagPriority(const TagID &tag, const unsigned  
 }
 
 template<typename ID, typename GroupID, typename TagID>
-const int &Task<ID, GroupID, TagID>::getTagPriority(const TagID &tag) const {
+const int Task<ID, GroupID, TagID>::getTagPriority(const TagID &tag) const {
 
     if(!tags.count(tag))
         return -1;
 
-    return tag.at(tag);
+    return tags.at(tag);
 }
 
 template<typename ID, typename GroupID, typename TagID>
@@ -183,13 +185,18 @@ const std::set<GroupID> &Task<ID, GroupID, TagID>::getGroups() const {
 template<typename ID, typename GroupID, typename TagID>
 void Task<ID, GroupID, TagID>::addTag(const TagID &tagID) {
 
-    tags[tagID] = 1;
+    tags[tagID] = 0;
 }
 
 template<typename ID, typename GroupID, typename TagID>
 void Task<ID, GroupID, TagID>::removeTag(const TagID &tagID) {
 
     tags.erase(tagID);
+}
+
+template<typename ID, typename GroupID, typename TagID>
+bool Task<ID, GroupID, TagID>::inGroup(const GroupID &group) const {
+    return groups.count(group);
 }
 
 
