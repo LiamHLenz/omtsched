@@ -3,7 +3,7 @@ project(omtsched)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(omtsched SHARED omtsched.hpp omtsched.h Task.h Timeslot.h Problem.hpp Problem.h)
+add_library(omtsched SHARED omtsched.hpp omtsched.h Task.h Timeslot.h Problem.hpp Problem.h Translator.h Translator.hpp)
 set_target_properties(omtsched PROPERTIES LINKER_LANGUAGE CXX)
 
 find_package(Boost REQUIRED COMPONENTS "date_time")
