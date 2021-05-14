@@ -215,12 +215,50 @@ void Translator<TaskID, TimeslotID, GroupID, TagID>::saveEncoding(const Problem<
 
 
     // 2. Task execution cannot exceed its deadline
+    for(const auto &[tsid, ts] : problem.getAllTimeslots())
+        for(const auto &[aid, action] : problem.getAllTasks())
+            ostream << "(assert (=> " << assigned(ts_id.at(tsid), task_id.at(aid))
+                    << "(<= " << timeBetween(unit, startPoint, ts.getStartPoint()) + timeInUnit(unit, ts.getDuration())
+                    << " " << timeBetween(unit, startPoint, action.getDeadline()) << ")))" << std::endl;
 
 
     // 3. Task duration cannot exceed timeslot duration
+    for(const auto &[tsid, ts] : problem.getAllTimeslots())
+        for(const auto &[aid, action] : problem.getAllTasks())
+            ostream << "(assert (=> " << assigned(ts_id.at(tsid), task_id.at(aid))
+                    << "(<= " << timeInUnit(unit, action.getDuration())
+                    << " " << timeInUnit(unit, ts.getDuration()) << ")))" << std::endl;
 
 
-    // 4.
+    // 4. If a tag is set on a task, it must be set on a timeslot
+    for(const auto &[tsid, ts] : problem.getAllTimeslots())
+        for(const auto &[aid, action] : problem.getAllTasks()) {
+            ostream << "(assert (=> " << assigned(ts_id.at(tsid), task_id.at(aid))
+                    << " (and ";
+            for(const auto &tag : problem.getAllTags())
+                ostream << "(=> (< 0 " << action.getTagPriority(tag) << ") (< 0 " << ts.getTagPriority(tag) << ")) ";
+
+            ostream << ")))" << std::endl;
+        }
+
+
+    // 5. All non-optional tasks need to be assigned
+
+    for(const auto &[aid, action] : problem.getAllTasks())
+        if(!action.isOptional()) {
+
+            ostream << "(assert (or ";
+
+            for(const auto &[tsid, ts] : problem.getAllTimeslots())
+                ostream << assigned(ts_id.at(tsid), task_id.at(aid)) << " ";
+
+            ostream << "))" << std::endl;
+        }
+
+
+    //---------------------------------------------------------------------------------------
+    // -------------------------------- Final Settings --------------------------------------
+    //---------------------------------------------------------------------------------------
 
 
     ostream << "(check-sat)" << std::endl;
