@@ -288,196 +288,21 @@ const char* Translator<TaskID, TimeslotID, GroupID, TagID>::makeID(const std::st
 
 }
 
-/*
+
 template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 bool Translator<TaskID, TimeslotID, GroupID, TagID>::solveZ3(const Problem<TaskID, TimeslotID, GroupID, TagID> problem) {
 
-    using namespace z3;
+    saveEncoding(problem);
 
-    enum {
-        ID = 0, Start = 1, Duration = 2, Deadline = 3, Optional = 4
-    };
+    z3::context context;
 
+    context.parse_file((problem.problemName + ".smt2").c_str());
 
-    // Set up internal data structures
-    // TODO: setup in a different function
-    const size_t num_tasks = problem.getAllTasks().size();
-    const size_t num_timeslots = problem.getAllTimeslots().size();
-    const size_t num_tags = problem.getAllTags().size();
-    const size_t num_groups = problem.getAllGroups().size();
+    z3::solver solver(context);
 
-    size_t t = 0;
-    for(const auto tag : problem.getAllTags())
-        tag_id[tag] = t++;
+    std::cout << solver.check();
 
-    size_t g = 0;
-    for(const auto group : problem.getAllGroups())
-        group_id[group] = g++;
-
-
-    // Declare all variables
-
-    context c;
-
-    size_t tid = 0;
-
-    for(const auto & [id, ts] : problem.getAllTimeslots()) {
-
-        const std::string t = "t";
-
-        ts_id[id] = tid;
-        c.int_const(makeID(t, tid, "s"));
-        c.int_const(makeID(t, tid, "d"));
-
-        // Tags
-        for(const auto & [tagid, zid] : tag_id)
-            c.int_const(makeID(t, tid, "t", zid));
-
-        // Groups
-        for(const auto & [groupid, zid] : group_id)
-            c.bool_const(makeID(t, tid, "t", zid));
-
-        tid++;
-    }
-
-    size_t aid = 0;
-
-    for(const auto & [id, action] : problem.getAllTasks()) {
-
-        const std::string a = "a";
-
-        task_id[id] = aid;
-        c.int_const(makeID(a, aid, "s"));
-        c.int_const(makeID(a, aid, "du"));
-        c.int_const(makeID(a, aid, "dl"));
-        c.bool_const(makeID(a, aid, "o"));
-
-        // Tags
-        for(const auto & [tagid, zid] : tag_id)
-            c.int_const(makeID(a, aid, "t", zid));
-
-        // Groups
-        for(const auto & [groupid, zid] : group_id)
-            c.bool_const(makeID(a, aid, "g", zid));
-
-        aid++;
-    }
-
-    // Declare assignment variables
-    for(size_t ti = 0; ti < num_timeslots; ti++)
-        for(size_t ai = 0; ai < num_tasks; ai++)
-            c.bool_const(makeID(ti, "assign", ai));
-
-
-
-    // Assert: given values
-    auto start_point = problem.getStartPoint();
-    auto unit = problem.getUnit();
-    auto s = solver(c);
-
-    // Assert existing values for timeslots
-    for(const auto & [id, ts] : problem.getAllTimeslots()) {
-
-
-        auto &tid = ts_id.at(id);
-
-        auto &start = makeID(t, tid, "s");
-        s.add(start == timeBetween(unit, start_point, ts.getStartPoint()));
-
-        auto &duration = makeID(t, tid, "d");
-        s.add(duration == timeInUnit(unit, ts.getDuration()));
-
-
-        // Tags
-        for(const auto & tag : problem.getAllTags())
-            s.add(makeID(t, tid, "t", tag_id.at(tag)) == ts.getTagPriority(tag));
-
-        // Groups
-        for(const auto & group : problem.getAllGroups())
-            if(ts.inGroup(group))
-                s.add(makeID(t, tid, "g", group_id.at(group)));
-            else
-                s.add(!makeID(t, tid, "g", group_id.at(group)));
-
-    }
-
-
-    // Assert values for tasks
-
-    for(const auto & [id, task] : problem.getAllTasks()) {
-
-        const std::string a = "a";
-        const auto &aid = task_id.at(id);
-
-        const auto &start = makeID(a, aid, "s");
-        s.add(start == timeBetween(unit, start_point, task.getStartPoint()));
-
-        const auto &duration = makeID(a, aid, "du");
-        s.add(duration == timeInUnit(unit, task.getDuration()));
-
-        const auto &deadline =makeID(a, aid, "dl");
-        s.add(deadline == timeBetween(unit, start_point, task.getDeadlinePoint()));
-
-        const auto &optional =makeID(a, aid, "o");
-
-        if(task.isOptional())
-            s.add(optional);
-        else
-            s.add(!optional);
-
-        // Tags
-        for(const auto & tag : problem.getAllTags())
-            s.add(makeID(a, aid, "t", tag_id.at(tag)) == task.getTagPriority(tag));
-
-        // Groups
-        for(const auto & group : problem.getAllGroups())
-            if(task.inGroup(group))
-                s.add(makeID(a, aid, "g", group_id.at(group)));
-            else
-                s.add(!makeID(t, tid, "g", group_id.at(group)));
-
-    }
-
-
-    // Assignment constraints
-
-    // 0. a timeslot cannot be double-booked
-    for(const auto &[tsid, tzid] : ts_id)
-        for(const auto &[aid, azid] : task_id)
-            for(const auto &[aid2, azid2] : task_id)
-                if(azid != azid2)
-                    s.add( !makeID(tzid, "assign", azid) || !makeID(tzid, "assign", azid2));
-
-
-    // 1. task cannot be scheduled before its start point
-    for(const auto &[tid, ts] : problem.getAllTimeslots())
-        for(const auto &[aid, task] : problem.getAllTasks()) {
-
-            const auto &tzid = ts_id.at(tid);
-            const auto &azid = task_id.at(aid);
-
-            const auto assign = makeID(tzid, "assign", azid);
-
-            const auto taskStart = makeID();
-            const auto aStart = timeBetween(unit, start_point, task.getStartPoint());
-
-            z3::expr tStartExpr;
-            const auto tStart = timeBetween(unit, start_point, ts.getStartPoint());
-
-        }
-
-
-    // 2. Task execution cannot exceed its deadline
-
-
-    // 3. Task duration cannot exceed timeslot duration
-
-
-    // 4.
-
-    std::cout << s.check();
-
-} */
+}
 
 
 #endif //OMTSCHED_TRANSLATOR_HPP

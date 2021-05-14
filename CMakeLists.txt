@@ -8,6 +8,8 @@ set_target_properties(omtsched PROPERTIES LINKER_LANGUAGE CXX)
 
 find_package(Boost REQUIRED COMPONENTS "date_time")
 
+find_package(Z3 REQUIRED CONFIG)
+
 if(Boost_FOUND)
     include_directories(${BOOST_INCLUDE_DIRS})
 
@@ -16,6 +18,8 @@ if(Boost_FOUND)
     )
 
     target_link_libraries(tester ${Boost_DATE_TIME_LIBRARY} omtsched)
+    target_include_directories(tester PRIVATE ${Z3_CXX_INCLUDE_DIRS})
+    target_link_libraries(tester ${Z3_LIBRARIES})
 
 else()
     message(FATAL_ERROR "boost libraries not found")
