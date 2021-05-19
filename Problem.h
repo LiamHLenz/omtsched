@@ -10,6 +10,7 @@
 #include <set>
 #include "Task.h"
 #include "Timeslot.h"
+#include "Constraint.h"
 
 
 enum class Unit {
@@ -73,7 +74,17 @@ public:
     void setStartPoint(const Timepoint &startPoint);
 
 
+    // Adding constraints
+
     void bind(Task<TaskID, GroupID, TagID> &task, Timeslot<TimeslotID, GroupID, TagID> &timeslot, const TagID& tag);
+
+    void oneOf(const std::initializer_list<GroupID>);
+
+    void xOf(const size_t &number, const std::initializer_list<GroupID>);
+
+    void atLeast(const size_t &number, const std::initializer_list<GroupID>);
+
+    void atMost(const size_t &number, const std::initializer_list<GroupID>);
 
 private:
 
@@ -88,6 +99,8 @@ private:
     Unit unit;
 
     Timepoint startPoint;
+
+    std::vector<Constraint> constraints;
 
 };
 
