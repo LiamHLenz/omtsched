@@ -3,6 +3,7 @@
 //
 
 #include "../omtsched.h"
+#include "problems.h"
 
 //template <typename ... Groups>
 void addLecture(Problem<std::string, std::string, std::string, std::string> &problem, boost::posix_time::ptime startTime, boost::gregorian::date endDate, std::initializer_list<std::string> groups) {
@@ -32,7 +33,7 @@ void addLecture(Problem<std::string, std::string, std::string, std::string> &pro
         for(auto it = groups.begin(); it != groups.end(); it++)
             task.addGroup(*it);
 
-        problem.bind(ts, task);
+        problem.bind(ts.getID(), task.getTaskId());
 
     }
 
@@ -81,23 +82,24 @@ void addReview(Problem<std::string, std::string, std::string, std::string> &prob
 
         // Construct a unique and understandable name
         std::string title = "Review1";
-        for(auto it = groups.begin(); it != groups.end(); it++)
+        for (auto it = groups.begin(); it != groups.end(); it++)
             title.append(*it).append("_");
 
         title.append(boost::gregorian::to_iso_string(*date));
 
-        ptime start {*date, startTime.time_of_day()};
+        ptime start{*date, startTime.time_of_day()};
 
-        time_duration duration {minutes(60)};
+        time_duration duration{minutes(60)};
         auto &task = problem.addTask(title, start, duration, start + weeks(1), true);
 
         task.addGroup("Uni");
         task.addGroup("Review");
 
-        for(auto it = groups.begin(); it != groups.end(); it++)
+        for (auto it = groups.begin(); it != groups.end(); it++)
             task.addGroup(*it);
 
         task.setTagPriority("Focus", 2);
+    }
 
 }
 
@@ -158,7 +160,7 @@ void getSecond(Problem<std::string, std::string, std::string, std::string> &prob
     addLecture(problem, time_from_string("2021-04-16 14:30:00.000"), from_string("2021-07-23"), {"BuS", "Tutorial"});
     problem.oneOf({"BuS1", "BuS2", "BuS3"});
 
-    addHomework();
+    //addHomework();
     addReview(problem, time_from_string("2021-04-19 08:30:00.000"), from_string("2021-07-26"), {"BuS", "Review"});
 
     // -------------
@@ -180,7 +182,7 @@ void getSecond(Problem<std::string, std::string, std::string, std::string> &prob
     addLecture(problem, time_from_string("2021-04-15 18:30:00.000"), from_string("2021-07-22"), {"FoSAP", "Tutorial", "FoSAP2"});
     addLecture(problem, time_from_string("2021-04-12 16:30:00.000"), from_string("2021-07-19"), {"FoSAP", "Tutorial", "FoSAP3"});
     addLecture(problem, time_from_string("2021-04-12 08:30:00.000"), from_string("2021-07-19"), {"FoSAP", "Tutorial", "FoSAP4"});
-    problem.oneOf("FoSAP1", "FoSAP2", "FoSAP3", "FoSAP4");
+    problem.oneOf({"FoSAP1", "FoSAP2", "FoSAP3", "FoSAP4"});
 
 
 
@@ -210,8 +212,8 @@ void getSecond(Problem<std::string, std::string, std::string, std::string> &prob
     problem.oneOf({"LA1", "LA2", "LA3", "LA4", "LA5", "LA6"});
 
     // Homework, Review
-    addHomework(problem, );
-    addReview(problem, );
+    //addHomework(problem, );
+    //addReview(problem, );
 
     // ---------------------
     // Proseminar
@@ -222,5 +224,9 @@ void getSecond(Problem<std::string, std::string, std::string, std::string> &prob
     // Exercise and Chores
 
 
+    // ---------------------
+    // Create Timeslots
+
+    //addTimeslots(startDate, endDate, startTime, duration, std::initiliazerList<TagID>);
 
 }

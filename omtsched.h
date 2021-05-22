@@ -5,7 +5,6 @@
 #include "Translator.h"
 #include <fstream>
 
-void hello();
 
 namespace omtsched {
 

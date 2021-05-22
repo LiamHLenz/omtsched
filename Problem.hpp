@@ -2,8 +2,8 @@
 // Created by dana on 28.04.21.
 //
 
-#include "Problem.h"
 
+#include "Problem.h"
 
 template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 Problem<TaskID, TimeslotID, GroupID, TagID>::
@@ -147,11 +147,9 @@ const std::set<TagID> &Problem<TaskID, TimeslotID, GroupID, TagID>::getAllTags()
 }
 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-void Problem<TaskID, TimeslotID, GroupID, TagID>::bind(Task<TaskID, GroupID, TagID> &task, Timeslot<TimeslotID, GroupID, TagID> &timeslot, const TagID& tag) {
+void Problem<TaskID, TimeslotID, GroupID, TagID>::bind(const TimeslotID &ts, const TaskID &task) {
 
-    addTag(tag);
-    task.setTagPriority(tag, 1);
-    timeslot.setTagPriority(tag, 1);
+
 
 }
 
@@ -173,4 +171,24 @@ const typename Problem<TaskID, TimeslotID, GroupID, TagID>::Timepoint &Problem<T
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 void Problem<TaskID, TimeslotID, GroupID, TagID>::setStartPoint(const Problem::Timepoint &startPoint) {
     Problem::startPoint = startPoint;
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+void Problem<TaskID, TimeslotID, GroupID, TagID>::oneOf(const std::initializer_list<GroupID>) {
+
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+void Problem<TaskID, TimeslotID, GroupID, TagID>::xOf(const size_t &number, const std::initializer_list<GroupID>) {
+
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+void Problem<TaskID, TimeslotID, GroupID, TagID>::atLeast(const size_t &number, const std::initializer_list<GroupID>) {
+
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+void Problem<TaskID, TimeslotID, GroupID, TagID>::atMost(const size_t &number, const std::initializer_list<GroupID>) {
+
 }

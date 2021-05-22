@@ -3,12 +3,11 @@
 //
 
 #include "../omtsched.h"
+#include "problems.h"
 
 void getSecond(Problem<std::string, std::string, std::string, std::string> &problem);
 
 int main() {
-
-    hello();
 
     Problem<std::string, std::string, std::string, std::string> second_semester {"RWTH2ndSemesterCS", Unit::MINUTES, boost::posix_time::time_from_string("2021-04-12 08:00:00.000")};
     getSecond(second_semester);

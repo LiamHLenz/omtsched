@@ -76,7 +76,7 @@ public:
 
     // Adding constraints
 
-    void bind(Task<TaskID, GroupID, TagID> &task, Timeslot<TimeslotID, GroupID, TagID> &timeslot, const TagID& tag);
+    void bind(const TimeslotID &timeslot, const TaskID& task);
 
     void oneOf(const std::initializer_list<GroupID>);
 
@@ -100,7 +100,7 @@ private:
 
     Timepoint startPoint;
 
-    std::vector<Constraint> constraints;
+    std::vector<Constraint<TaskID, TimeslotID, GroupID>> constraints;
 
 };
 
