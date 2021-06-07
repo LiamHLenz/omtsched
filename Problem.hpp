@@ -149,7 +149,7 @@ const std::set<TagID> &Problem<TaskID, TimeslotID, GroupID, TagID>::getAllTags()
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 void Problem<TaskID, TimeslotID, GroupID, TagID>::bind(const TimeslotID &ts, const TaskID &task) {
 
-
+    constraints.emplace_back( ConstraintType::BIND, ts, task );
 
 }
 
@@ -191,4 +191,10 @@ void Problem<TaskID, TimeslotID, GroupID, TagID>::atLeast(const size_t &number, 
 template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 void Problem<TaskID, TimeslotID, GroupID, TagID>::atMost(const size_t &number, const std::initializer_list<GroupID>) {
 
+}
+
+template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+const std::vector<Constraint<TaskID, TimeslotID, GroupID>> &
+Problem<TaskID, TimeslotID, GroupID, TagID>::getConstraints() const {
+    return constraints;
 }

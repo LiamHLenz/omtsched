@@ -74,6 +74,9 @@ public:
     void setStartPoint(const Timepoint &startPoint);
 
 
+    const std::vector<Constraint<TaskID, TimeslotID, GroupID>> &getConstraints() const;
+
+
     // Adding constraints
 
     void bind(const TimeslotID &timeslot, const TaskID& task);

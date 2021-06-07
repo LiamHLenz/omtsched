@@ -38,6 +38,6 @@ Constraint<TaskID, TimeslotID, GroupID>::Constraint(const ConstraintType &type, 
 
 template <typename TaskID, typename TimeslotID, typename GroupID>
 Constraint<TaskID, TimeslotID, GroupID>::Constraint(const ConstraintType &type, const TimeslotID &ts, const TaskID &task)
-: type{type}, ts{ts}, task{task} {}
+: type{type}, ts{ts}, task{task}, number{0} {}
 
 #endif //OMTSCHED_CONSTRAINT_H

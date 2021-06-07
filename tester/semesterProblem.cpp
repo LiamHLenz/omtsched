@@ -103,6 +103,32 @@ void addReview(Problem<std::string, std::string, std::string, std::string> &prob
 
 }
 
+void addStudyTime(Problem<std::string, std::string, std::string, std::string> &problem,  boost::posix_time::ptime startTime, boost::gregorian::date endDate, std::initializer_list<std::string> tags) {
+
+    using namespace boost::gregorian;
+    using namespace boost::posix_time;
+
+    for(week_iterator date = startTime.date(); date <= endDate; ++date) {
+
+        // Construct a unique and understandable name
+        std::string title = "Study_";
+
+        title.append(boost::gregorian::to_iso_string(*date));
+        title.append(boost::posix_time::to_iso_string(startTime.time_of_day()));
+
+        ptime start{*date, startTime.time_of_day()};
+
+        time_duration duration{minutes(60)};
+        auto &ts = problem.addTimeslot(title, start, duration);
+
+        for (auto it = tags.begin(); it != tags.end(); it++)
+            ts.addTag(*it);
+
+        ts.setTagPriority("Focus", 3);
+    }
+
+}
+
 void getSecond(Problem<std::string, std::string, std::string, std::string> &problem) {
 
     using namespace boost::gregorian;
