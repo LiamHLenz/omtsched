@@ -7,7 +7,7 @@
 
 enum class Operator {
 
-    "&", "||", "=>", "<=>", "=", "!="
+    NOT, AND, OR, IMPLIES, IFF, EQUAL, UNEQUAL
 };
 
 class Expression {

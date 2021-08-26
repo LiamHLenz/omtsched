@@ -6,8 +6,12 @@
 #define OMTSCHED_PROBLEM_H
 
 #include <set>
+#include <vector>
+#include "Assignment.h"
+#include "Rule.h"
+#include "Component.h"
 
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+template <typename ComponentID, typename GroupID, typename TagID>
 class Problem {
 
 public:
@@ -17,6 +21,7 @@ public:
     Problem(const std::string &name);
 
     // Assignments & components:
+    std::vector<Assignments>
 
 
     // Groups and Tags
@@ -33,11 +38,6 @@ public:
     void deleteTag(const TagID &id);
 
     const std::set<TagID>& getAllTags() const;
-
-
-    Unit getUnit() const;
-
-    void setUnit(Unit unit);
 
 
 private:
