@@ -2,7 +2,7 @@
 #define OMTSCHED_OMTSCHED_H
 
 #include "Problem.h"
-#include "TranslatorZ3.h"
+#include "z3/TranslatorZ3.h"
 #include <fstream>
 
 

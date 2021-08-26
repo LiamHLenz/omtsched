@@ -6,7 +6,7 @@
 #define OMTSCHED_TRANSLATORZ3_H
 
 
-#include "Translator.h"
+#include "../Translator.h"
 #include <z3.h>
 #include <z3++.h>
 
