@@ -3,24 +3,25 @@ project(omtsched)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(omtsched SHARED omtsched.hpp omtsched.h components/Task.h components/Timeslot.h Problem.hpp Problem.h Translator.h z3/TranslatorZ3.h z3/TranslatorZ3.hpp Model.h examples/inrc2.cpp)
+add_library(omtsched SHARED omtsched.hpp omtsched.h components/Task.h components/Timeslot.h Problem.hpp Problem.h
+        Translator.h z3/TranslatorZ3.h z3/TranslatorZ3.hpp Model.h encoding/Rule.h Formula.h Assignment.h Component.h Variable.h
+        components/Agent.h components/Time.h components/TimedTask.h)
 set_target_properties(omtsched PROPERTIES LINKER_LANGUAGE CXX)
 
-find_package(Boost REQUIRED COMPONENTS "date_time")
+# find_package(Boost REQUIRED COMPONENTS "date_time")
 
 find_package(Z3 REQUIRED CONFIG)
 
-if(Boost_FOUND)
-    include_directories(${BOOST_INCLUDE_DIRS})
+#if(Boost_FOUND)
+#    include_directories(${BOOST_INCLUDE_DIRS})
 
-    add_executable(
-            examples examples/testMain.cpp
-            examples/semesterProblem.cpp examples/problems.h Rule.h Formula.h Assignment.h Component.h Variable.h)
+    add_executable(examples
+            examples/inrc2.cpp encoding/Condition.h)
 
-    target_link_libraries(examples ${Boost_DATE_TIME_LIBRARY} omtsched)
-    #target_include_directories(examples PRIVATE ${Z3_CXX_INCLUDE_DIRS})
+#    target_link_libraries(examples ${Boost_DATE_TIME_LIBRARY} omtsched)
+    target_include_directories(examples PRIVATE ${Z3_CXX_INCLUDE_DIRS})
     target_link_libraries(examples ${Z3_LIBRARIES})
 
-else()
-    message(FATAL_ERROR "boost libraries not found")
-endif()
+#else()
+#    message(FATAL_ERROR "boost libraries not found")
+#endif()

@@ -7,55 +7,73 @@
 
 #include <set>
 #include <vector>
+#include <string>
+#include <memory>
 #include "Assignment.h"
-#include "Rule.h"
+#include "encoding/Rule.h"
 #include "Component.h"
 
-template <typename ComponentID, typename GroupID, typename TagID>
-class Problem {
+namespace omtsched {
 
-public:
+    template<typename ComponentID, typename GroupID, typename TagID>
+    class Problem {
 
-    std::string problemName;
+    public:
 
-    Problem(const std::string &name);
+        std::string problemName;
 
-    // Assignments & components:
-    std::vector<Assignments>
+        explicit Problem(const std::string &name);
 
-
-    // Groups and Tags
-
-    void addGroup(const GroupID &);
-
-    void deleteGroup(const GroupID &);
-
-    const std::set<GroupID>& getAllGroups() const;
+        Problem();
 
 
-    void addTag(const TagID &id);
+        Component<ComponentID, GroupID, TagID> &addComponent(const ComponentID &);
 
-    void deleteTag(const TagID &id);
+        Assignment &addAssignment();
 
-    const std::set<TagID>& getAllTags() const;
+        std::set<std::string> getComponentTypes() const;
 
 
-private:
+        // Groups and Tags
 
-    std::set<TagID> tags;
+        void addGroup(const GroupID &);
 
-    std::set<GroupID> groups;
+        void deleteGroup(const GroupID &);
 
-    std::vector<Component> components;
+        const std::set<GroupID> &getAllGroups() const;
 
-    std::vector<Assignment> assignments;
 
-    std::vector<Rule> rules;
+        void addTag(const TagID &id);
 
-    //std::vector<Rule> objectives;
+        void deleteTag(const TagID &id);
 
-};
+        const std::set<TagID> &getAllTags() const;
 
+
+        const std::vector<std::unique_ptr<Component<ComponentID, GroupID, TagID>>> &getComponents() const;
+
+        const std::vector<std::unique_ptr<Assignment>> &getAssignments() const;
+
+        const std::vector<Rule> &getRules() const;
+
+
+    private:
+
+        std::set<TagID> tags;
+
+        std::set<GroupID> groups;
+
+        std::vector<std::unique_ptr<Component<ComponentID, GroupID, TagID>>> components;
+
+        std::vector<std::unique_ptr<Assignment>> assignments;
+
+        std::vector<Rule> rules;
+
+        //std::vector<Rule> objectives;
+
+    };
+
+}
 
 #include "Problem.hpp"
 

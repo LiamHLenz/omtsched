@@ -9,7 +9,7 @@
 namespace omtsched {
 
     template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-    void saveEncoding(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem);
+    void saveEncoding(const Problem<TaskID, GroupID, TagID> &problem);
 
     // getSchedule();
     // getExplanation();

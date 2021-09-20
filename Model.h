@@ -5,4 +5,6 @@
 #ifndef OMTSCHED_MODEL_H
 #define OMTSCHED_MODEL_H
 
+class Model {};
+
 #endif //OMTSCHED_MODEL_H

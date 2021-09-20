@@ -5,11 +5,15 @@
 #ifndef OMTSCHED_TIMESLOT_H
 #define OMTSCHED_TIMESLOT_H
 
-#include <string>
-#include <map>
-#include <set>
-#include <boost/date_time/posix_time/ptime.hpp>
+#include "Time.h"
 
+namespace omtsched {
+    template<class ComponentID, class TagID, class GroupID, class Unit>
+    class Timeslot : public Time<ComponentID, TagID, GroupID, Unit> {
+    };
+
+}
+/*
 template<typename ID, typename GroupID, typename TagID>
 class Timeslot {
 
@@ -142,6 +146,6 @@ template<typename ID, typename GroupID, typename TagID>
 void Timeslot<ID, GroupID, TagID>::removeTag(const TagID &tagID) {
 
     tags.erase(tagID);
-}
+} */
 
 #endif //OMTSCHED_TIMESLOT_H

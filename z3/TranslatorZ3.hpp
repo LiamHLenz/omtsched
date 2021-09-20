@@ -8,7 +8,7 @@
 
 #include "TranslatorZ3.h"
 
-
+/*
 enum LABELS {
 
 };
@@ -27,7 +27,7 @@ z3::expr TranslatorZ3<TaskID, TimeslotID, GroupID, TagID>::get_assigned_expr(con
 
 }*/
 
-
+/*
 template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 bool TranslatorZ3<TaskID, TimeslotID, GroupID, TagID>::solve(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem) {
 
@@ -227,7 +227,7 @@ bool TranslatorZ3<TaskID, TimeslotID, GroupID, TagID>::solve(const Problem<TaskI
         }
     }*/
 
-
+/*
     //---------------------------------------------------------------------------------------
     // ------------------------- Assert rules for assignments -------------------------------
     //---------------------------------------------------------------------------------------
@@ -355,6 +355,6 @@ void expr_map<Key1, Key2>::set(const Key1 &key1, const Key2 &key2, z3::expr expr
 
     internal_map[{key1, key2}].push_back(expr);
 }
-
+*/
 
 #endif //OMTSCHED_TRANSLATOR_Z3HPP

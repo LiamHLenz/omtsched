@@ -11,13 +11,21 @@
 
 class Rule;
 
+struct ComponentSlot {
+    const int id;
+    const std::string type;
+    int number;
+    bool optional;
+};
+
+template<typename ComponentID, typename GroupID, typename TagID>
 class Assignment {
 
 public:
-    virtual std::set<Variable> generate() const;
+    std::vector<Component<ComponentID, GroupID, TagID>> &getDomain(const int &id);
 
 private:
-    std::vector<std::shared_ptr<Component>> components;
+    std::vector<ComponentSlot> components;
     std::set<Rule> requirements;
 };
 

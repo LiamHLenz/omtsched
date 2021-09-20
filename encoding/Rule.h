@@ -7,33 +7,32 @@
 
 enum class Operator {
 
-    NOT, AND, OR, IMPLIES, IFF, EQUAL, UNEQUAL
+    NOT, AND, OR, IMPLIES, IFF, EQUAL, UNEQUAL, INGROUP, INSET
 };
 
 class Expression {
 
 public:
-    virtual Formula generate() const;
+    //virtual Formula generate() const;
 
 };
 
 class Rule : public Expression {
 
 public:
-    Formula generate() const override;
+    //Formula generate() const override;
+    //Condition conditions;
     bool validate() const;
 
 private:
-    Expression left;
-    Expression right;
-    Operator op;
+
 
 };
 
 class Function : public Expression {
 
 public:
-    Formula generate() const override;
+    //Formula generate() const override;
 
 };
 

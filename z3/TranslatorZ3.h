@@ -9,7 +9,157 @@
 #include "../Translator.h"
 #include <z3.h>
 #include <z3++.h>
+#include <map>
+#include <boost/bimap.hpp>
 
+template <typename ComponentID, typename GroupID, typename TagID>
+class TranslatorZ3 : public omtsched::Translator<ComponentID, GroupID, TagID> {
+public:
+    TranslatorZ3();
+    void solve() override;
+
+private:
+    void setup();
+    void addDomainConstraints(const ComponentSlot &);
+    z3::expr resolveCondition(const std::string &r);
+    z3::expr resolveVariable(const std::string &r);
+    void addRule(const Rule &);
+
+    z3::context context;
+    z3::solver solver;
+
+    //TODO: double map
+    boost::bimap<std::string, z3::sort> component_types;
+    boost::bimap<ComponentID, z3::expr> components;
+    boost::bimap<ComponentSlot*, z3::expr> slots;
+
+};
+
+template<typename ComponentID, typename GroupID, typename TagID>
+TranslatorZ3<ComponentID, GroupID, TagID>::TranslatorZ3() {}
+
+template<typename ComponentID, typename GroupID, typename TagID>
+void TranslatorZ3<ComponentID, GroupID, TagID>::solve() {
+
+}
+
+template<typename ComponentID, typename GroupID, typename TagID>
+void TranslatorZ3<ComponentID, GroupID, TagID>::setup() {
+
+    // Create sorts for component types
+    for (const auto &compType: this->problem.getComponentTypes()) {
+        component_types[compType] = context.uninterpreted_sort(compType);
+
+        // Components
+        size_t ccount = 0;
+        for (const auto &component: this->problem.getComponents()) {
+
+            // Assign an internal numerical ID
+            const auto &type = component_types.at(component.getType());
+            components[component] = context.constant(ccount, type);
+            ccount++;
+        }
+
+        // Components are all distinct
+
+    }
+
+    int a = 0;
+    for(const auto &assignment : this->problem.getAssignments()) {
+        int c = 0;
+        for (const auto &component: assignment->getComponents()) {
+
+            // create assignment variable
+            const auto &type = component_types.at(component.getType());
+            std::string name = "a"+std::to_string(a)+"c"+std::to_string(c);
+            context.constant(name, type);
+            c++;
+
+        }
+        a++;
+    }
+}
+/*
+template<typename ComponentID, typename GroupID, typename TagID>
+void TranslatorZ3<ComponentID, GroupID, TagID>::domainConstraints() {
+
+    // domain constraint
+    z3::expr_vector domain;
+    for(const ComponentSlot &c : assignment.getDomain(component))
+}
+*/
+
+template<typename ComponentID, typename GroupID, typename TagID>
+z3::expr TranslatorZ3<ComponentID, GroupID, TagID>::resolveVariable(const std::string &r) {
+
+
+}
+
+template<typename ComponentID, typename GroupID, typename TagID>
+z3::expr TranslatorZ3<ComponentID, GroupID, TagID>::resolveCondition(const std::string &r) {
+
+
+    // parse
+    bool isVariable = false;
+
+
+    if(isVariable)
+        return resolveVariable(r);
+
+    // NOT, AND, OR, IMPLIES, IFF, EQUAL, UNEQUAL
+    Operator op;
+    Expression left;
+    Expression right;
+
+    switch(op) {
+
+        case Operator::NOT:
+            return !resolveCondition(right);
+            break;
+
+        case Operator::AND:
+            return resolveCondition(left) && resolveCondition(right);
+            break;
+
+        case Operator::OR:
+            return resolveCondition(left) || resolveCondition(right);
+            break;
+
+        case Operator::IMPLIES:
+            return implies(resolveCondition(left), resolveCondition(right));
+            break;
+
+        case Operator::IFF:
+            return implies(resolveCondition(left), resolveCondition(right)) &&
+                    implies(resolveCondition(right), resolveCondition(left));
+            break;
+
+        case Operator::EQUAL:
+            return resolveCondition(left) == resolveCondition(right);
+            break;
+
+        case Operator::UNEQUAL:
+            return resolveCondition(left) != resolveCondition(right);
+            break;
+
+        case Operator::INGROUP:
+            break;
+
+        case Operator::INSET:
+            if()
+            break;
+    }
+}
+
+template<typename ComponentID, typename GroupID, typename TagID>
+void TranslatorZ3<ComponentID, GroupID, TagID>::addRule(const Rule &r) {
+
+    z3::expr exp = resolveCondition(r);
+    solver.add(exp);
+
+}
+
+/*
 template <typename Key1, typename Key2>
 class expr_map {
 
@@ -53,7 +203,7 @@ private:
     std::map<GroupID, size_t> group_id; */
 
     //-- datastructures for Z3 ----------
-
+/*
     // This should work better
     std::map<TaskID, std::vector<z3::expr>> task_expr;
     std::map<TimeslotID, std::vector<z3::expr>> ts_expr;
@@ -76,7 +226,7 @@ private:
     };
 
 };
-
+*/
 #include "TranslatorZ3.hpp"
 
 #endif //OMTSCHED_TRANSLATORZ3_H

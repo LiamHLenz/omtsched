@@ -10,6 +10,7 @@ class Component {
 
 public:
     Component(const ComponentID &id) : ID{id} {}
+    virtual const std::string componentType() const = 0;
 
 private:
     const ComponentID ID;

@@ -6,8 +6,80 @@
 #define OMTSCHED_TRANSLATOR_H
 
 #include "Problem.h"
+#include "Model.h"
 #include <string>
 
+namespace omtsched {
+
+    template<class ComponentID, class TagID, class GroupID>
+    class Translator {
+
+    public:
+
+        virtual void solve() = 0;
+
+        virtual Model getSolution() = 0;
+        virtual std::vector<Model> getAllSolutions() = 0;
+
+        virtual void printProblem(std::string path) const = 0;
+        virtual void printSolution(std::string path) const = 0;
+        virtual void printAllSolutions(std::string path) const = 0;
+        virtual void printExplanation(std::string path) const = 0;
+
+        Problem <ComponentID, TagID, GroupID> &getProblem() const;
+
+        void setProblem(Problem <ComponentID, TagID, GroupID> &problem);
+
+        bool isGenerateAllSolution() const;
+
+        void setGenerateAllSolution(bool generateAllSolution);
+
+        bool isGenerateExplanations() const;
+
+        void setGenerateExplanations(bool generateExplanations);
+
+    protected:
+        Problem<ComponentID, TagID, GroupID> &problem;
+        bool generateAllSolution;
+        bool generateExplanations;
+
+    };
+
+    template<class ComponentID, class TagID, class GroupID>
+    Problem <ComponentID, TagID, GroupID> &Translator<ComponentID, TagID, GroupID>::getProblem() const {
+        return problem;
+    }
+
+    template<class ComponentID, class TagID, class GroupID>
+    void Translator<ComponentID, TagID, GroupID>::setProblem(Problem <ComponentID, TagID, GroupID> &problem) {
+        Translator::problem = problem;
+    }
+
+    template<class ComponentID, class TagID, class GroupID>
+    bool Translator<ComponentID, TagID, GroupID>::isGenerateAllSolution() const {
+        return generateAllSolution;
+    }
+
+    template<class ComponentID, class TagID, class GroupID>
+    void Translator<ComponentID, TagID, GroupID>::setGenerateAllSolution(bool generateAllSolution) {
+        Translator::generateAllSolution = generateAllSolution;
+    }
+
+    template<class ComponentID, class TagID, class GroupID>
+    bool Translator<ComponentID, TagID, GroupID>::isGenerateExplanations() const {
+        return generateExplanations;
+    }
+
+    template<class ComponentID, class TagID, class GroupID>
+    void Translator<ComponentID, TagID, GroupID>::setGenerateExplanations(bool generateExplanations) {
+        Translator::generateExplanations = generateExplanations;
+    }
+
+}
+
+
+
+/*
 template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
 class Translator {
 
@@ -289,7 +361,7 @@ void Translator<TaskID, TimeslotID, GroupID, TagID>::saveEncoding(const Problem<
     //ostream << "(get-unsat-core)" << std::endl;
 
     //ostream << "))" << std::endl;
-
+/*
     ostream.close();
 
 }
@@ -314,5 +386,5 @@ const std::string Translator<TaskID, TimeslotID, GroupID, TagID>::assigned(const
     return "c" + std::to_string(tid) + "_" + std::to_string(aid);
 
 }
-
+*/
 #endif //OMTSCHED_TRANSLATOR_H

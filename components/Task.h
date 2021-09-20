@@ -9,7 +9,15 @@
 #include <set>
 #include <map>
 
+namespace omtsched {
 
+    template<class ComponentID, class TagID, class GroupID>
+    class Task : public TimedTask {
+    };
+
+}
+
+/*
 template<typename ID, typename GroupID, typename TagID>
 class Task {
 
@@ -29,6 +37,7 @@ public:
      * @param optional Every non-optional task must be scheduled before its deadline for a schedule
      *        to be considered valid.
      */
+/*
     Task(const ID &id, const Timepoint &start, const Duration &duration,
             const Timepoint &deadline = boost::date_time::neg_infin, bool optional = false);
 
@@ -38,6 +47,7 @@ public:
      * and help find patterns of failure.
      * @param group ID of the group to add. The group needs to be registered using addGroup() before.
      */
+/*
     bool addGroup(const GroupID &group);
 
     bool removeGroup(const GroupID &group);
@@ -198,6 +208,6 @@ template<typename ID, typename GroupID, typename TagID>
 bool Task<ID, GroupID, TagID>::inGroup(const GroupID &group) const {
     return groups.count(group);
 }
-
+*/
 
 #endif //OMTSCHED_TASK_H
