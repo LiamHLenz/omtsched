@@ -8,11 +8,13 @@
 #include <boost/date_time.hpp>
 #include <set>
 #include <map>
+#include "../Component.h"
 
 namespace omtsched {
 
     template<class ComponentID, class TagID, class GroupID>
-    class Task : public TimedTask {
+    class Task : public Component<ComponentID, TagID, GroupID> {
+
     };
 
 }

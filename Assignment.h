@@ -6,14 +6,11 @@
 #define OMTSCHED_ASSIGNMENT_H
 
 #include "Component.h"
-#include <set>
 #include <vector>
-
-class Rule;
 
 struct ComponentSlot {
     const int id;
-    const std::string type;
+    const int type;
     int number;
     bool optional;
 };
@@ -25,8 +22,9 @@ public:
     std::vector<Component<ComponentID, GroupID, TagID>> &getDomain(const int &id);
 
 private:
-    std::vector<ComponentSlot> components;
-    std::set<Rule> requirements;
+    std::vector<ComponentSlot> componentSlots;
+    //TODO: domains
+    
 };
 
 

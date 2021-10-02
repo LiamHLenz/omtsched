@@ -11,7 +11,7 @@ namespace omtsched {
 
     template<class ComponentID, class TagID, class GroupID>
     class Agent : public Component<ComponentID, TagID, GroupID> {
-
+        public:
         Agent(const ComponentID &id) : Component<ComponentID, TagID, GroupID>{id} {}
     };
 

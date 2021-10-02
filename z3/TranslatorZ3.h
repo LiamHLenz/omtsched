@@ -4,7 +4,7 @@
 
 #ifndef OMTSCHED_TRANSLATORZ3_H
 #define OMTSCHED_TRANSLATORZ3_H
-
+/*
 
 #include "../Translator.h"
 #include <z3.h>
@@ -87,7 +87,7 @@ void TranslatorZ3<ComponentID, GroupID, TagID>::domainConstraints() {
     z3::expr_vector domain;
     for(const ComponentSlot &c : assignment.getDomain(component))
 }
-*/
+
 
 template<typename ComponentID, typename GroupID, typename TagID>
 z3::expr TranslatorZ3<ComponentID, GroupID, TagID>::resolveVariable(const std::string &r) {
@@ -95,61 +95,6 @@ z3::expr TranslatorZ3<ComponentID, GroupID, TagID>::resolveVariable(const std::s
 
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-z3::expr TranslatorZ3<ComponentID, GroupID, TagID>::resolveCondition(const std::string &r) {
-
-
-    // parse
-    bool isVariable = false;
-
-
-    if(isVariable)
-        return resolveVariable(r);
-
-    // NOT, AND, OR, IMPLIES, IFF, EQUAL, UNEQUAL
-    Operator op;
-    Expression left;
-    Expression right;
-
-    switch(op) {
-
-        case Operator::NOT:
-            return !resolveCondition(right);
-            break;
-
-        case Operator::AND:
-            return resolveCondition(left) && resolveCondition(right);
-            break;
-
-        case Operator::OR:
-            return resolveCondition(left) || resolveCondition(right);
-            break;
-
-        case Operator::IMPLIES:
-            return implies(resolveCondition(left), resolveCondition(right));
-            break;
-
-        case Operator::IFF:
-            return implies(resolveCondition(left), resolveCondition(right)) &&
-                    implies(resolveCondition(right), resolveCondition(left));
-            break;
-
-        case Operator::EQUAL:
-            return resolveCondition(left) == resolveCondition(right);
-            break;
-
-        case Operator::UNEQUAL:
-            return resolveCondition(left) != resolveCondition(right);
-            break;
-
-        case Operator::INGROUP:
-            break;
-
-        case Operator::INSET:
-            if()
-            break;
-    }
-}
 
 template<typename ComponentID, typename GroupID, typename TagID>
 void TranslatorZ3<ComponentID, GroupID, TagID>::addRule(const Rule &r) {
@@ -159,7 +104,7 @@ void TranslatorZ3<ComponentID, GroupID, TagID>::addRule(const Rule &r) {
 
 }
 
-/*
+
 template <typename Key1, typename Key2>
 class expr_map {
 
@@ -227,6 +172,5 @@ private:
 
 };
 */
-#include "TranslatorZ3.hpp"
 
 #endif //OMTSCHED_TRANSLATORZ3_H
