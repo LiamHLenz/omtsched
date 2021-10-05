@@ -119,7 +119,26 @@ void omtsched::Problem<ComponentID, GroupID, TagID>::addRule(const Rule<Componen
 template<typename ComponentID, typename GroupID, typename TagID>
 void omtsched::Problem<ComponentID, GroupID, TagID>::getModel(Model &model) const {
 
-    //Step 1.
+
+    // Preprocessing steps:
+    // 1. Determine free variables
+
+    // 2. Determine variable domains
+
+    // 3. Determine for every rule the set of applicable parameters and simplify
+
+    // 4. Determine which resulting rules are domain restrictions and apply them
+
+    // 5. Determine types used
+
+    // Translation steps:
+    // 1. Create assignment variables with constrained domains
+
+    // 2. Instantiate rules
+
+
+    // Re-translate model steps:
+    // 1.
 }
 
 #endif //OMTSCHED_PROBLEM_H

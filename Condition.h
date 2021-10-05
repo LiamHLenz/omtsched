@@ -11,23 +11,35 @@
 #include "Component.h"
 
 template<typename ComponentID, typename TagID, typename GroupID>
-class Condition : public ComponentType {
+class Condition {
 
 public:
     virtual bool evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) = 0;
+    virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) = 0;
 
 private:
-    std::vector<ComponentType> componentTypes;
+    // specifies the types of
+    std::vector<ComponentType> paramenterTypes;
+    std::vector<Condition*> subconditions;
 
 };
 
 
+template<typename ComponentID, typename TagID, typename GroupID>
+class Not : public Condition<ComponentID, TagID, GroupID> {
 
-class Not : public Condition {};
-z3::expr Not::evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) {
+public:
+    Not(const std::vector<Condition<ComponentID, TagID, GroupID>*> subconditions);
+    virtual bool evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
+    virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
+};
 
-    return !componentTypes.at(0).evaluate();
+template<typename ComponentID, typename TagID, typename GroupID>
+z3::expr Not<ComponentID, TagID, GroupID>::evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) {
+
+    return !arguments.at(0).evaluate();
 }
+
 /*
 class And : public Condition {};
 z3::expr And::generate(std::vector<Condition> arguments) {
