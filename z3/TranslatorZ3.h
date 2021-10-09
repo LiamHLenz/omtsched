@@ -18,6 +18,10 @@ public:
     TranslatorZ3();
     void solve() override;
 
+    virtual z3::context getContext() = 0;
+    virtual const z3::expr getVariable(const Assignment<ID> &assignment, const std::string &&componentSlot) = 0;
+    virtual const z3::expr getComponent(const ID &component) = 0;
+
 private:
     void setup();
     void addDomainConstraints(const ComponentSlot &);

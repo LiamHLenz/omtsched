@@ -9,21 +9,24 @@
 #include <z3++.h>
 #include "ComponentType.h"
 #include "Component.h"
+#include "Translator.h"
 
-template<typename ID>
-class Condition {
+namespace omtsched {
+    template<typename ID>
+    class Condition {
 
-public:
-    virtual z3::expr instantiate(const std::vector<const std::vector< const Assignment<ID>*>>& assignmentGroups) = 0;
-    //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
-    //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
+    public:
+        virtual z3::expr instantiate(const Translator<ID> &t,
+                                     const std::vector<const std::vector<const Assignment<ID> *>> &assignmentGroups) = 0;
+        //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
+        //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
 
-private:
-    // specifies the types of
-    std::vector<ComponentType> paramenterTypes;
-    std::vector<Condition*> subconditions;
+    private:
+        // specifies the types of
+        std::vector<ComponentType> paramenterTypes;
+        std::vector<Condition *> subconditions;
 
-};
+    };
 
 
 // ------------------------------------
@@ -32,16 +35,18 @@ private:
 //class NumAssigned
 
 
-template<typename ID>
-class MaxAssignment : public Condition<ID>{
+    template<typename ID>
+    class MaxAssignment : public Condition<ID> {
 
-    MaxAssignment(std::vector<Condition<ID>>, const int&);
-    virtual z3::expr instantiate(const std::vector<const std::vector<const Assignment<ID>*>>& assignmentGroups) override;
+        MaxAssignment(std::vector<Condition<ID>>, const int &);
 
-private:
-    std::vector<Condition<ID>> conditions;
+        virtual z3::expr instantiate(const Translator<ID> &p,
+                                     const std::vector<const std::vector<const Assignment<ID> *>> &assignmentGroups) override;
 
-};
+    private:
+        std::vector<Condition<ID>> conditions;
+
+    };
 /*
 template<typename ID>
 MaxAssignment<ID>::MaxAssignment(std::vector<Condition<ID>> c, const int& m) :  {};
@@ -60,4 +65,7 @@ z3::expr MaxAssignment<ID>::instantiate(const std::vector<const std::vector< con
     //
 }
 */
+
+}
+
 #endif //OMTSCHED_CONDITION_H

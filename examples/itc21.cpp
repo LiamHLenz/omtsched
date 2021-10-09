@@ -8,6 +8,7 @@
 #include "../components/Task.h"
 #include "../components/Timeslot.h"
 #include "../conditions/BasicConditions.h"
+#include "../conditions/BooleanConditions.h"
 #include <string>
 
 

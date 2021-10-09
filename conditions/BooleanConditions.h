@@ -2,8 +2,8 @@
 // Created by Betrieb-PC on 06.10.2021.
 //
 
-#ifndef OMTSCHED_COMPOSITECONDITIONS_H
-#define OMTSCHED_COMPOSITECONDITIONS_H
+#ifndef OMTSCHED_BOOLEANCONDITIONS_H
+#define OMTSCHED_BOOLEANCONDITIONS_H
 
 #include "../Condition.h"
 
@@ -108,4 +108,4 @@ z3::expr Iff::generate(std::vector<Condition> arguments) {
 }
 */
 
-#endif //OMTSCHED_COMPOSITECONDITIONS_H
+#endif //OMTSCHED_BOOLEANCONDITIONS_H

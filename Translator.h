@@ -21,6 +21,12 @@ namespace omtsched {
         virtual Model getSolution() = 0;
         virtual std::vector<Model> getAllSolutions() = 0;
 
+        // TODO: generalize away from z3
+        virtual z3::context getContext() = 0;
+        virtual const z3::expr getVariable(const Assignment<ID> &assignment, const std::string &&componentSlot) = 0;
+        virtual const z3::expr getComponent(const ID &component) = 0;
+
+
         virtual void printProblem(std::string path) const = 0;
         virtual void printSolution(std::string path) const = 0;
         virtual void printAllSolutions(std::string path) const = 0;
