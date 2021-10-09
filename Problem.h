@@ -16,7 +16,7 @@
 
 namespace omtsched {
 
-    template<typename ComponentID, typename GroupID, typename TagID>
+    template<typename ID>
     class Problem {
 
     public:
@@ -25,27 +25,27 @@ namespace omtsched {
 
         explicit Problem(const std::string &name);
 
-        Component<ComponentID, GroupID, TagID> &newComponent(const ComponentType &type, const ComponentID &id);
+        Component<ID> &newComponent(const ComponentType &type, const ID &id);
 
-        Assignment<ComponentID, GroupID, TagID> &newAssignment();
+        Assignment<ID> &newAssignment();
 
         std::set<std::string> getComponentTypes() const;
 
 
-        const std::set<GroupID> &getAllGroups() const;
+        const std::set<ID> &getAllGroups() const;
 
-        const std::set<TagID> &getAllTags() const;
+        const std::set<ID> &getAllTags() const;
 
 
-        const std::vector<std::unique_ptr<Component<ComponentID, GroupID, TagID>>> &getComponents() const;
+        const std::vector<std::unique_ptr<Component<ID>>> &getComponents() const;
 
-        const std::vector<std::unique_ptr<Assignment<ComponentID, GroupID, TagID>>> &getAssignments() const;
+        const std::vector<std::unique_ptr<Assignment<ID>>> &getAssignments() const;
 
-        const std::vector<Rule<ComponentID, GroupID, TagID>> &getRules() const;
+        const std::vector<Rule<ID>> &getRules() const;
 
         void addRule(const std::string &);
 
-        void addRule(const Rule<ComponentID, GroupID, TagID> &);
+        void addRule(const Rule<ID> &);
 
         //void solve(const bool &allModels);
 
@@ -55,15 +55,15 @@ namespace omtsched {
 
     private:
 
-        std::set<TagID> tags;
+        std::set<ID> tags;
 
-        std::set<GroupID> groups;
+        std::set<ID> groups;
 
-        std::vector<std::unique_ptr<Component<ComponentID, GroupID, TagID>>> components;
+        std::vector<std::unique_ptr<Component<ID>>> components;
 
-        std::vector<std::unique_ptr<Assignment<ComponentID, GroupID, TagID>>> assignments;
+        std::vector<std::unique_ptr<Assignment<ID>>> assignments;
 
-        std::vector<Rule<ComponentID, GroupID, TagID>> rules;
+        std::vector<Rule<ID>> rules;
 
         //std::vector<Rule> objectives;
 
@@ -72,73 +72,49 @@ namespace omtsched {
 }
 
 
-template<typename ComponentID, typename GroupID, typename TagID>
-omtsched::Problem<ComponentID, GroupID, TagID>::
+template<typename ID>
+omtsched::Problem<ID>::
 Problem(const std::string &name)
         : problemName(name) {};
 
-template<typename ComponentID, typename GroupID, typename TagID>
-const std::set<GroupID> &omtsched::Problem<ComponentID, GroupID, TagID>::getAllGroups() const {
+template<typename ID>
+const std::set<ID> &omtsched::Problem<ID>::getAllGroups() const {
 
     return groups;
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-const std::set<TagID> &omtsched::Problem<ComponentID, GroupID, TagID>::getAllTags() const {
+template<typename ID>
+const std::set<ID> &omtsched::Problem<ID>::getAllTags() const {
     return tags;
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-const std::vector<std::unique_ptr<Component<ComponentID, GroupID, TagID>>> &
-omtsched::Problem<ComponentID, GroupID, TagID>::getComponents() const {
+template<typename ID>
+const std::vector<std::unique_ptr<Component<ID>>> &
+omtsched::Problem<ID>::getComponents() const {
     return components;
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-const std::vector<std::unique_ptr<Assignment<ComponentID, GroupID, TagID>>> &omtsched::Problem<ComponentID, GroupID, TagID>::getAssignments() const {
+template<typename ID>
+const std::vector<std::unique_ptr<Assignment<ID>>> &omtsched::Problem<ID>::getAssignments() const {
     return assignments;
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-const std::vector<Rule<ComponentID, GroupID, TagID>> &omtsched::Problem<ComponentID, GroupID, TagID>::getRules() const {
+template<typename ID>
+const std::vector<Rule<ID>> &omtsched::Problem<ID>::getRules() const {
     return rules;
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-void omtsched::Problem<ComponentID, GroupID, TagID>::addRule(const std::string &) {
+template<typename ID>
+void omtsched::Problem<ID>::addRule(const std::string &) {
 
 
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-void omtsched::Problem<ComponentID, GroupID, TagID>::addRule(const Rule<ComponentID, GroupID, TagID> &) {
+template<typename ID>
+void omtsched::Problem<ID>::addRule(const Rule<ID> &) {
 
 
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-void omtsched::Problem<ComponentID, GroupID, TagID>::getModel(Model &model) const {
-
-
-    // Preprocessing steps:
-    // 1. Determine free variables
-
-    // 2. Determine variable domains
-
-    // 3. Determine for every rule the set of applicable parameters and simplify
-
-    // 4. Determine which resulting rules are domain restrictions and apply them
-
-    // 5. Determine types used
-
-    // Translation steps:
-    // 1. Create assignment variables with constrained domains
-
-    // 2. Instantiate rules
-
-
-    // Re-translate model steps:
-    // 1.
-}
 
 #endif //OMTSCHED_PROBLEM_H

@@ -15,8 +15,8 @@ enum LABELS {
 
 
 /*
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-z3::expr TranslatorZ3<TaskID, TimeslotID, GroupID, TagID>::get_assigned_expr(const TaskID &aid) {
+template <typename TaskID, typename TimeslotID, typename ID, typename ID>
+z3::expr TranslatorZ3<TaskID, TimeslotID, ID, ID>::get_assigned_expr(const TaskID &aid) {
 
     z3::expr expr (context);
 
@@ -28,8 +28,8 @@ z3::expr TranslatorZ3<TaskID, TimeslotID, GroupID, TagID>::get_assigned_expr(con
 }*/
 
 /*
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-bool TranslatorZ3<TaskID, TimeslotID, GroupID, TagID>::solve(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem) {
+template <typename TaskID, typename TimeslotID, typename ID, typename ID>
+bool TranslatorZ3<TaskID, TimeslotID, ID, ID>::solve(const Problem<TaskID, TimeslotID, ID, ID> &problem) {
 
     saveEncoding(problem);
 
@@ -71,9 +71,9 @@ bool TranslatorZ3<TaskID, TimeslotID, GroupID, TagID>::solve(const Problem<TaskI
         task_expr[id].push_back(optional);
 
         // Tags
-        for(const auto & [tag, tagid] : tag_id) {
+        for(const auto & [tag, ID] : tag_id) {
 
-            auto tagexpr = context.int_const( ("a" + std::to_string(acount) + "t" + std::to_string(tagid)).c_str() );
+            auto tagexpr = context.int_const( ("a" + std::to_string(acount) + "t" + std::to_string(ID)).c_str() );
             task_tags.set(id, tag, tagexpr);
 
         }
@@ -104,9 +104,9 @@ bool TranslatorZ3<TaskID, TimeslotID, GroupID, TagID>::solve(const Problem<TaskI
         ts_expr[id].push_back(duration);
 
         // Tags
-        for(const auto & [tag, tagid] : tag_id) {
+        for(const auto & [tag, ID] : tag_id) {
 
-            auto tagexpr = context.int_const( ("t" + std::to_string(tcount) + "t" + std::to_string(tagid)).c_str() );
+            auto tagexpr = context.int_const( ("t" + std::to_string(tcount) + "t" + std::to_string(ID)).c_str() );
             ts_tags.set(id, tag, tagexpr);
 
         }

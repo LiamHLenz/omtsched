@@ -10,13 +10,13 @@
 #include "ComponentType.h"
 #include "Component.h"
 
-template<typename ComponentID, typename TagID, typename GroupID>
+template<typename ID>
 class Condition {
 
 public:
-    virtual z3::expr instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) = 0;
-    virtual bool evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) = 0;
-    virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) = 0;
+    virtual z3::expr instantiate(const std::vector<const std::vector< const Assignment<ID>*>>& assignmentGroups) = 0;
+    //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
+    //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
 
 private:
     // specifies the types of
@@ -29,25 +29,25 @@ private:
 // ------------------------------------
 // OR, AND,
 
-class NumAssigned 
-*/
+//class NumAssigned
 
-template<typename ComponentID, typename TagID, typename GroupID>
-class MaxAssignment : public Condition<ComponentID, TagID, GroupID>{
 
-    MaxAssignment(std::vector<Condition>, const int&);
-    virtual z3::expr instantiate(const std::vector<const std::vector<const Assignment*>>& assignmentGroups) override;
+template<typename ID>
+class MaxAssignment : public Condition<ID>{
+
+    MaxAssignment(std::vector<Condition<ID>>, const int&);
+    virtual z3::expr instantiate(const std::vector<const std::vector<const Assignment<ID>*>>& assignmentGroups) override;
 
 private:
-    std::vector<Condition> conditions;
+    std::vector<Condition<ID>> conditions;
 
 };
+/*
+template<typename ID>
+MaxAssignment<ID>::MaxAssignment(std::vector<Condition<ID>> c, const int& m) :  {};
 
-template<typename ComponentID, typename TagID, typename GroupID>
-MaxAssignment<ComponentID, TagID, GroupID>::MaxAssignment(std::vector<Condition> c, const int& m) :  {};
-
-template<typename ComponentID, typename TagID, typename GroupID>
-MaxAssignment<ComponentID, TagID, bool GroupID>::z3::expr instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
+template<typename ID>
+z3::expr MaxAssignment<ID>::instantiate(const std::vector<const std::vector< const Assignment<ID>*>>& assignmentGroups) {
 
     /*
      * Resolved by:
@@ -55,9 +55,9 @@ MaxAssignment<ComponentID, TagID, bool GroupID>::z3::expr instantiate(const std:
      * 2. creating an implication for each assignment: if the conditions are met the
      *    bit corresponding to the assignment is set
      * 3. constraining the maximum number of set bits
-     */
+     /
 
     //
 }
-
+*/
 #endif //OMTSCHED_CONDITION_H

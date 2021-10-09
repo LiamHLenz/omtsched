@@ -8,8 +8,8 @@
 #include "Timeslot.h"
 
 namespace omtsched {
-    template<class ComponentID, class TagID, class GroupID, class Unit>
-    class TimedTask : public Timeslot<ComponentID, TagID, GroupID, Unit> {
+    template<class ID, class ID, class ID, class Unit>
+    class TimedTask : public Timeslot<ID, ID, ID, Unit> {
     };
 
 }

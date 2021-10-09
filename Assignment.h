@@ -15,11 +15,11 @@ struct ComponentSlot {
     bool optional;
 };
 
-template<typename ComponentID, typename GroupID, typename TagID>
+template<typename ID>
 class Assignment {
 
 public:
-    std::vector<Component<ComponentID, GroupID, TagID>> &getDomain(const int &id);
+    std::vector<Component<ID>> &getDomain(const int &id);
 
 private:
     std::vector<ComponentSlot> componentSlots;

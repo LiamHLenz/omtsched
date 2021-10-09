@@ -8,57 +8,57 @@
 #include <map>
 #include <set>
 
-template<class ComponentID, class TagID, class GroupID>
+template<typename ID>
 class Component {
 
 public:
-    Component(const ComponentID &id) : ID{id} {}
+    Component(const ID &id) : ID{id} {}
     //virtual const std::string componentType() const = 0;
 
-    const ComponentID getId() const;
-    const std::map<TagID, int> &getTags() const;
-    const std::set<GroupID> &getGroups() const;
+    const ID getId() const;
+    const std::map<ID, int> &getTags() const;
+    const std::set<ID> &getGroups() const;
 
-    void addGroup(const GroupID&);
-    void removeGroup(const GroupID&);
+    void addGroup(const ID&);
+    void removeGroup(const ID&);
 
-    void setTag(const TagID &, const int);
+    void setTag(const ID &, const int);
 
 private:
-    const ComponentID ID;
-    std::map<TagID, int> tags;
-    std::set<GroupID> groups;
+    const ID id;
+    std::map<ID, int> tags;
+    std::set<ID> groups;
 };
 
-template<class ComponentID, class TagID, class GroupID>
-const ComponentID Component<ComponentID, TagID, GroupID>::getId() const {
-    return ID;
+template<typename ID>
+const ID Component<ID>::getId() const {
+    return id;
 }
 
-template<class ComponentID, class TagID, class GroupID>
-const std::map<TagID, int> &Component<ComponentID, TagID, GroupID>::getTags() const {
+template<typename ID>
+const std::map<ID, int> &Component<ID>::getTags() const {
     return tags;
 }
 
-template<class ComponentID, class TagID, class GroupID>
-const std::set<GroupID> &Component<ComponentID, TagID, GroupID>::getGroups() const {
+template<typename ID>
+const std::set<ID> &Component<ID>::getGroups() const {
     return groups;
 }
 
-template<class ComponentID, class TagID, class GroupID>
-void Component<ComponentID, TagID, GroupID>::addGroup(const GroupID &id) {
+template<typename ID>
+void Component<ID>::addGroup(const ID &id) {
 
     groups.insert(id);
 }
 
-template<class ComponentID, class TagID, class GroupID>
-void Component<ComponentID, TagID, GroupID>::removeGroup(const GroupID &id) {
+template<typename ID>
+void Component<ID>::removeGroup(const ID &id) {
 
     groups.erase(id);
 }
 
-template<class ComponentID, class TagID, class GroupID>
-void Component<ComponentID, TagID, GroupID>::setTag(const TagID &id, const int val) {
+template<typename ID>
+void Component<ID>::setTag(const ID &id, const int val) {
 
     tags.at(id) = val;
 }

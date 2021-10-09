@@ -16,7 +16,7 @@ find_package(Z3 REQUIRED CONFIG)
 #    include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-            Condition.h examples/itc21.cpp ComponentType.h conditions/CompositeConditions.h conditions/BasicCondition.h)
+            Condition.h examples/itc21.cpp ComponentType.h conditions/CompositeConditions.h conditions/BasicConditions.h)
 
 #    target_link_libraries(examples ${Boost_DATE_TIME_LIBRARY} omtsched)
     target_include_directories(examples PRIVATE ${Z3_CXX_INCLUDE_DIRS})

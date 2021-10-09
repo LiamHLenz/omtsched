@@ -10,17 +10,17 @@
 //  ------------
 //      Not
 
-template<typename ComponentID, typename TagID, typename GroupID>
-class Not : public Condition<ComponentID, TagID, GroupID> {
+template<typename ID, typename ID, typename ID>
+class Not : public Condition<ID> {
 
 public:
-    Not(const std::vector<Condition<ComponentID, TagID, GroupID>*> subconditions);
-    virtual z3::expr instantiate(std::vector<Component < ComponentID, TagID, GroupID>*>& arguments) override;
-    virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
+    Not(const std::vector<Condition<ID>*> subconditions);
+    virtual z3::expr instantiate(std::vector<Component < ID, ID, ID>*>& arguments) override;
+    virtual bool validParameters(std::vector<Component<ID>*>& arguments) override;
 };
 
-template<typename ComponentID, typename TagID, typename GroupID>
-z3::expr Not<ComponentID, TagID, GroupID>::instantiate(std::vector<Component < ComponentID, TagID, GroupID>*>& arguments) {
+template<typename ID, typename ID, typename ID>
+z3::expr Not<ID>::instantiate(std::vector<Component < ID, ID, ID>*>& arguments) {
 
     return !arguments.at(0).evaluate();
 }
@@ -28,18 +28,18 @@ z3::expr Not<ComponentID, TagID, GroupID>::instantiate(std::vector<Component < C
 //  ------------
 //      And
 
-template<typename ComponentID, typename TagID, typename GroupID>
-class And : public Condition<ComponentID, TagID, GroupID> {
+template<typename ID, typename ID, typename ID>
+class And : public Condition<ID> {
 
     public:
-        And(const std::vector<Condition<ComponentID, TagID, GroupID>*> subconditions);
-        virtual bool evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
-        virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
+        And(const std::vector<Condition<ID>*> subconditions);
+        virtual bool evaluate(std::vector<Component<ID>*>& arguments) override;
+        virtual bool validParameters(std::vector<Component<ID>*>& arguments) override;
         virtual z3::expr instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) = 0;
     };
 
-template<typename ComponentID, typename TagID, typename GroupID>
-z3::expr And<ComponentID, TagID, GroupID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
+template<typename ID, typename ID, typename ID>
+z3::expr And<ID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
 
     z3::expr_vector z3args;
     for(const auto s : subconditions)
@@ -51,17 +51,17 @@ z3::expr And<ComponentID, TagID, GroupID>::instantiate(const std::vector<const s
 //  ------------
 //      Not
 
-template<typename ComponentID, typename TagID, typename GroupID>
-class Or : public Condition<ComponentID, TagID, GroupID> {
+template<typename ID, typename ID, typename ID>
+class Or : public Condition<ID> {
 
     public:
         Or(const Condition ... subconditions);
-        virtual bool evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
-        virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
+        virtual bool evaluate(std::vector<Component<ID>*>& arguments) override;
+        virtual bool validParameters(std::vector<Component<ID>*>& arguments) override;
     };
 
-template<typename ComponentID, typename TagID, typename GroupID>
-z3::expr Or<ComponentID, TagID, GroupID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
+template<typename ID, typename ID, typename ID>
+z3::expr Or<ID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
 
     z3::expr_vector z3args;
     for(const auto s : subconditions)
@@ -74,17 +74,17 @@ z3::expr Or<ComponentID, TagID, GroupID>::instantiate(const std::vector<const st
 //  ------------
 //    Implies
 
-template<typename ComponentID, typename TagID, typename GroupID>
-class Implies : public Condition<ComponentID, TagID, GroupID> {
+template<typename ID, typename ID, typename ID>
+class Implies : public Condition<ID> {
 
     public:
-        Implies(const std::vector<Condition<ComponentID, TagID, GroupID>*> subconditions);
-        virtual bool evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
-        virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
+        Implies(const std::vector<Condition<ID>*> subconditions);
+        virtual bool evaluate(std::vector<Component<ID>*>& arguments) override;
+        virtual bool validParameters(std::vector<Component<ID>*>& arguments) override;
     };
 
-template<typename ComponentID, typename TagID, typename GroupID>
-z3::expr Implies<ComponentID, TagID, GroupID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
+template<typename ID, typename ID, typename ID>
+z3::expr Implies<ID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
 
     return z3::implies(subconditions.at(0).evaluate(assignmentGroups), subconditions.at(1).evaluate(assignmentGroups));
 }

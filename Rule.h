@@ -8,20 +8,20 @@
 
 #include "Condition.h"
 
-template<typename ComponentID, typename GroupID, typename TagID>
+template<typename ID>
 class Rule {
 
 public:
     bool validate() const;
     void generate(const std::string &path);
 
-    void addAssignments(std::vector<Assignment<ComponentID, GroupID, TagID>*>);
-    void removeAssignments(std::vector<Assignment<ComponentID, GroupID, TagID>*>);
+    void addAssignments(std::vector<Assignment<ID>*>);
+    void removeAssignments(std::vector<Assignment<ID>*>);
 
 private:
-    Condition<ComponentID, GroupID, TagID> toplevel;
+    Condition<ID> toplevel;
     bool restrictedSet;
-    std::vector<std::vector<Assignment<ComponentID, GroupID, TagID>*>> applicableSets;
+    std::vector<std::vector<Assignment<ID>*>> applicableSets;
 
 };
 

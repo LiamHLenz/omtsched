@@ -11,7 +11,7 @@
 
 namespace omtsched {
 
-    template<class ComponentID, class TagID, class GroupID>
+    template<typename ID>
     class Translator {
 
     public:
@@ -26,9 +26,9 @@ namespace omtsched {
         virtual void printAllSolutions(std::string path) const = 0;
         virtual void printExplanation(std::string path) const = 0;
 
-        Problem <ComponentID, TagID, GroupID> &getProblem() const;
+        Problem <ID> &getProblem() const;
 
-        void setProblem(Problem <ComponentID, TagID, GroupID> &problem);
+        void setProblem(Problem <ID> &problem);
 
         bool isGenerateAllSolution() const;
 
@@ -39,39 +39,39 @@ namespace omtsched {
         void setGenerateExplanations(bool generateExplanations);
 
     protected:
-        Problem<ComponentID, TagID, GroupID> &problem;
+        Problem<ID> &problem;
         bool generateAllSolution;
         bool generateExplanations;
 
     };
 
-    template<class ComponentID, class TagID, class GroupID>
-    Problem <ComponentID, TagID, GroupID> &Translator<ComponentID, TagID, GroupID>::getProblem() const {
+    template<typename ID>
+    Problem <ID> &Translator<ID>::getProblem() const {
         return problem;
     }
 
-    template<class ComponentID, class TagID, class GroupID>
-    void Translator<ComponentID, TagID, GroupID>::setProblem(Problem <ComponentID, TagID, GroupID> &problem) {
+    template<typename ID>
+    void Translator<ID>::setProblem(Problem <ID> &problem) {
         Translator::problem = problem;
     }
 
-    template<class ComponentID, class TagID, class GroupID>
-    bool Translator<ComponentID, TagID, GroupID>::isGenerateAllSolution() const {
+    template<typename ID>
+    bool Translator<ID>::isGenerateAllSolution() const {
         return generateAllSolution;
     }
 
-    template<class ComponentID, class TagID, class GroupID>
-    void Translator<ComponentID, TagID, GroupID>::setGenerateAllSolution(bool generateAllSolution) {
+    template<typename ID>
+    void Translator<ID>::setGenerateAllSolution(bool generateAllSolution) {
         Translator::generateAllSolution = generateAllSolution;
     }
 
-    template<class ComponentID, class TagID, class GroupID>
-    bool Translator<ComponentID, TagID, GroupID>::isGenerateExplanations() const {
+    template<typename ID>
+    bool Translator<ID>::isGenerateExplanations() const {
         return generateExplanations;
     }
 
-    template<class ComponentID, class TagID, class GroupID>
-    void Translator<ComponentID, TagID, GroupID>::setGenerateExplanations(bool generateExplanations) {
+    template<typename ID>
+    void Translator<ID>::setGenerateExplanations(bool generateExplanations) {
         Translator::generateExplanations = generateExplanations;
     }
 
@@ -80,7 +80,7 @@ namespace omtsched {
 
 
 /*
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
+template <typename TaskID, typename TimeslotID, typename ID, typename ID>
 class Translator {
 
 public:
@@ -90,8 +90,8 @@ public:
     };
 
 
-    void saveEncoding(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem);
-    virtual bool solve(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem) = 0;
+    void saveEncoding(const Problem<TaskID, TimeslotID, ID, ID> &problem);
+    virtual bool solve(const Problem<TaskID, TimeslotID, ID, ID> &problem) = 0;
 
 protected:
 
@@ -104,8 +104,8 @@ protected:
     // ----------------------------------
     std::map<TaskID, size_t> task_id;
     std::map<TimeslotID, size_t> ts_id;
-    std::map<TagID, size_t> tag_id;
-    std::map<GroupID, size_t> group_id;
+    std::map<ID, size_t> tag_id;
+    std::map<ID, size_t> group_id;
 
 private:
 
@@ -115,8 +115,8 @@ private:
 
 
 
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-int Translator<TaskID, TimeslotID, GroupID, TagID>::timeInUnit(const Unit &unit, const boost::posix_time::time_duration &duration) const {
+template <typename TaskID, typename TimeslotID, typename ID, typename ID>
+int Translator<TaskID, TimeslotID, ID, ID>::timeInUnit(const Unit &unit, const boost::posix_time::time_duration &duration) const {
 
     switch (unit) {
 
@@ -134,8 +134,8 @@ int Translator<TaskID, TimeslotID, GroupID, TagID>::timeInUnit(const Unit &unit,
 
 }
 
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-int Translator<TaskID, TimeslotID, GroupID, TagID>::timeBetween(const Unit &unit, const boost::posix_time::ptime &first, const boost::posix_time::ptime &second) const {
+template <typename TaskID, typename TimeslotID, typename ID, typename ID>
+int Translator<TaskID, TimeslotID, ID, ID>::timeBetween(const Unit &unit, const boost::posix_time::ptime &first, const boost::posix_time::ptime &second) const {
 
     boost::posix_time::time_duration between = second - first;
 
@@ -145,8 +145,8 @@ int Translator<TaskID, TimeslotID, GroupID, TagID>::timeBetween(const Unit &unit
 
 
 
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-void Translator<TaskID, TimeslotID, GroupID, TagID>::saveEncoding(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem) {
+template <typename TaskID, typename TimeslotID, typename ID, typename ID>
+void Translator<TaskID, TimeslotID, ID, ID>::saveEncoding(const Problem<TaskID, TimeslotID, ID, ID> &problem) {
 
     std::ofstream ostream(problem.problemName + ".smt2");
 
@@ -182,8 +182,8 @@ void Translator<TaskID, TimeslotID, GroupID, TagID>::saveEncoding(const Problem<
         ostream << "(declare-fun a" << acount << "o () Bool)" << std::endl;                 // Optional
 
         // Tags
-        for(const auto & [tag, tagid] : tag_id)
-            ostream << "(declare-fun a" << acount << "t" << tagid << " () Int)" << std::endl;
+        for(const auto & [tag, ID] : tag_id)
+            ostream << "(declare-fun a" << acount << "t" << ID << " () Int)" << std::endl;
 
         // Groups
         for(const auto & [group, gid] : group_id)
@@ -204,8 +204,8 @@ void Translator<TaskID, TimeslotID, GroupID, TagID>::saveEncoding(const Problem<
         ostream << "(declare-fun t" << tcount << "du () Int)" << std::endl;                 // Duration
 
         // Tags
-        for(const auto & [tag, tagid] : tag_id)
-            ostream << "(declare-fun t" << tcount << "t" << tagid << " () Int)" << std::endl;
+        for(const auto & [tag, ID] : tag_id)
+            ostream << "(declare-fun t" << tcount << "t" << ID << " () Int)" << std::endl;
 
         // Groups
         for(const auto & [group, gid] : group_id)
@@ -246,17 +246,17 @@ void Translator<TaskID, TimeslotID, GroupID, TagID>::saveEncoding(const Problem<
 
 
         // Tags
-        for(const auto & [tag, tagid] : tag_id)
-            ostream << "(assert (= a" << internal_id << "t" << tagid << " " << task.getTagPriority(tag) << "))" << std::endl;
+        for(const auto & [tag, ID] : tag_id)
+            ostream << "(assert (= a" << internal_id << "t" << ID << " " << task.getTagPriority(tag) << "))" << std::endl;
 
 
         // Groups
-        for(const auto & [group, groupid] : group_id)
+        for(const auto & [group, ID] : group_id)
 
             if(task.inGroup(group))
-                ostream << "(assert a" << internal_id << "g" << groupid << ")" << std::endl;
+                ostream << "(assert a" << internal_id << "g" << ID << ")" << std::endl;
             else
-                ostream << "(assert (not a" << internal_id << "g" << groupid << "))" << std::endl;
+                ostream << "(assert (not a" << internal_id << "g" << ID << "))" << std::endl;
     }
 
 
@@ -270,16 +270,16 @@ void Translator<TaskID, TimeslotID, GroupID, TagID>::saveEncoding(const Problem<
 
 
         // Tags
-        for(const auto & [tag, tagid] : tag_id)
-            ostream << "(assert (= t" << internal_id << "t" << tagid << " " << timeslot.getTagPriority(tag) << "))" << std::endl;
+        for(const auto & [tag, ID] : tag_id)
+            ostream << "(assert (= t" << internal_id << "t" << ID << " " << timeslot.getTagPriority(tag) << "))" << std::endl;
 
         // Groups
-        for(const auto & [group, groupid] : group_id)
+        for(const auto & [group, ID] : group_id)
 
             if(timeslot.inGroup(group))
-                ostream << "(assert t" << internal_id << "g" << groupid << ")" << std::endl;
+                ostream << "(assert t" << internal_id << "g" << ID << ")" << std::endl;
             else
-                ostream << "(assert (not t" << internal_id << "g" << groupid << "))" << std::endl;
+                ostream << "(assert (not t" << internal_id << "g" << ID << "))" << std::endl;
     }
 
 
@@ -366,22 +366,22 @@ void Translator<TaskID, TimeslotID, GroupID, TagID>::saveEncoding(const Problem<
 
 }
 
-template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-const char* Translator<TaskID, TimeslotID, GroupID, TagID>::makeID(const std::string &type, const size_t &number, const std::string &attribute) const {
+template<typename TaskID, typename TimeslotID, typename ID, typename ID>
+const char* Translator<TaskID, TimeslotID, ID, ID>::makeID(const std::string &type, const size_t &number, const std::string &attribute) const {
 
     return (type + std::to_string(number) + attribute).c_str();
 
 }
 
-template<typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-const char* Translator<TaskID, TimeslotID, GroupID, TagID>::makeID(const std::string &type, const size_t &num1, const std::string &attribute, const size_t &num2) const {
+template<typename TaskID, typename TimeslotID, typename ID, typename ID>
+const char* Translator<TaskID, TimeslotID, ID, ID>::makeID(const std::string &type, const size_t &num1, const std::string &attribute, const size_t &num2) const {
 
     return (type + std::to_string(num1) + attribute + std::to_string(num2)).c_str();
 
 }
 
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-const std::string Translator<TaskID, TimeslotID, GroupID, TagID>::assigned(const size_t &tid, const size_t &aid) const {
+template <typename TaskID, typename TimeslotID, typename ID, typename ID>
+const std::string Translator<TaskID, TimeslotID, ID, ID>::assigned(const size_t &tid, const size_t &aid) const {
 
     return "c" + std::to_string(tid) + "_" + std::to_string(aid);
 

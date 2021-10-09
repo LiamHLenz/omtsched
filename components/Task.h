@@ -12,15 +12,15 @@
 
 namespace omtsched {
 
-    template<class ComponentID, class TagID, class GroupID>
-    class Task : public Component<ComponentID, TagID, GroupID> {
+    template<typename ID>
+    class Task : public Component<ID> {
 
     };
 
 }
 
 /*
-template<typename ID, typename GroupID, typename TagID>
+template<typename ID>
 class Task {
 
 public:
@@ -50,17 +50,17 @@ public:
      * @param group ID of the group to add. The group needs to be registered using addGroup() before.
      */
 /*
-    bool addGroup(const GroupID &group);
+    bool addGroup(const ID &group);
 
-    bool removeGroup(const GroupID &group);
+    bool removeGroup(const ID &group);
 
-    bool inGroup(const GroupID &group) const;
+    bool inGroup(const ID &group) const;
 
-    [[nodiscard]] const std::set<GroupID> &getGroups() const;
+    [[nodiscard]] const std::set<ID> &getGroups() const;
 
-    bool setTagPriority(const TagID &tag, const unsigned int &priority);
+    bool setTagPriority(const ID &tag, const unsigned int &priority);
 
-    [[nodiscard]] const int getTagPriority(const TagID &tag) const;
+    [[nodiscard]] const int getTagPriority(const ID &tag) const;
 
     [[nodiscard]] const ID getTaskId() const;
 
@@ -80,9 +80,9 @@ public:
 
     void setOptional(const bool &optional);
 
-    void addTag(const TagID &tagID);
+    void addTag(const ID &ID);
 
-    void removeTag(const TagID &tagID);
+    void removeTag(const ID &ID);
 
 private:
 
@@ -90,25 +90,25 @@ private:
     Timepoint startPoint;
     Timepoint deadline;
     Duration duration;
-    std::set<GroupID> groups;
-    std::map<TagID, unsigned int> tags;
+    std::set<ID> groups;
+    std::map<ID, unsigned int> tags;
     bool optional;
 
 };
 
 
-template <typename ID, typename GroupID, typename TagID>
-Task<ID, GroupID, TagID>::Task(const ID &id, const Task::Timepoint &start, const Task::Duration &duration,
+template <typename ID, typename ID, typename ID>
+Task<ID>::Task(const ID &id, const Task::Timepoint &start, const Task::Duration &duration,
                                const Task::Timepoint &deadline, bool optional)
         : taskID{id}, startPoint{start}, duration{duration}, deadline{deadline}, optional{optional} {
 
-    // for(auto &tagID : getAllTags())
-    //    tags[tagID] = 1;
+    // for(auto &ID : getAllTags())
+    //    tags[ID] = 1;
 }
 
 
-template<typename ID, typename GroupID, typename TagID>
-bool Task<ID, GroupID, TagID>::addGroup(const GroupID &group) {
+template<typename ID>
+bool Task<ID>::addGroup(const ID &group) {
 
     //if(!allGroups().count())
     //  return false;
@@ -118,14 +118,14 @@ bool Task<ID, GroupID, TagID>::addGroup(const GroupID &group) {
 
 }
 
-template<typename ID, typename GroupID, typename TagID>
-bool Task<ID, GroupID, TagID>::removeGroup(const GroupID &group) {
+template<typename ID>
+bool Task<ID>::removeGroup(const ID &group) {
 
     groups.erase(group);
 }
 
-template<typename ID, typename GroupID, typename TagID>
-bool Task<ID, GroupID, TagID>::setTagPriority(const TagID &tag, const unsigned  int &priority) {
+template<typename ID>
+bool Task<ID>::setTagPriority(const ID &tag, const unsigned  int &priority) {
 
     if(!tags.count(tag))
         return false;
@@ -135,8 +135,8 @@ bool Task<ID, GroupID, TagID>::setTagPriority(const TagID &tag, const unsigned  
     return true;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-const int Task<ID, GroupID, TagID>::getTagPriority(const TagID &tag) const {
+template<typename ID>
+const int Task<ID>::getTagPriority(const ID &tag) const {
 
     if(!tags.count(tag))
         return -1;
@@ -144,70 +144,70 @@ const int Task<ID, GroupID, TagID>::getTagPriority(const TagID &tag) const {
     return tags.at(tag);
 }
 
-template<typename ID, typename GroupID, typename TagID>
-const ID Task<ID, GroupID, TagID>::getTaskId() const {
+template<typename ID>
+const ID Task<ID>::getTaskId() const {
     return taskID;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-const boost::posix_time::ptime &Task<ID, GroupID, TagID>::getStartPoint() const {
+template<typename ID>
+const boost::posix_time::ptime &Task<ID>::getStartPoint() const {
     return startPoint;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-void Task<ID, GroupID, TagID>::setStartPoint(const Task::Timepoint &startPoint) {
+template<typename ID>
+void Task<ID>::setStartPoint(const Task::Timepoint &startPoint) {
     Task::startPoint = startPoint;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-const boost::posix_time::ptime &Task<ID, GroupID, TagID>::getDeadline() const {
+template<typename ID>
+const boost::posix_time::ptime &Task<ID>::getDeadline() const {
     return deadline;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-void Task<ID, GroupID, TagID>::setDeadline(const Task::Timepoint &deadline) {
+template<typename ID>
+void Task<ID>::setDeadline(const Task::Timepoint &deadline) {
     Task::deadline = deadline;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-const boost::posix_time::time_duration &Task<ID, GroupID, TagID>::getDuration() const {
+template<typename ID>
+const boost::posix_time::time_duration &Task<ID>::getDuration() const {
     return duration;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-void Task<ID, GroupID, TagID>::setDuration(const Task::Duration &duration) {
+template<typename ID>
+void Task<ID>::setDuration(const Task::Duration &duration) {
     Task::duration = duration;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-bool Task<ID, GroupID, TagID>::isOptional() const {
+template<typename ID>
+bool Task<ID>::isOptional() const {
     return optional;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-void Task<ID, GroupID, TagID>::setOptional(const bool &optional) {
+template<typename ID>
+void Task<ID>::setOptional(const bool &optional) {
     Task::optional = optional;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-const std::set<GroupID> &Task<ID, GroupID, TagID>::getGroups() const {
+template<typename ID>
+const std::set<ID> &Task<ID>::getGroups() const {
     return groups;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-void Task<ID, GroupID, TagID>::addTag(const TagID &tagID) {
+template<typename ID>
+void Task<ID>::addTag(const ID &ID) {
 
-    tags[tagID] = 0;
+    tags[ID] = 0;
 }
 
-template<typename ID, typename GroupID, typename TagID>
-void Task<ID, GroupID, TagID>::removeTag(const TagID &tagID) {
+template<typename ID>
+void Task<ID>::removeTag(const ID &ID) {
 
-    tags.erase(tagID);
+    tags.erase(ID);
 }
 
-template<typename ID, typename GroupID, typename TagID>
-bool Task<ID, GroupID, TagID>::inGroup(const GroupID &group) const {
+template<typename ID>
+bool Task<ID>::inGroup(const ID &group) const {
     return groups.count(group);
 }
 */

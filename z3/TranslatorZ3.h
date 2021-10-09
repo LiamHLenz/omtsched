@@ -12,8 +12,8 @@
 #include <map>
 #include <boost/bimap.hpp>
 
-template <typename ComponentID, typename GroupID, typename TagID>
-class TranslatorZ3 : public omtsched::Translator<ComponentID, GroupID, TagID> {
+template <typename ID, typename ID, typename ID>
+class TranslatorZ3 : public omtsched::Translator<ID> {
 public:
     TranslatorZ3();
     void solve() override;
@@ -29,24 +29,24 @@ private:
     z3::solver solver;
 
     //TODO: double map
-    std::vector<Assignment<ComponentID, GroupID, TagID>*> assignmentOrder;
+    std::vector<Assignment<ID>*> assignmentOrder;
     boost::bimap<std::string, z3::sort> component_types;
-    boost::bimap<ComponentID, z3::expr> components;
+    boost::bimap<ID, z3::expr> components;
     // tuple in order: assignment, slot name, i-th part
     boost::bimap<std::tuple<int, std::string, int>, z3::expr> slots;
 
 };
 
-template<typename ComponentID, typename GroupID, typename TagID>
-TranslatorZ3<ComponentID, GroupID, TagID>::TranslatorZ3() {}
+template<typename ID>
+TranslatorZ3<ID>::TranslatorZ3() {}
 
-template<typename ComponentID, typename GroupID, typename TagID>
-void TranslatorZ3<ComponentID, GroupID, TagID>::solve() {
+template<typename ID>
+void TranslatorZ3<ID>::solve() {
 
 }
 
-template<typename ComponentID, typename GroupID, typename TagID>
-void TranslatorZ3<ComponentID, GroupID, TagID>::setup() {
+template<typename ID>
+void TranslatorZ3<ID>::setup() {
 
     // Create sorts for component types
     for (const auto &compType: this->problem.getComponentTypes())
@@ -85,8 +85,8 @@ void TranslatorZ3<ComponentID, GroupID, TagID>::setup() {
     }
 }
 /*
-template<typename ComponentID, typename GroupID, typename TagID>
-void TranslatorZ3<ComponentID, GroupID, TagID>::domainConstraints() {
+template<typename ID>
+void TranslatorZ3<ID>::domainConstraints() {
 
     // domain constraint
     z3::expr_vector domain;
@@ -94,15 +94,15 @@ void TranslatorZ3<ComponentID, GroupID, TagID>::domainConstraints() {
 }
 
 
-template<typename ComponentID, typename GroupID, typename TagID>
-z3::expr TranslatorZ3<ComponentID, GroupID, TagID>::resolveVariable(const std::string &r) {
+template<typename ID>
+z3::expr TranslatorZ3<ID>::resolveVariable(const std::string &r) {
 
 
 }
 
 
-template<typename ComponentID, typename GroupID, typename TagID>
-void TranslatorZ3<ComponentID, GroupID, TagID>::addRule(const Rule &r) {
+template<typename ID>
+void TranslatorZ3<ID>::addRule(const Rule &r) {
 
     z3::expr exp = resolveCondition(r);
     solver.add(exp);
@@ -123,12 +123,12 @@ private:
 };
 
 
-template <typename TaskID, typename TimeslotID, typename GroupID, typename TagID>
-class TranslatorZ3 : public Translator<TaskID, TimeslotID, GroupID, TagID> {
+template <typename TaskID, typename TimeslotID, typename ID, typename ID>
+class TranslatorZ3 : public Translator<TaskID, TimeslotID, ID, ID> {
 
 public:
 
-    bool solve(const Problem<TaskID, TimeslotID, GroupID, TagID> &problem) override;
+    bool solve(const Problem<TaskID, TimeslotID, ID, ID> &problem) override;
 
 
 private:
@@ -149,8 +149,8 @@ private:
     // ----------------------------------
     std::map<TaskID, size_t> task_id;
     std::map<TimeslotID, size_t> ts_id;
-    std::map<TagID, size_t> tag_id;
-    std::map<GroupID, size_t> group_id; */
+    std::map<ID, size_t> tag_id;
+    std::map<ID, size_t> group_id; */
 
     //-- datastructures for Z3 ----------
 /*
@@ -160,12 +160,12 @@ private:
 
     // These are tricky, since z3 has no default constructor, which is needed by map
     // Implementation subject to change, hence encapsulation in own class
-    expr_map<TimeslotID, TagID> assign_expr;
+    expr_map<TimeslotID, ID> assign_expr;
 
-    expr_map<TaskID, TagID> task_tags;
-    expr_map<TaskID, GroupID> task_groups;
-    expr_map<TimeslotID, TagID> ts_tags;
-    expr_map<TimeslotID, GroupID> ts_groups;
+    expr_map<TaskID, ID> task_tags;
+    expr_map<TaskID, ID> task_groups;
+    expr_map<TimeslotID, ID> ts_tags;
+    expr_map<TimeslotID, ID> ts_groups;
 
 
     enum Attributes {

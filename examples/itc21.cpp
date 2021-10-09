@@ -7,6 +7,7 @@
 #include "../omtsched.h"
 #include "../components/Task.h"
 #include "../components/Timeslot.h"
+#include "../conditions/BasicConditions.h"
 #include <string>
 
 
@@ -24,21 +25,13 @@ away games they play during the most lucrative time slots. Note that a CA1 const
 set teams contains more than one team can be split into several CA1 constraints where the set
 teams contains one team: in all ITC2021 instances, teams therefore contains only one team."
  */
-Rule ca1(int team, int max, bool home, std::vector<int> &slots, bool hard){
+Rule<int> ca1(int team, int max, bool home, std::vector<int> &slots, bool hard){
 
-    Condition
-    if(home)
-        //conditions.emplace_back("A.HomeTeam == team");
-        conditions.push_back(ComponentIs("HomeTeam", team));
-    else
-        //conditions.emplace_back("A.AwayTeam == team");
-        conditions.push_back(ComponentIs("AwayTeam, team"));
+    auto modeCondition = home ? std::make_unique<ComponentIs<int>>("HomeTeam", team) : std::make_unique<ComponentIs<int>>("AwayTeam", team);
 
-    Condition slotCondition;
+    Condition<std::string>* slotCondition;
     for(const auto &slot : slots)
         slotCondition = Or(ComponentIs("Slot", slot), slotCondition);
-
-    conditions.push_back(slotCondition);
 
     return {MaxAssignments({modeCondition, slotCondition}, max)};
 

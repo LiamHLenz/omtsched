@@ -8,8 +8,8 @@
 #include "../Component.h"
 
 namespace omtsched {
-    template<class ComponentID, class TagID, class GroupID, class Unit>
-    class Time : public Component<ComponentID, TagID, GroupID> {
+    template<class ID, class ID, class ID, class Unit>
+    class Time : public Component<ID> {
 
     public:
         Unit getTimepoint() const;
@@ -21,19 +21,19 @@ namespace omtsched {
 
     };
 
-    template<class ComponentID, class TagID, class GroupID, class Unit>
-    Unit Time<ComponentID, TagID, GroupID, Unit>::getTimepoint() const {
+    template<class ID, class ID, class ID, class Unit>
+    Unit Time<ID, ID, ID, Unit>::getTimepoint() const {
         return timepoint;
     }
 
-    template<class ComponentID, class TagID, class GroupID, class Unit>
-    void Time<ComponentID, TagID, GroupID, Unit>::setTimepoint(Unit timepoint) {
+    template<class ID, class ID, class ID, class Unit>
+    void Time<ID, ID, ID, Unit>::setTimepoint(Unit timepoint) {
         Time::timepoint = timepoint;
     }
 }
 
-template<class ComponentID, class TagID, class GroupID, class Unit>
-bool operator<(const omtsched::Time<ComponentID, TagID, GroupID, Unit> &lhs, const omtsched::Time<ComponentID, TagID, GroupID, Unit> &rhs) {
+template<class ID, class ID, class ID, class Unit>
+bool operator<(const omtsched::Time<ID, ID, ID, Unit> &lhs, const omtsched::Time<ID, ID, ID, Unit> &rhs) {
 
     return lhs.getTimepoint() < rhs.getTimepoint();
 }

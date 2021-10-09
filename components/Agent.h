@@ -9,10 +9,10 @@
 
 namespace omtsched {
 
-    template<class ComponentID, class TagID, class GroupID>
-    class Agent : public Component<ComponentID, TagID, GroupID> {
+    template<typename ID>
+    class Agent : public Component<ID> {
         public:
-        Agent(const ComponentID &id) : Component<ComponentID, TagID, GroupID>{id} {}
+        Agent(const ID &id) : Component<ID>{id} {}
     };
 
 }
