@@ -9,9 +9,46 @@
 #include "../components/Timeslot.h"
 #include <string>
 
+
+/*
+"CA1 <CA1 teams="0" max="0" mode="H" slots="0" type="HARD"/>
+Each team from teams plays at most max home games (mode = "H") or away games
+(mode = "A") during time slots in slots. Team 0 cannot play at home on time slot 0.
+Each team in teams triggers a deviation equal to the number of home games (mode = "H")
+or away games (mode = "A") in slots more than max.
+Constraint CA1 is of fundamental use in sports timetabling to model ‘place constraints’ that
+forbid a team to play a home game or away game in a given time slot. Constraint CA1 can
+also help to balance the home-away status of games over time and teams. For example, when
+the home team receives ticket revenues, teams often request to have a limit on the number of
+away games they play during the most lucrative time slots. Note that a CA1 constraint where the
+set teams contains more than one team can be split into several CA1 constraints where the set
+teams contains one team: in all ITC2021 instances, teams therefore contains only one team."
+ */
+Rule ca1(int team, int max, bool home, std::vector<int> &slots, bool hard){
+
+    Condition
+    if(home)
+        //conditions.emplace_back("A.HomeTeam == team");
+        conditions.push_back(ComponentIs("HomeTeam", team));
+    else
+        //conditions.emplace_back("A.AwayTeam == team");
+        conditions.push_back(ComponentIs("AwayTeam, team"));
+
+    Condition slotCondition;
+    for(const auto &slot : slots)
+        slotCondition = Or(ComponentIs("Slot", slot), slotCondition);
+
+    conditions.push_back(slotCondition);
+
+    return {MaxAssignments({modeCondition, slotCondition}, max)};
+
+}
+
 int main() {
 
     omtsched::Problem<std::string, std::string, std::string> itc21;
+    std::string solutionPath;
+    std::string problemPath;
 
     namespace pt = boost::property_tree;
 
@@ -59,12 +96,82 @@ int main() {
     }
 
     // Add Standard Rules:
-    // Compactness, P,
-    if()
 
-    // Set Objective
+    // A
+
+    // Compactness, P,
+
+    // TODO: phasedness
+    // Phased: season is split into two equally long 1RR intervals, where each pair plays
+    // in one home-away configuration in both phases
+    bool &phased = scenarioTree.get<std::string>("Instance.Structure.Format.gameMode") == "P";
+    if(phased){
+        //addRule();
+    }
+
+    // A timetable is time-constrained (also called compact) if it uses the
+    //minimal number of time slots needed, and is time-relaxed otherwise.
+    bool &compact = scenarioTree.get<std::string>("Instance.Structure.Format.compactness") == "C";
+    if(compact){
+        //addRule();
+    }
+
+    // Set Objective: minimize number of violated soft constraints, equally weighted
 
     // Add Constraints
+    for(pt::ptree::value_type &node : scenarioTree.get_child("Instance.Constraints.CapacityConstraints")){
 
+        std::string type = ;
+
+        switch (condition) {
+
+            case "CA1":
+                bool hard = node.second.get<std::string>("<xmlattr>.type") == "HARD";
+                int team = node.second.get<int>("<xmlattr>.teams");
+                //std::vector<int> slots;
+                int penalty = node.second.get<int>("<xmlattr>.penalty");
+                bool home = node.second.get<std::string>("<xmlattr>.mode") == "H";
+                int max = node.second.get<int>("<xmlattr>.max");
+                itc21.addRule(ca1(team, max, home, slots, hard));
+                break;
+
+            case "CA2":
+                break;
+
+            case "CA3":
+                break;
+
+            case "CA4":
+                break;
+
+        }
+
+    }
+
+
+
+    // Translate and solve
+    TranslatorZ3 z3trans {itc21};
+    Model solution {itc21};
+    z3trans.getModel(solution);
+
+    // Print solution
+    pt::ptree solutionTree;
+
+    solutionTree.put("Solution.MetaData.InstanceName", instanceName);
+    solutionTree.put("Solution.MetaData.SolutionName", instanceName + "_sol");
+
+    solutionTree.put("Solution.MetaData.ObjectiveValue.<xmlattr>.infeasibility", 0);
+    solutionTree.put("Solution.MetaData.ObjectiveValue.<xmlattr>.objective", model.getPenalty());
+
+    /*
+    for(assignment : model.getAssignments())
+        for(game : ) {
+            solutionTree.put("Solution.Games.ScheduledMatch.<xmlattr>.home", game.homeTeam());
+            solutionTree.put("Solution.Games.ScheduledMatch.<xmlattr>.away", game.awayTeam());
+            solutionTree.put("Solution.Games.ScheduledMatch.<xmlattr>.slot", game.timeslot());
+        }
+*/
+    pt::write_xml(solutionPath, solutionTree);
 
 }

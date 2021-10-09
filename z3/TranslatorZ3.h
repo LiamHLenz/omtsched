@@ -4,7 +4,7 @@
 
 #ifndef OMTSCHED_TRANSLATORZ3_H
 #define OMTSCHED_TRANSLATORZ3_H
-/*
+
 
 #include "../Translator.h"
 #include <z3.h>
@@ -29,9 +29,11 @@ private:
     z3::solver solver;
 
     //TODO: double map
+    std::vector<Assignment<ComponentID, GroupID, TagID>*> assignmentOrder;
     boost::bimap<std::string, z3::sort> component_types;
     boost::bimap<ComponentID, z3::expr> components;
-    boost::bimap<ComponentSlot*, z3::expr> slots;
+    // tuple in order: assignment, slot name, i-th part
+    boost::bimap<std::tuple<int, std::string, int>, z3::expr> slots;
 
 };
 
@@ -47,34 +49,37 @@ template<typename ComponentID, typename GroupID, typename TagID>
 void TranslatorZ3<ComponentID, GroupID, TagID>::setup() {
 
     // Create sorts for component types
-    for (const auto &compType: this->problem.getComponentTypes()) {
+    for (const auto &compType: this->problem.getComponentTypes())
         component_types[compType] = context.uninterpreted_sort(compType);
 
-        // Components
-        size_t ccount = 0;
-        for (const auto &component: this->problem.getComponents()) {
+    // Components
+    size_t ccount = 0;
+    for (const auto &component: this->problem.getComponents()) {
 
-            // Assign an internal numerical ID
-            const auto &type = component_types.at(component.getType());
-            components[component] = context.constant(ccount, type);
-            ccount++;
-        }
-
-        // Components are all distinct
-
+        // Assign an internal numerical ID
+        const auto &type = component_types.at(component.getType());
+        components[component] = context.constant(ccount, type);
+        ccount++;
     }
+
+    // Components are all distinct
+
+
 
     int a = 0;
     for(const auto &assignment : this->problem.getAssignments()) {
+        assignmentOrder[a] = &assignment;
         int c = 0;
-        for (const auto &component: assignment->getComponents()) {
-
-            // create assignment variable
-            const auto &type = component_types.at(component.getType());
-            std::string name = "a"+std::to_string(a)+"c"+std::to_string(c);
-            context.constant(name, type);
+        for (const auto &slot: assignment->getSlots()) {
+            int i = 0;
+            for(const auto &slotPart : slot){
+                // create assignment variable
+                const auto &type = component_types.at(component.getType());
+                std::string name = "a"+std::to_string(a)+"c"+std::to_string(c)+"i"+std::to_string(i);
+                slotVars[{a, slot.getName(), i}] = context.constant(name, type);
+                i++;
+            }
             c++;
-
         }
         a++;
     }

@@ -14,6 +14,7 @@ template<typename ComponentID, typename TagID, typename GroupID>
 class Condition {
 
 public:
+    virtual z3::expr instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) = 0;
     virtual bool evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) = 0;
     virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) = 0;
 
@@ -25,64 +26,38 @@ private:
 };
 
 
-template<typename ComponentID, typename TagID, typename GroupID>
-class Not : public Condition<ComponentID, TagID, GroupID> {
-
-public:
-    Not(const std::vector<Condition<ComponentID, TagID, GroupID>*> subconditions);
-    virtual bool evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
-    virtual bool validParameters(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) override;
-};
-
-template<typename ComponentID, typename TagID, typename GroupID>
-z3::expr Not<ComponentID, TagID, GroupID>::evaluate(std::vector<Component<ComponentID, TagID, GroupID>*>& arguments) {
-
-    return !arguments.at(0).evaluate();
-}
-
-/*
-class And : public Condition {};
-z3::expr And::generate(std::vector<Condition> arguments) {
-
-    for()
-        inner.generate();
-
-return mk_and();
-}
-
-class Or : public Condition {};
-z3::expr And::generate(std::vector<Condition> arguments) {
-
-for()
-    inner.generate();
-
-return mk_and();
-}
-
-class Xor : public Condition {};
-z3::expr Xor::generate(std::vector<Condition> arguments) {
-
-for()
-generate();
-
-return mk_and();
-}
-
-class Implies : public Condition {};
-z3::expr Implies::generate(std::vector<Condition> arguments) {
-
-    assert(arguments.size() == 2 && "'Implies' Condition takes exactly two arguments.");
-    return z3::implies(generate(arguments.at(0)), generate(arguments.at(1)));
-}
-
-class Iff : public Condition {};
-z3::expr Iff::generate(std::vector<Condition> arguments) {
-
-    assert(arguments.size() == 2 && "'Iff' Condition takes exactly two arguments.");
-    return z3::implies(generate(arguments.at(0)), generate(arguments.at(1)))
-        && z3::implies(generate(arguments.at(1)), generate(arguments.at(0)));
-}
+// ------------------------------------
+// OR, AND,
 
 class NumAssigned 
 */
+
+template<typename ComponentID, typename TagID, typename GroupID>
+class MaxAssignment : public Condition<ComponentID, TagID, GroupID>{
+
+    MaxAssignment(std::vector<Condition>, const int&);
+    virtual z3::expr instantiate(const std::vector<const std::vector<const Assignment*>>& assignmentGroups) override;
+
+private:
+    std::vector<Condition> conditions;
+
+};
+
+template<typename ComponentID, typename TagID, typename GroupID>
+MaxAssignment<ComponentID, TagID, GroupID>::MaxAssignment(std::vector<Condition> c, const int& m) :  {};
+
+template<typename ComponentID, typename TagID, typename GroupID>
+MaxAssignment<ComponentID, TagID, bool GroupID>::z3::expr instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
+
+    /*
+     * Resolved by:
+     * 1. creating a bitvector of (relevant) assignments
+     * 2. creating an implication for each assignment: if the conditions are met the
+     *    bit corresponding to the assignment is set
+     * 3. constraining the maximum number of set bits
+     */
+
+    //
+}
+
 #endif //OMTSCHED_CONDITION_H
