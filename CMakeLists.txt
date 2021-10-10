@@ -16,7 +16,7 @@ find_package(Z3 CONFIG REQUIRED)
 #    include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-             examples/itc21.cpp)
+             examples/itc21.cpp omtsched)
 
 #    target_link_libraries(examples ${Boost_DATE_TIME_LIBRARY} omtsched)
     target_include_directories(examples PRIVATE ${Z3_CXX_INCLUDE_DIRS})

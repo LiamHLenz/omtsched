@@ -12,106 +12,118 @@
 #include <map>
 #include <boost/bimap.hpp>
 
-template <typename ID>
-class TranslatorZ3 : public omtsched::Translator<ID> {
-public:
-    TranslatorZ3(const Problem<ID> &problem);
-    void solve() override;
+namespace omtsched {
 
-    z3::context getContext();
-    const z3::expr getVariable(const Assignment<ID> &assignment, const std::string &componentSlot, int num);
-    const z3::expr getComponent(const ID &component);
+    template<typename ID>
+    class TranslatorZ3 : public omtsched::Translator<ID> {
+    public:
+        TranslatorZ3(const Problem <ID> &problem);
 
-private:
-    void setup();
-    void addDomainConstraints(const ComponentSlot &);
-    z3::expr resolveCondition(const std::string &r);
-    z3::expr resolveVariable(const std::string &r);
-    void addRule(const Rule &);
+        void solve() override;
 
-    int getAssignmentNumber(const Assignment<ID> &assignment);
+        z3::context &getContext();
 
-    z3::context context;
-    z3::solver solver;
+        const z3::expr getVariable(const Assignment<ID> &assignment, const std::string &componentSlot, int num);
 
-    //TODO: double map
-    boost::bimap<int, Assignment<ID>*> assignmentOrder;
-    boost::bimap<std::string, z3::sort> component_types;
-    boost::bimap<ID, z3::expr> components;
-    // tuple in order: assignment, slot name, i-th part
-    boost::bimap<std::tuple<int, std::string, int>, z3::expr> slots;
+        const z3::expr getComponent(const ID &component);
 
-};
+    private:
+        void setup();
 
-template<typename ID>
-TranslatorZ3<ID>::TranslatorZ3(const Problem<ID> &problem) {
+        void addDomainConstraints(const ComponentSlot &);
 
-    setup(problem);
-}
+        z3::expr resolveCondition(const std::string &r);
 
+        z3::expr resolveVariable(const std::string &r);
 
-template<typename ID>
-void TranslatorZ3<ID>::setup(problem) {
+        void addRule(const Rule<ID> &);
 
-    // Create sorts for component types
-    for (const auto &compType: this->problem.getComponentTypes())
-        component_types[compType] = context.uninterpreted_sort(compType);
+        int getAssignmentNumber(const Assignment<ID> &assignment);
 
-    // Components
-    size_t ccount = 0;
-    for (const auto &component: this->problem.getComponents()) {
+        Problem<ID> &problem;
+        z3::context context;
+        z3::solver solver;
 
-        // Assign an internal numerical ID
-        const auto &type = component_types.at(component.getType());
-        components[component] = context.constant(ccount, type);
-        ccount++;
+        //TODO: double map
+        boost::bimap<int, Assignment<ID> *> assignmentOrder;
+        boost::bimap<std::string, z3::sort> component_types;
+        boost::bimap<ID, z3::expr> components;
+        // tuple in order: assignment, slot name, i-th part
+        boost::bimap<std::tuple<int, std::string, int>, z3::expr> slots;
+
+    };
+
+    template<typename ID>
+    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) {
+
+        setup(problem);
     }
 
-    // Components are all distinct
 
+    template<typename ID>
+    void TranslatorZ3<ID>::setup() {
 
+        // Create sorts for component types
+        for (const auto &compType: this->problem.getComponentTypes())
+            component_types[compType] = context.uninterpreted_sort(compType);
 
-    int a = 0;
-    for(const auto &assignment : this->problem.getAssignments()) {
-        assignmentOrder[a] = &assignment;
-        int c = 0;
-        for (const auto &slot: assignment->getSlots()) {
-            int i = 0;
-            for(const auto &slotPart : slot){
-                // create assignment variable
-                const auto &type = component_types.at(component.getType());
-                std::string name = "a"+std::to_string(a)+"c"+std::to_string(c)+"i"+std::to_string(i);
-                slotVars[{a, slot.getName(), i}] = context.constant(name, type);
-                i++;
-            }
-            c++;
+        // Components
+        size_t ccount = 0;
+        for (const auto &component: this->problem.getComponents()) {
+
+            // Assign an internal numerical ID
+            const auto &type = component_types.right.at(component.getType());
+            components[component] = context.constant(ccount, type);
+            ccount++;
         }
-        a++;
+
+        // TODO: Components are all distinct
+
+
+
+        int a = 0;
+        for (const auto &assignment: this->problem.getAssignments()) {
+            assignmentOrder[a] = &assignment;
+            int c = 0;
+            for (const auto &slot: assignment->getSlots()) {
+                int i = 0;
+                for (const auto &slotPart: slot) {
+                    // create assignment variable
+                    const auto &type = component_types.right.at(slot.type);
+                    std::string name = "a" + std::to_string(a) + "c" + std::to_string(c) + "i" + std::to_string(i);
+                    slots[{a, slot.getName(), i}] = context.constant(name, type);
+                    i++;
+                }
+                c++;
+            }
+            a++;
+        }
+
     }
 
-}
+    template<typename ID>
+    int TranslatorZ3<ID>::getAssignmentNumber(const Assignment<ID> &assignment) {
 
-int TranslatorZ3<ID>::getAssignmentNumber(const Assignment<ID> &assignment) {
+        return assignmentOrder.at(assignment);
+    }
 
-    return assignmentOrder.at(assignment);
-}
+    template<typename ID>
+    z3::context &TranslatorZ3<ID>::getContext() {
+        return context;
+    }
 
-template<typename ID>
-z3::context TranslatorZ3<ID>::getContext(){
-    return context;
-}
+    template<typename ID>
+    const z3::expr
+    TranslatorZ3<ID>::getVariable(const Assignment<ID> &assignment, const std::string &componentSlot, int num) {
 
-template<typename ID>
-const z3::expr TranslatorZ3<ID>::getVariable(const Assignment<ID> &assignment, const std::string &componentSlot, int num) {
+        auto assignmentNumber = getAssignmentNumber(assignment);
+        return slots.left.at({assignmentNumber, componentSlot, num});
+    }
 
-    auto assignmentNumber = getAssignmentNumber(assignment);
-    return slots.at({assignmentNum, componentSlot, num});
-}
-
-template<typename ID>
-const z3::expr TranslatorZ3<ID>::getComponent(const ID &component){
-    return components.at(component);
-}
+    template<typename ID>
+    const z3::expr TranslatorZ3<ID>::getComponent(const ID &component) {
+        return components.at(component);
+    }
 
 
 /*
@@ -207,5 +219,7 @@ private:
 
 };
 */
+
+}
 
 #endif //OMTSCHED_TRANSLATORZ3_H

@@ -12,7 +12,6 @@
 #include "Assignment.h"
 #include "Rule.h"
 #include "Component.h"
-#include "Model.h"
 
 namespace omtsched {
 

@@ -32,9 +32,11 @@ namespace omtsched {
         virtual void printAllSolutions(std::string path) const = 0;
         virtual void printExplanation(std::string path) const = 0;
 
-        Problem <ID> &getProblem() const;
 
-        void setProblem(Problem <ID> &problem);
+
+        Problem<ID> &getProblem() const;
+
+        void setProblem(Problem<ID> &problem);
 
         bool isGenerateAllSolution() const;
 
@@ -52,12 +54,12 @@ namespace omtsched {
     };
 
     template<typename ID>
-    Problem <ID> &Translator<ID>::getProblem() const {
+    Problem<ID> &Translator<ID>::getProblem() const {
         return problem;
     }
 
     template<typename ID>
-    void Translator<ID>::setProblem(Problem <ID> &problem) {
+    void Translator<ID>::setProblem(Problem<ID> &problem) {
         Translator::problem = problem;
     }
 
