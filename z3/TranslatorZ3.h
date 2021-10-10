@@ -12,15 +12,15 @@
 #include <map>
 #include <boost/bimap.hpp>
 
-template <typename ID, typename ID, typename ID>
+template <typename ID>
 class TranslatorZ3 : public omtsched::Translator<ID> {
 public:
-    TranslatorZ3();
+    TranslatorZ3(const Problem<ID> &problem);
     void solve() override;
 
-    virtual z3::context getContext() = 0;
-    virtual const z3::expr getVariable(const Assignment<ID> &assignment, const std::string &&componentSlot) = 0;
-    virtual const z3::expr getComponent(const ID &component) = 0;
+    z3::context getContext();
+    const z3::expr getVariable(const Assignment<ID> &assignment, const std::string &componentSlot, int num);
+    const z3::expr getComponent(const ID &component);
 
 private:
     void setup();
@@ -29,11 +29,13 @@ private:
     z3::expr resolveVariable(const std::string &r);
     void addRule(const Rule &);
 
+    int getAssignmentNumber(const Assignment<ID> &assignment);
+
     z3::context context;
     z3::solver solver;
 
     //TODO: double map
-    std::vector<Assignment<ID>*> assignmentOrder;
+    boost::bimap<int, Assignment<ID>*> assignmentOrder;
     boost::bimap<std::string, z3::sort> component_types;
     boost::bimap<ID, z3::expr> components;
     // tuple in order: assignment, slot name, i-th part
@@ -42,15 +44,14 @@ private:
 };
 
 template<typename ID>
-TranslatorZ3<ID>::TranslatorZ3() {}
+TranslatorZ3<ID>::TranslatorZ3(const Problem<ID> &problem) {
 
-template<typename ID>
-void TranslatorZ3<ID>::solve() {
-
+    setup(problem);
 }
 
+
 template<typename ID>
-void TranslatorZ3<ID>::setup() {
+void TranslatorZ3<ID>::setup(problem) {
 
     // Create sorts for component types
     for (const auto &compType: this->problem.getComponentTypes())
@@ -87,7 +88,32 @@ void TranslatorZ3<ID>::setup() {
         }
         a++;
     }
+
 }
+
+int TranslatorZ3<ID>::getAssignmentNumber(const Assignment<ID> &assignment) {
+
+    return assignmentOrder.at(assignment);
+}
+
+template<typename ID>
+z3::context TranslatorZ3<ID>::getContext(){
+    return context;
+}
+
+template<typename ID>
+const z3::expr TranslatorZ3<ID>::getVariable(const Assignment<ID> &assignment, const std::string &componentSlot, int num) {
+
+    auto assignmentNumber = getAssignmentNumber(assignment);
+    return slots.at({assignmentNum, componentSlot, num});
+}
+
+template<typename ID>
+const z3::expr TranslatorZ3<ID>::getComponent(const ID &component){
+    return components.at(component);
+}
+
+
 /*
 template<typename ID>
 void TranslatorZ3<ID>::domainConstraints() {

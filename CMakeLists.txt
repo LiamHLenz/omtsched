@@ -10,13 +10,13 @@ set_target_properties(omtsched PROPERTIES LINKER_LANGUAGE CXX)
 
 # find_package(Boost REQUIRED COMPONENTS "date_time")
 
-find_package(Z3 REQUIRED CONFIG)
+find_package(Z3 CONFIG REQUIRED)
 
 #if(Boost_FOUND)
 #    include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-            Condition.h examples/itc21.cpp ComponentType.h conditions/BooleanConditions.h conditions/BasicConditions.h)
+             examples/itc21.cpp)
 
 #    target_link_libraries(examples ${Boost_DATE_TIME_LIBRARY} omtsched)
     target_include_directories(examples PRIVATE ${Z3_CXX_INCLUDE_DIRS})
