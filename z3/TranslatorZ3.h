@@ -17,6 +17,7 @@ class TranslatorZ3 : public omtsched::Translator<ID> {
 public:
     TranslatorZ3(const Problem<ID> &problem);
     void solve() override;
+    Model getModel() override;
 
     z3::context getContext();
     const z3::expr getVariable(const Assignment<ID> &assignment, const std::string &componentSlot, int num);
@@ -50,47 +51,6 @@ TranslatorZ3<ID>::TranslatorZ3(const Problem<ID> &problem) {
 }
 
 
-template<typename ID>
-void TranslatorZ3<ID>::setup(problem) {
-
-    // Create sorts for component types
-    for (const auto &compType: this->problem.getComponentTypes())
-        component_types[compType] = context.uninterpreted_sort(compType);
-
-    // Components
-    size_t ccount = 0;
-    for (const auto &component: this->problem.getComponents()) {
-
-        // Assign an internal numerical ID
-        const auto &type = component_types.at(component.getType());
-        components[component] = context.constant(ccount, type);
-        ccount++;
-    }
-
-    // Components are all distinct
-
-
-
-    int a = 0;
-    for(const auto &assignment : this->problem.getAssignments()) {
-        assignmentOrder[a] = &assignment;
-        int c = 0;
-        for (const auto &slot: assignment->getSlots()) {
-            int i = 0;
-            for(const auto &slotPart : slot){
-                // create assignment variable
-                const auto &type = component_types.at(component.getType());
-                std::string name = "a"+std::to_string(a)+"c"+std::to_string(c)+"i"+std::to_string(i);
-                slotVars[{a, slot.getName(), i}] = context.constant(name, type);
-                i++;
-            }
-            c++;
-        }
-        a++;
-    }
-
-}
-
 int TranslatorZ3<ID>::getAssignmentNumber(const Assignment<ID> &assignment) {
 
     return assignmentOrder.at(assignment);
@@ -113,32 +73,77 @@ const z3::expr TranslatorZ3<ID>::getComponent(const ID &component){
     return components.at(component);
 }
 
+template<typename ID>
+void TranslatorZ3<ID>::setup(problem) {
+
+    // Create component types and components
+    for (const auto &compType: this->problem.getComponentTypes()) {
+        component_types[compType] = context.uninterpreted_sort(compType);
+        // Components
+        size_t ccount = 0;
+        z3::expr_vector comps {context};
+        for (const auto &component: this->problem.getComponents(compType)) {
+
+            // Assign an internal numerical ID
+            const auto &type = component_types.at(component.getType());
+            components[component] = context.constant(ccount, type);
+            ccount++;
+            comps.push_back(components.at(component));
+        }
+        // Components are assumed to be unique
+        addRule(z3::distinct(comps));
+    }
+
+    // Create Assignments
+    int a = 0;
+    for(const auto &assignment : this->problem.getAssignments()) {
+        assignmentOrder[a] = &assignment;
+        int c = 0;
+        for (const auto &slot: assignment->getSlots()) {
+            int i = 0;
+            for(const auto &slotPart : slot){
+                // create assignment variable
+                const auto &type = component_types.at(component.getType());
+                std::string name = "a"+std::to_string(a)+"c"+std::to_string(c)+"i"+std::to_string(i);
+                slotVars[{a, slot.getName(), i}] = context.constant(name, type);
+                i++;
+            }
+            c++;
+        }
+        a++;
+    }
+
+    solver = z3::solver{context};
+
+    // Add Rules
+    for(const Rule &rule : problem.getRules())
+        solver.add(rule.generate());
+
+}
+
+
+template<typename ID>
+void TranslatorZ3<ID>::solve() {
+
+    switch(solver.check()){
+
+        case z3::unsat:
+            std::cout << "UNSAT" << std::endl;
+            break;
+
+        case z3::sat:
+            std::cout << "SAT" << std::endl;
+            z3::model m = solver.get_model();
+            break;
+
+        case z3::unknown:
+            std::cout << "UNKNOWN" << std::endl;
+            break;
+    }
+
+}
 
 /*
-template<typename ID>
-void TranslatorZ3<ID>::domainConstraints() {
-
-    // domain constraint
-    z3::expr_vector domain;
-    for(const ComponentSlot &c : assignment.getDomain(component))
-}
-
-
-template<typename ID>
-z3::expr TranslatorZ3<ID>::resolveVariable(const std::string &r) {
-
-
-}
-
-
-template<typename ID>
-void TranslatorZ3<ID>::addRule(const Rule &r) {
-
-    z3::expr exp = resolveCondition(r);
-    solver.add(exp);
-
-}
-
 
 template <typename Key1, typename Key2>
 class expr_map {
@@ -155,17 +160,6 @@ private:
 
 template <typename TaskID, typename TimeslotID, typename ID, typename ID>
 class TranslatorZ3 : public Translator<TaskID, TimeslotID, ID, ID> {
-
-public:
-
-    bool solve(const Problem<TaskID, TimeslotID, ID, ID> &problem) override;
-
-
-private:
-
-    //void interpretModelZ3(z3::model, Model &model);
-    void outputModelZ3(z3::model);
-
 
     /*
     const std::string assigned(const size_t &tid, const size_t &aid) const;
@@ -197,13 +191,6 @@ private:
     expr_map<TimeslotID, ID> ts_tags;
     expr_map<TimeslotID, ID> ts_groups;
 
-
-    enum Attributes {
-        Start = 0,
-        Duration = 1,
-        Deadline = 2,
-        Optional = 3
-    };
 
 };
 */

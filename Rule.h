@@ -13,7 +13,7 @@ class Rule {
 
 public:
     bool validate() const;
-    void generate(const std::string &path);
+    z3::expr generate();
 
     void addAssignments(std::vector<Assignment<ID>*>);
     void removeAssignments(std::vector<Assignment<ID>*>);
@@ -24,6 +24,23 @@ private:
     std::vector<std::vector<Assignment<ID>*>> applicableSets;
 
 };
+
+template<typename ID>
+void Rule<ID>::addAssignments(std::vector<Assignment<ID>*> assignments) {
+    applicableSets.push_back(assignments);
+}
+
+//TODO: the complication is finding different permutations
+// of the same set
+//template<typename ID>
+//void Rule<ID>::removeAssignments(std::vector<Assignment<ID>*>);
+
+template<typename ID>
+z3::expr Rule<ID>::generate() {
+
+    // A rule needs to be instantiated for every combination of assignments
+
+}
 
 
 

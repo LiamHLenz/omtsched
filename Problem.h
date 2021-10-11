@@ -36,8 +36,7 @@ namespace omtsched {
 
         const std::set<ID> &getAllTags() const;
 
-
-        const std::vector<std::unique_ptr<Component<ID>>> &getComponents() const;
+        const std::vector<Component<ID>> &getComponents(const std::string &componentType) const;
 
         const std::vector<std::unique_ptr<Assignment<ID>>> &getAssignments() const;
 
@@ -59,9 +58,9 @@ namespace omtsched {
 
         std::set<ID> groups;
 
-        std::vector<std::unique_ptr<Component<ID>>> components;
+        std::vector<Component<ID>> components;
 
-        std::vector<std::unique_ptr<Assignment<ID>>> assignments;
+        std::vector<Assignment<ID>> assignments;
 
         std::vector<Rule<ID>> rules;
 

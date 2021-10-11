@@ -11,21 +11,16 @@
 #include "../conditions/BooleanConditions.h"
 #include <string>
 
+enum Mode {
+    HOME, AWAY, HA
+};
 
 /*
 "CA1 <CA1 teams="0" max="0" mode="H" slots="0" type="HARD"/>
 Each team from teams plays at most max home games (mode = "H") or away games
-(mode = "A") during time slots in slots. Team 0 cannot play at home on time slot 0.
-Each team in teams triggers a deviation equal to the number of home games (mode = "H")
-or away games (mode = "A") in slots more than max.
-Constraint CA1 is of fundamental use in sports timetabling to model ‘place constraints’ that
-forbid a team to play a home game or away game in a given time slot. Constraint CA1 can
-also help to balance the home-away status of games over time and teams. For example, when
-the home team receives ticket revenues, teams often request to have a limit on the number of
-away games they play during the most lucrative time slots. Note that a CA1 constraint where the
-set teams contains more than one team can be split into several CA1 constraints where the set
-teams contains one team: in all ITC2021 instances, teams therefore contains only one team."
+(mode = "A") during time slots in slots.
  */
+//TODO: punish every violated instance
 Rule<int> ca1(int team, int max, bool home, std::vector<int> &slots, bool hard){
 
     auto modeCondition = home ? std::make_unique<ComponentIs<int>>("HomeTeam", team) : std::make_unique<ComponentIs<int>>("AwayTeam", team);
@@ -37,6 +32,71 @@ Rule<int> ca1(int team, int max, bool home, std::vector<int> &slots, bool hard){
     return {MaxAssignments({modeCondition, slotCondition}, max)};
 
 }
+
+/*
+ * CA2 <CA2 teams1="0" min="0" max="1" mode1="HA" mode2="GLOBAL" teams2="1;2"
+slots ="0;1;2" type="SOFT"/>
+Each team in teams1 plays at most max home games (mode1 = "H"), away games (mode1 =
+"A"), or games (mode1 = "HA") against teams (mode2 = "GLOBAL"; the only mode we
+consider) in teams2 during time slots in slots.
+ */
+
+
+/*
+ * CA3 <CA3 teams1="0" max="2" mode1="HA" teams2="1;2;3" intp="3" mode2=
+"SLOTS" type="SOFT"/>
+Each team in teams1 plays at most max home games (mode1 = "H"), away games (mode1 =
+"A"), or games (mode1 = "HA") against teams in teams2 in each sequence of intp time
+slots (mode2 = "SLOTS"; the only mode we consider).
+ */
+
+
+/*
+ * CA4 <CA4 teams1="0;1" max="3" mode1="H" teams2="2,3" mode2="GLOBAL"
+slots ="0;1" type="HARD"/>
+Teams in teams1 play at most max home games (mode1 = "H"), away games (mode1 =
+"A"), or games (mode1 = "HA") against teams in teams2 during time slots in slots
+(mode2 = "GLOBAL") or during each time slot in slots (mode2 = "EVERY").
+ */
+
+
+/*
+ * GA1 <GA1 min="0" max="0" meetings="0,1;1,2;" slots="3" type="HARD"/>
+At least min and at most max games from G = {(i1,j1),(i2,j2),...}take place during time
+slots in slots. Game (0,1) and (1,2) cannot take place during time slot 3.
+The set slots triggers a deviation equal to the number of games in meetings less than min
+or more than max.
+ */
+
+/*
+ * BR1 <BR1 teams="0" intp="0" mode2="HA" slots="1" type="HARD"/>
+Each team in teams has at most intp home breaks (mode2 = "H"), away breaks (mode2 =
+"A"), or breaks (mode2 = "HA") during time slots in slots. Team 0 cannot have a break
+on time slot 1
+ */
+
+/*
+ * BR2 <BR2 homeMode="HA" teams="0;1" mode2="LEQ" intp="2" slots="0;1;2;3" type="HARD
+"/>
+The sum over all breaks (homeMode = "HA", the only mode we consider) in teams is no
+more than (mode2 = "LEQ", the only mode we consider) intp during time slots in slots.
+Team 0 and 1 together do not have more than two breaks during the first four time slots
+ */
+
+/*
+ * FA2 <FA2 teams="0;1;2" mode="H" intp="1" slots=" 0;1;2;3 " type="HARD"/>
+Each pair of teams in teams has a difference in played home games (mode = "H", the only
+mode we consider) that is not larger than intp after each time slot in slots. The difference
+in home games played between the first three teams is not larger than 1 during the first four
+time slots.
+ */
+
+/*
+ * SE1 <SE1 teams="0;1" min="5" mode1="SLOTS" type="HARD"/>
+Each pair of teams in teams has at least min time slots (mode1 = "SLOTS", the only mode
+we consider) between two consecutive mutual games. There are at least 5 time slots between
+the mutual games of team 0 and 1
+ */
 
 int main() {
 
@@ -89,6 +149,33 @@ int main() {
         gameSlot.setVariable(Game, ANY, true);
     }
 
+
+    std::cout << "---- Printing Assignments ----" << std::endl;
+    // Print out the assignment problem
+    for(const auto & asgn : itc21.getAssignments()){
+
+        std::cout << "New Assignment: " << std::endl;
+        for(const auto & cs : asgn.getComponentSlots()) {
+            std::cout << "Slot " << asgn.id
+            << ": " << asgn.number << " components of type " << asgn.type;
+            if(asgn.optional)
+                std::cout << ", " << asgn.optional;
+            std::cout << std::endl;
+        }
+    }
+
+    std::cout << std::endl;
+    std::cout << "---- Printing Components ----" << std::endl;
+    for(const auto &compType : itc21.getComponentTypes()){
+        std::cout << "Component Type:";
+        for(const auto &comp : itc21.getComponents(compType)){
+
+            std::cout << " " << comp.getID();
+        }
+        std::cout << std::endl;
+    }
+
+
     // Add Standard Rules:
 
     // A
@@ -131,41 +218,3 @@ int main() {
 
             case "CA2":
                 break;
-
-            case "CA3":
-                break;
-
-            case "CA4":
-                break;
-
-        }
-
-    }
-
-
-
-    // Translate and solve
-    TranslatorZ3 z3trans {itc21};
-    Model solution {itc21};
-    z3trans.getModel(solution);
-
-    // Print solution
-    pt::ptree solutionTree;
-
-    solutionTree.put("Solution.MetaData.InstanceName", instanceName);
-    solutionTree.put("Solution.MetaData.SolutionName", instanceName + "_sol");
-
-    solutionTree.put("Solution.MetaData.ObjectiveValue.<xmlattr>.infeasibility", 0);
-    solutionTree.put("Solution.MetaData.ObjectiveValue.<xmlattr>.objective", model.getPenalty());
-
-    /*
-    for(assignment : model.getAssignments())
-        for(game : ) {
-            solutionTree.put("Solution.Games.ScheduledMatch.<xmlattr>.home", game.homeTeam());
-            solutionTree.put("Solution.Games.ScheduledMatch.<xmlattr>.away", game.awayTeam());
-            solutionTree.put("Solution.Games.ScheduledMatch.<xmlattr>.slot", game.timeslot());
-        }
-*/
-    pt::write_xml(solutionPath, solutionTree);
-
-}

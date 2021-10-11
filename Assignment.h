@@ -8,9 +8,10 @@
 #include "Component.h"
 #include <vector>
 
+template<typename ID>
 struct ComponentSlot {
-    const int id;
-    const int type;
+    const std::string id;
+    const ID type;
     int number;
     bool optional;
 };
