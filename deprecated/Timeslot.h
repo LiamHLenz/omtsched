@@ -6,14 +6,14 @@
 #define OMTSCHED_TIMESLOT_H
 
 #include "Time.h"
-
+/*
 namespace omtsched {
     template<typename ID>
     class Timeslot : public Component<ID> {
     };
 
 }
-/*
+
 template<typename ID>
 class Timeslot {
 

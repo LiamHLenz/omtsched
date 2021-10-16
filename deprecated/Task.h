@@ -12,10 +12,7 @@
 
 namespace omtsched {
 
-    template<typename ID>
-    class Task : public Component<ID> {
 
-    };
 
 }
 

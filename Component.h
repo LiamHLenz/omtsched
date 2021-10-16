@@ -7,60 +7,74 @@
 
 #include <map>
 #include <set>
+#include "ComponentType.h"
 
-template<typename ID>
-class Component {
+namespace omtsched {
 
-public:
-    Component(const ID &id) : ID{id} {}
-    //virtual const std::string componentType() const = 0;
+    template<typename ID>
+    class Component {
 
-    const ID getId() const;
-    const std::map<ID, int> &getTags() const;
-    const std::set<ID> &getGroups() const;
+    public:
+        Component(const ID &id, const ComponentType<ID> &type) : ID{id}, type{type} {}
+        //virtual const std::string componentType() const = 0;
 
-    void addGroup(const ID&);
-    void removeGroup(const ID&);
+        const ID getId() const;
+        std::string getIDString() const;
+        const std::map<ID, int> &getTags() const;
+        const std::set<ID> &getGroups() const;
 
-    void setTag(const ID &, const int);
+        void addGroup(const ID&);
+        void removeGroup(const ID&);
 
-private:
-    const ID id;
-    std::map<ID, int> tags;
-    std::set<ID> groups;
-};
+        void setTag(const ID &, const int);
 
-template<typename ID>
-const ID Component<ID>::getId() const {
-    return id;
-}
+        const ComponentType<ID> &getType() const;
 
-template<typename ID>
-const std::map<ID, int> &Component<ID>::getTags() const {
-    return tags;
-}
+    private:
+        ComponentType<ID> type;
+        const ID id;
+        std::map<ID, int> tags;
+        std::set<ID> groups;
+    };
 
-template<typename ID>
-const std::set<ID> &Component<ID>::getGroups() const {
-    return groups;
-}
+    template<typename ID>
+    const ComponentType<ID>&Component<ID>::getType() const {
+        return type;
+    }
 
-template<typename ID>
-void Component<ID>::addGroup(const ID &id) {
+    template<typename ID>
+    const ID Component<ID>::getId() const {
+        return id;
+    }
 
-    groups.insert(id);
-}
+    template<typename ID>
+    const std::map<ID, int> &Component<ID>::getTags() const {
+        return tags;
+    }
 
-template<typename ID>
-void Component<ID>::removeGroup(const ID &id) {
+    template<typename ID>
+    const std::set<ID> &Component<ID>::getGroups() const {
+        return groups;
+    }
 
-    groups.erase(id);
-}
+    template<typename ID>
+    void Component<ID>::addGroup(const ID &id) {
 
-template<typename ID>
-void Component<ID>::setTag(const ID &id, const int val) {
+        groups.insert(id);
+    }
 
-    tags.at(id) = val;
+    template<typename ID>
+    void Component<ID>::removeGroup(const ID &id) {
+
+        groups.erase(id);
+    }
+
+    template<typename ID>
+    void Component<ID>::setTag(const ID &id, const int val) {
+
+        tags.at(id) = val;
+    }
+
 }
 
 #endif //OMTSCHED_COMPONENT_H

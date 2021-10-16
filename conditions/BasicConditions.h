@@ -13,9 +13,9 @@ namespace omtsched {
     class ComponentIs : public Condition<ID> {
 
     public:
-        ComponentIs(std::string, ID);
+        static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IS;
 
-        z3::expr instantiate(const Translator<ID> &t, const std::vector<const std::vector<const Assignment<ID> *>> &assignmentGroups);
+        ComponentIs(std::string, ID);
         //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
         //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
 
@@ -29,21 +29,16 @@ namespace omtsched {
                                                                             component{component} {}
 
     template<typename ID>
-    z3::expr
-    ComponentIs<ID>::instantiate(const Translator<ID> &t, const std::vector<const std::vector<const Assignment<ID> *>> &assignmentGroups) {
+    class MaxAssignment : public Condition<ID> {
 
-        //If there is more than one assignment: conjunction
-        z3::expr_vector equalities (t.getContext());
-        for(const auto &assignment : assignmentGroups) {
-            const z3::expr &var = t.getVariable(assignment, componentSlot);
-            const z3::expr &component = t.getComponent(component);
-            equalities.push_back(var == component);
-        }
+    public:
+        MaxAssignment(std::initializer_list<Condition<ID>> sc, const int &max);
+        const int max;
 
-        return z3::mk_and(equalities);
+    };
 
-    }
-
+    template<typename ID>
+    MaxAssignment<ID>::MaxAssignment(std::initializer_list<Condition <ID>> sc, const int &max) : max{ max }, Condition<ID>{sc} {}
 }
 
 #endif //OMTSCHED_BASICCONDITIONS_H

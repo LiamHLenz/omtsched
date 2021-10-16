@@ -1,24 +1,34 @@
 cmake_minimum_required(VERSION 3.15)
 project(omtsched)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(omtsched SHARED omtsched.hpp omtsched.h components/Task.h components/Timeslot.h Problem.h
-        Translator.h z3/TranslatorZ3.h z3/TranslatorZ3.hpp Model.h Rule.h Assignment.h Component.h Variable.h
-        components/Agent.h components/Time.h components/TimedTask.h)
+add_library(omtsched SHARED omtsched.h
+        Assignment.h Component.h ComponentType.h Condition.h
+        Model.h Problem.h Rule.h Translator.h
+        conditions/BasicConditions.h conditions/BooleanConditions.h
+        z3/TranslatorZ3.h
+        )
+
 set_target_properties(omtsched PROPERTIES LINKER_LANGUAGE CXX)
+#target_compile_features(omtsched PRIVATE cxx_std_17)
 
-# find_package(Boost REQUIRED COMPONENTS "date_time")
+
+find_package(Boost REQUIRED)
 
 find_package(Z3 CONFIG REQUIRED)
 
 #if(Boost_FOUND)
-#    include_directories(${BOOST_INCLUDE_DIRS})
+    include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-             examples/itc21.cpp)
+             examples/itc21.cpp )
 
-#    target_link_libraries(examples ${Boost_DATE_TIME_LIBRARY} omtsched)
+
+    target_link_libraries(examples omtsched)
+    target_link_libraries(examples Boost::boost)
     target_include_directories(examples PRIVATE ${Z3_CXX_INCLUDE_DIRS})
     target_link_libraries(examples ${Z3_LIBRARIES})
 

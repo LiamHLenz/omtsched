@@ -5,15 +5,32 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include "../omtsched.h"
-#include "../components/Task.h"
-#include "../components/Timeslot.h"
-#include "../conditions/BasicConditions.h"
-#include "../conditions/BooleanConditions.h"
 #include <string>
 
+using And = omtsched::And<std::string>;
+using Or = omtsched::Or<std::string>;
+using ComponentIs = omtsched::ComponentIs<std::string>;
+using MaxAssignment = omtsched::MaxAssignment<std::string>;
+
 enum Mode {
-    HOME, AWAY, HA
+    H, A, HA
 };
+
+// Utility function to break up strings specifying a set of integer identifiers (e.g. "9;14;5")
+std::vector<int> split(const std::string &str){
+
+    std::vector<int> v;
+    std::string buffer = "";
+    for(const char &c : str) {
+        if(c != ';')
+            buffer.append(1, c);
+        else{
+            v.push_back(std::stoi(buffer));
+            buffer = "";
+        }
+    }
+    return v;
+}
 
 /*
 "CA1 <CA1 teams="0" max="0" mode="H" slots="0" type="HARD"/>
@@ -21,15 +38,15 @@ Each team from teams plays at most max home games (mode = "H") or away games
 (mode = "A") during time slots in slots.
  */
 //TODO: punish every violated instance
-Rule<int> ca1(int team, int max, bool home, std::vector<int> &slots, bool hard){
+omtsched::Rule<std::string> ca1(std::string team, int max, bool home, std::string &slots, bool hard){
 
-    auto modeCondition = home ? std::make_unique<ComponentIs<int>>("HomeTeam", team) : std::make_unique<ComponentIs<int>>("AwayTeam", team);
+    auto modeCondition = home ? ComponentIs("HomeTeam", team) : ComponentIs("AwayTeam", team);
 
-    Condition<std::string>* slotCondition;
+    Or slotCondition;
     for(const auto &slot : slots)
-        slotCondition = Or(ComponentIs("Slot", slot), slotCondition);
+        slotCondition.add(ComponentIs("Slot", std::string(1, slot)));
 
-    return {MaxAssignments({modeCondition, slotCondition}, max)};
+     return {MaxAssignment({modeCondition, slotCondition}, max)};
 
 }
 
@@ -98,9 +115,14 @@ we consider) between two consecutive mutual games. There are at least 5 time slo
 the mutual games of team 0 and 1
  */
 
+
+
 int main() {
 
-    omtsched::Problem<std::string, std::string, std::string> itc21;
+    const omtsched::Task<std::string> Game {"G"};
+    const omtsched::Timeslot<std::string> Gameslot {"S"};
+
+    omtsched::Problem<std::string> itc21;
     std::string solutionPath;
     std::string problemPath;
 
@@ -127,7 +149,7 @@ int main() {
 
             std::string gameID = std::to_string(id1) + "_" + std::to_string(id2);
 
-            auto game = itc21.newComponent(Game, gameID);
+            auto game = itc21.newComponent(gameID, Game);
 
             game.addGroup("h" + std::to_string(id1));       // h: home
             game.addGroup("a" + std::to_string(id2));       // a: away
@@ -140,38 +162,30 @@ int main() {
     for(pt::ptree::value_type &node: scenarioTree.get_child("Instance.Resources.Slots")){
 
         const int &id = node.second.get<int>("<xmlattr>.id");
-        auto ts = itc21.newComponent(Timeslot, id);
+        auto ts = itc21.newComponent(std::to_string(id), Gameslot);
         ts.addGroup(std::to_string(id));
 
         // Create game assignments as fixed timeslot assignments
         auto gameSlot = itc21.newAssignment();
-        gameSlot.setFixed(ts);
-        gameSlot.setVariable(Game, ANY, true);
+        gameSlot.setFixed("s_" + std::to_string(id), ts);
+        //gameSlot.add("slot_" + std::to_string(id), Game, ANY, true);
     }
 
 
     std::cout << "---- Printing Assignments ----" << std::endl;
-    // Print out the assignment problem
-    for(const auto & asgn : itc21.getAssignments()){
 
+    for(const auto &assignment : itc21.getAssignments()) {
         std::cout << "New Assignment: " << std::endl;
-        for(const auto & cs : asgn.getComponentSlots()) {
-            std::cout << "Slot " << asgn.id
-            << ": " << asgn.number << " components of type " << asgn.type;
-            if(asgn.optional)
-                std::cout << ", " << asgn.optional;
-            std::cout << std::endl;
-        }
+        for(const auto & [name, compSlot] : assignment.getComponentSlots())
+            std::cout << compSlot.describe() << std::endl;
     }
-
     std::cout << std::endl;
+
     std::cout << "---- Printing Components ----" << std::endl;
     for(const auto &compType : itc21.getComponentTypes()){
-        std::cout << "Component Type:";
-        for(const auto &comp : itc21.getComponents(compType)){
-
-            std::cout << " " << comp.getID();
-        }
+        std::cout << "Component Type " << compType << ": ";
+        for(const auto &comp : itc21.getComponents(compType))
+            std::cout << " " << comp.getIDString();
         std::cout << std::endl;
     }
 
@@ -185,14 +199,14 @@ int main() {
     // TODO: phasedness
     // Phased: season is split into two equally long 1RR intervals, where each pair plays
     // in one home-away configuration in both phases
-    bool &phased = scenarioTree.get<std::string>("Instance.Structure.Format.gameMode") == "P";
+    bool phased = scenarioTree.get<std::string>("Instance.Structure.Format.gameMode") == "P";
     if(phased){
         //addRule();
     }
 
     // A timetable is time-constrained (also called compact) if it uses the
     //minimal number of time slots needed, and is time-relaxed otherwise.
-    bool &compact = scenarioTree.get<std::string>("Instance.Structure.Format.compactness") == "C";
+    bool compact = scenarioTree.get<std::string>("Instance.Structure.Format.compactness") == "C";
     if(compact){
         //addRule();
     }
@@ -202,19 +216,38 @@ int main() {
     // Add Constraints
     for(pt::ptree::value_type &node : scenarioTree.get_child("Instance.Constraints.CapacityConstraints")){
 
-        std::string type = ;
+        std::string name = node.first;
 
-        switch (condition) {
+        // CA1, CA2, CA3, CA4,
+        // GA1, BR1, BR2,
+        // FA2, SE1
+        // TODO: oh my god burn this and burn me
+        if(name == "CA1") {
+            bool hard = node.second.get<std::string>("<xmlattr>.type") == "HARD";
+            std::string team = node.second.get<std::string>("<xmlattr>.teams");
+            std::string slots = node.second.get<std::string>("<xmlattr>.slots");
+            int penalty = node.second.get<int>("<xmlattr>.penalty");
+            bool home = node.second.get<std::string>("<xmlattr>.mode") == "H";
+            int max = node.second.get<int>("<xmlattr>.max");
+            itc21.addRule(ca1(team, max, home, slots, hard));
+        }
+        else if(name == "CA2") {
+        }
+        else if(name == "CA3") {
+        }
+        else if(name == "CA4") {
+        }
+        else if(name == "GA1") {
+        }
+        else if(name == "BR1") {
+        }
+        else if(name == "BR2") {
+        }
+        else if(name == "FA2") {
+        }
+        else if(name == "SE1") {
+        }
+    }
 
-            case "CA1":
-                bool hard = node.second.get<std::string>("<xmlattr>.type") == "HARD";
-                int team = node.second.get<int>("<xmlattr>.teams");
-                //std::vector<int> slots;
-                int penalty = node.second.get<int>("<xmlattr>.penalty");
-                bool home = node.second.get<std::string>("<xmlattr>.mode") == "H";
-                int max = node.second.get<int>("<xmlattr>.max");
-                itc21.addRule(ca1(team, max, home, slots, hard));
-                break;
 
-            case "CA2":
-                break;
+}

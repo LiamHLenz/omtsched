@@ -11,8 +11,6 @@
 #include <memory>
 #include "Assignment.h"
 #include "Rule.h"
-#include "Component.h"
-#include "Model.h"
 
 namespace omtsched {
 
@@ -21,15 +19,13 @@ namespace omtsched {
 
     public:
 
-        const std::string problemName;
-
-        explicit Problem(const std::string &name);
-
-        Component<ID> &newComponent(const ComponentType &type, const ID &id);
+        Component<ID> &newComponent(const ID &id, const ComponentType<ID> &type);
 
         Assignment<ID> &newAssignment();
 
-        std::set<std::string> getComponentTypes() const;
+        void addComponentType(const ID &id);
+
+        std::set<ID> getComponentTypes() const;
 
 
         const std::set<ID> &getAllGroups() const;
@@ -38,7 +34,7 @@ namespace omtsched {
 
         const std::vector<Component<ID>> &getComponents(const std::string &componentType) const;
 
-        const std::vector<std::unique_ptr<Assignment<ID>>> &getAssignments() const;
+        const std::vector<Assignment<ID>> &getAssignments() const;
 
         const std::vector<Rule<ID>> &getRules() const;
 
@@ -46,11 +42,6 @@ namespace omtsched {
 
         void addRule(const Rule<ID> &);
 
-        //void solve(const bool &allModels);
-
-        void getModel(Model &model) const;
-
-        void printProblem(std::ostream) const;
 
     private:
 
@@ -64,56 +55,68 @@ namespace omtsched {
 
         std::vector<Rule<ID>> rules;
 
+        std::set<ID> componentTypes;
+
         //std::vector<Rule> objectives;
 
     };
 
+    // Reference can be subject to invalidation, only use locally!
+    // TODO: returned reference can be invalidated in newComponent and newAssignment
+    template<typename ID>
+    Component<ID> &Problem<ID>::newComponent(const ID &id, const ComponentType<ID> &type) {
+        auto it = components.template emplace_back(id, type);
+        return it;
+    }
+
+    // Reference can be subject to invalidation, only use locally!
+    template<typename ID>
+    Assignment<ID> &Problem<ID>::newAssignment() {
+        auto it = assignments.emplace_back();
+        return it;
+    }
+
+    template<typename ID>
+    void Problem<ID>::addComponentType(const ID &id) {
+        componentTypes.template emplace({id});
+    }
+
+    template<typename ID>
+    std::set<ID> Problem<ID>::getComponentTypes() const {
+        return componentTypes;
+    }
+
+
+    template<typename ID>
+    const std::set<ID> &omtsched::Problem<ID>::getAllGroups() const {
+        return groups;
+    }
+
+    template<typename ID>
+    const std::set<ID> &omtsched::Problem<ID>::getAllTags() const {
+        return tags;
+    }
+
+    template<typename ID>
+    const std::vector<Component<ID>> &omtsched::Problem<ID>::getComponents(const std::string &componentType) const {
+        return components;
+    }
+
+    template<typename ID>
+    const std::vector<Assignment<ID>> &omtsched::Problem<ID>::getAssignments() const {
+        return assignments;
+    }
+
+    template<typename ID>
+    const std::vector<Rule<ID>> &omtsched::Problem<ID>::getRules() const {
+        return rules;
+    }
+
+
+    template<typename ID>
+    void omtsched::Problem<ID>::addRule(const Rule<ID> &rule) {
+        rules.push_back(rule);
+    }
+
 }
-
-
-template<typename ID>
-omtsched::Problem<ID>::
-Problem(const std::string &name)
-        : problemName(name) {};
-
-template<typename ID>
-const std::set<ID> &omtsched::Problem<ID>::getAllGroups() const {
-
-    return groups;
-}
-
-template<typename ID>
-const std::set<ID> &omtsched::Problem<ID>::getAllTags() const {
-    return tags;
-}
-
-template<typename ID>
-const std::vector<std::unique_ptr<Component<ID>>> &
-omtsched::Problem<ID>::getComponents() const {
-    return components;
-}
-
-template<typename ID>
-const std::vector<std::unique_ptr<Assignment<ID>>> &omtsched::Problem<ID>::getAssignments() const {
-    return assignments;
-}
-
-template<typename ID>
-const std::vector<Rule<ID>> &omtsched::Problem<ID>::getRules() const {
-    return rules;
-}
-
-template<typename ID>
-void omtsched::Problem<ID>::addRule(const std::string &) {
-
-
-}
-
-template<typename ID>
-void omtsched::Problem<ID>::addRule(const Rule<ID> &) {
-
-
-}
-
-
 #endif //OMTSCHED_PROBLEM_H
