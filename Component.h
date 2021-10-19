@@ -7,6 +7,7 @@
 
 #include <map>
 #include <set>
+#include <memory>
 #include "ComponentType.h"
 
 namespace omtsched {
@@ -15,11 +16,11 @@ namespace omtsched {
     class Component {
 
     public:
-        Component(const ID &id, const ComponentType<ID> &type) : ID{id}, type{type} {}
+        Component(const ID &id) : id{id} {}
         //virtual const std::string componentType() const = 0;
 
-        const ID getId() const;
-        std::string getIDString() const;
+        const ID getID() const;
+
         const std::map<ID, int> &getTags() const;
         const std::set<ID> &getGroups() const;
 
@@ -28,22 +29,15 @@ namespace omtsched {
 
         void setTag(const ID &, const int);
 
-        const ComponentType<ID> &getType() const;
-
     private:
-        ComponentType<ID> type;
         const ID id;
         std::map<ID, int> tags;
         std::set<ID> groups;
     };
 
-    template<typename ID>
-    const ComponentType<ID>&Component<ID>::getType() const {
-        return type;
-    }
 
     template<typename ID>
-    const ID Component<ID>::getId() const {
+    const ID Component<ID>::getID() const {
         return id;
     }
 

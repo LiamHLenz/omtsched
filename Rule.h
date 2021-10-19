@@ -14,7 +14,7 @@ namespace omtsched {
 
     public:
         Rule(const Condition<ID> &condition);
-        Rule(const Rule &);
+        //Rule(const Rule &);
         bool validate() const;
 
         void addAssignments(std::vector<Assignment<ID>*>);
@@ -32,8 +32,6 @@ namespace omtsched {
     template<typename ID>
     Rule<ID>::Rule(const Condition<ID> &condition) : toplevel{std::make_unique<Condition<ID>>(condition)} {}
 
-    template<typename ID>
-    Rule<ID>::Rule(const Rule &r) : toplevel{r.toplevel}, restrictedSet{r.restrictedSet}, applicableSets{r.applicableSets} {}
 
     template<typename ID>
     void Rule<ID>::addAssignments(std::vector<Assignment<ID>*> assignments) {

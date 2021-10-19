@@ -19,13 +19,13 @@ namespace omtsched {
 
     public:
 
-        Component<ID> &newComponent(const ID &id, const ComponentType<ID> &type);
+        void print(std::ostream &) const;
+
+        //Component<ID> &newComponent(const ID &id, const ComponentType<ID> &type);
+
+        Component<ID> &newComponent(const ID &id, const ID &type);
 
         Assignment<ID> &newAssignment();
-
-        void addComponentType(const ID &id);
-
-        std::set<ID> getComponentTypes() const;
 
 
         const std::set<ID> &getAllGroups() const;
@@ -38,10 +38,15 @@ namespace omtsched {
 
         const std::vector<Rule<ID>> &getRules() const;
 
-        void addRule(const std::string &);
+        //void addRule(const std::string &);
 
-        void addRule(const Rule<ID> &);
+        //void addRule(const Rule<ID> &&);
 
+        Rule<ID> &addRule(const Condition<ID> &&);
+
+        std::vector<ID> getComponentTypes() const;
+        const std::vector<Component<ID>> &getComponents(const ID &type);
+        const ID addComponentType(const ID &);
 
     private:
 
@@ -49,41 +54,62 @@ namespace omtsched {
 
         std::set<ID> groups;
 
-        std::vector<Component<ID>> components;
-
         std::vector<Assignment<ID>> assignments;
 
         std::vector<Rule<ID>> rules;
 
-        std::set<ID> componentTypes;
+        std::map<ID, std::vector<Component<ID>>> components;
 
         //std::vector<Rule> objectives;
 
     };
 
-    // Reference can be subject to invalidation, only use locally!
-    // TODO: returned reference can be invalidated in newComponent and newAssignment
     template<typename ID>
-    Component<ID> &Problem<ID>::newComponent(const ID &id, const ComponentType<ID> &type) {
-        auto it = components.template emplace_back(id, type);
-        return it;
+    Rule<ID> &Problem<ID>::addRule(const Condition<ID> &&c) {
+        return rules.template emplace_back(std::move(c));
+    }
+/*
+    // Reference can be subject to invalidation, only use locally!
+    // TODO: returned iterator can be invalidated in newComponent and newAssignment
+    template<typename ID>
+     Component<ID> &Problem<ID>::newComponent(const ID &id, const ComponentType<ID> &type) {
+        return components.emplace_back(id, type.getID());
+    }*/
+
+    // Reference can be subject to invalidation, only use locally!
+    // TODO: returned iterator can be invalidated in newComponent and newAssignment
+    template<typename ID>
+    Component<ID> &Problem<ID>::newComponent(const ID &id, const ID &type) {
+        return components[type].emplace_back(id);
     }
 
     // Reference can be subject to invalidation, only use locally!
     template<typename ID>
     Assignment<ID> &Problem<ID>::newAssignment() {
-        auto it = assignments.emplace_back();
-        return it;
+        return assignments.emplace_back();
+    }
+
+
+    template<typename ID>
+    std::vector<ID> Problem<ID>::getComponentTypes() const {
+
+        std::vector<ID> types;
+
+        for(const auto &[id, comps] : components)
+            types.push_back(id);
+
+        return types;
     }
 
     template<typename ID>
-    void Problem<ID>::addComponentType(const ID &id) {
-        componentTypes.template emplace({id});
+    const std::vector<Component<ID>> &Problem<ID>::getComponents(const ID &type) {
+        return components.at(type);
     }
 
     template<typename ID>
-    std::set<ID> Problem<ID>::getComponentTypes() const {
-        return componentTypes;
+    const ID Problem<ID>::addComponentType(const ID &id) {
+        components[id]; // create empty vector at position
+        return id;
     }
 
 
@@ -112,11 +138,20 @@ namespace omtsched {
         return rules;
     }
 
-
+    /*
     template<typename ID>
-    void omtsched::Problem<ID>::addRule(const Rule<ID> &rule) {
-        rules.push_back(rule);
-    }
+    void Problem<ID>::print(std::ostream &ostr) const {
+
+        for(const auto &comp : components)
+            comp.print(ostr);
+
+        for(const auto &asgn : assignments)
+            asgn.print(ostr);
+
+        for(const auto &rule : rules)
+            rule.print(ostr);
+
+    } */
 
 }
 #endif //OMTSCHED_PROBLEM_H

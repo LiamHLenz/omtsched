@@ -38,7 +38,7 @@ Each team from teams plays at most max home games (mode = "H") or away games
 (mode = "A") during time slots in slots.
  */
 //TODO: punish every violated instance
-omtsched::Rule<std::string> ca1(std::string team, int max, bool home, std::string &slots, bool hard){
+void ca1(omtsched::Problem<std::string> &pr, std::string team, int max, bool home, std::string &slots, bool hard){
 
     auto modeCondition = home ? ComponentIs("HomeTeam", team) : ComponentIs("AwayTeam", team);
 
@@ -46,8 +46,7 @@ omtsched::Rule<std::string> ca1(std::string team, int max, bool home, std::strin
     for(const auto &slot : slots)
         slotCondition.add(ComponentIs("Slot", std::string(1, slot)));
 
-     return {MaxAssignment({modeCondition, slotCondition}, max)};
-
+    pr.addRule(MaxAssignment({modeCondition, slotCondition}, max));
 }
 
 /*
@@ -119,10 +118,12 @@ the mutual games of team 0 and 1
 
 int main() {
 
-    const omtsched::Task<std::string> Game {"G"};
-    const omtsched::Timeslot<std::string> Gameslot {"S"};
 
     omtsched::Problem<std::string> itc21;
+
+    const std::string gameType = itc21.addComponentType("G");
+    const std::string slotType = itc21.addComponentType("S");
+
     std::string solutionPath;
     std::string problemPath;
 
@@ -149,7 +150,7 @@ int main() {
 
             std::string gameID = std::to_string(id1) + "_" + std::to_string(id2);
 
-            auto game = itc21.newComponent(gameID, Game);
+            auto game = itc21.newComponent(gameID, gameType);
 
             game.addGroup("h" + std::to_string(id1));       // h: home
             game.addGroup("a" + std::to_string(id2));       // a: away
@@ -162,7 +163,7 @@ int main() {
     for(pt::ptree::value_type &node: scenarioTree.get_child("Instance.Resources.Slots")){
 
         const int &id = node.second.get<int>("<xmlattr>.id");
-        auto ts = itc21.newComponent(std::to_string(id), Gameslot);
+        auto ts = itc21.newComponent(std::to_string(id), slotType);
         ts.addGroup(std::to_string(id));
 
         // Create game assignments as fixed timeslot assignments
@@ -184,8 +185,8 @@ int main() {
     std::cout << "---- Printing Components ----" << std::endl;
     for(const auto &compType : itc21.getComponentTypes()){
         std::cout << "Component Type " << compType << ": ";
-        for(const auto &comp : itc21.getComponents(compType))
-            std::cout << " " << comp.getIDString();
+        //for(const auto &comp : itc21.getComponents(compType))
+        //    std::cout << " " << comp;
         std::cout << std::endl;
     }
 
@@ -229,7 +230,7 @@ int main() {
             int penalty = node.second.get<int>("<xmlattr>.penalty");
             bool home = node.second.get<std::string>("<xmlattr>.mode") == "H";
             int max = node.second.get<int>("<xmlattr>.max");
-            itc21.addRule(ca1(team, max, home, slots, hard));
+            ca1(itc21, team, max, home, slots, hard);
         }
         else if(name == "CA2") {
         }
