@@ -130,7 +130,7 @@ int main() {
     namespace pt = boost::property_tree;
 
     pt::ptree scenarioTree;
-    pt::read_xml("/home/hal/Desktop/ITC2021_Test1.xml", scenarioTree);
+    pt::read_xml("C:/Users/Betrieb-PC/Desktop/TestInstances_V3/ITC2021_Test1.xml", scenarioTree);
 
 
     // Create Games
@@ -150,7 +150,7 @@ int main() {
 
             std::string gameID = std::to_string(id1) + "_" + std::to_string(id2);
 
-            auto game = itc21.newComponent(gameID, gameType);
+            auto &game = itc21.newComponent(gameID, gameType);
 
             game.addGroup("h" + std::to_string(id1));       // h: home
             game.addGroup("a" + std::to_string(id2));       // a: away
@@ -163,39 +163,25 @@ int main() {
     for(pt::ptree::value_type &node: scenarioTree.get_child("Instance.Resources.Slots")){
 
         const int &id = node.second.get<int>("<xmlattr>.id");
-        auto ts = itc21.newComponent(std::to_string(id), slotType);
+        auto &ts = itc21.newComponent(std::to_string(id), slotType);
         ts.addGroup(std::to_string(id));
 
         // Create game assignments as fixed timeslot assignments
-        auto gameSlot = itc21.newAssignment();
+        auto &gameSlot = itc21.newAssignment();
         gameSlot.setFixed("s_" + std::to_string(id), ts);
+
         //gameSlot.add("slot_" + std::to_string(id), Game, ANY, true);
     }
 
 
-    std::cout << "---- Printing Assignments ----" << std::endl;
 
-    for(const auto &assignment : itc21.getAssignments()) {
-        std::cout << "New Assignment: " << std::endl;
-        for(const auto & [name, compSlot] : assignment.getComponentSlots())
-            std::cout << compSlot.describe() << std::endl;
-    }
-    std::cout << std::endl;
-
-    std::cout << "---- Printing Components ----" << std::endl;
-    for(const auto &compType : itc21.getComponentTypes()){
-        std::cout << "Component Type " << compType << ": ";
-        //for(const auto &comp : itc21.getComponents(compType))
-        //    std::cout << " " << comp;
-        std::cout << std::endl;
-    }
-
-
+    // -----------------------------------------------
     // Add Standard Rules:
 
-    // A
+    // a team can only play one game simultaneously
+    for()
+        itc21.addRule( Implies(SameComponent(slotType), Not() ) );
 
-    // Compactness, P,
 
     // TODO: phasedness
     // Phased: season is split into two equally long 1RR intervals, where each pair plays
