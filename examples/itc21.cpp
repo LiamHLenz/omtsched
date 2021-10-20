@@ -17,34 +17,70 @@ enum Mode {
 };
 
 // Utility function to break up strings specifying a set of integer identifiers (e.g. "9;14;5")
-std::vector<int> split(const std::string &str){
+std::vector<std::string> split(const std::string &str){
 
-    std::vector<int> v;
+    std::vector<std::string> v;
     std::string buffer = "";
     for(const char &c : str) {
         if(c != ';')
             buffer.append(1, c);
         else{
-            v.push_back(std::stoi(buffer));
+            v.push_back(buffer);
             buffer = "";
         }
     }
     return v;
 }
 
+std::string modeString(const std::string &team, const Mode &mode) {
+
+    std::string s = "";
+    switch(mode) {
+        case Mode::H: s += "h";
+        break;
+
+        case Mode::A: s += "a";
+        break;
+
+        case Mode::HA:
+            break;  // nothing needs to be added - the
+                    // standard team group covers this case
+
+    }
+
+    s += team;
+    return s;
+
+}
+
 /*
 "CA1 <CA1 teams="0" max="0" mode="H" slots="0" type="HARD"/>
 Each team from teams plays at most max home games (mode = "H") or away games
 (mode = "A") during time slots in slots.
+
+ Note that a CA1 constraint where the
+set teams contains more than one team can be split into several CA1 constraints where the set
+teams contains one team: in all ITC2021 instances, teams therefore contains only one team.
+
  */
 //TODO: punish every violated instance
-void ca1(omtsched::Problem<std::string> &pr, std::string team, int max, bool home, std::string &slots, bool hard){
+
+void ca1(omtsched::Problem<std::string> &pr, std::string team, int max, Mode mode, std::string &slots, bool hard){
+
+
+
+
+}
+
+void ca1(omtsched::Problem<std::string> &pr, std::string team, int max, Mode mode, std::string &slots, bool hard){
 
     auto modeCondition = home ? ComponentIs("HomeTeam", team) : ComponentIs("AwayTeam", team);
 
     Or slotCondition;
     for(const auto &slot : slots)
         slotCondition.add(ComponentIs("Slot", std::string(1, slot)));
+
+    MaxAssignment(max, modeCondition, ComponentIs())
 
     pr.addRule(MaxAssignment({modeCondition, slotCondition}, max));
 }
@@ -55,7 +91,24 @@ slots ="0;1;2" type="SOFT"/>
 Each team in teams1 plays at most max home games (mode1 = "H"), away games (mode1 =
 "A"), or games (mode1 = "HA") against teams (mode2 = "GLOBAL"; the only mode we
 consider) in teams2 during time slots in slots.
+
+ Note that a CA2 constraint
+where the set teams contains more than one team can be split into several CA2 constraints where
+the set teams contains one team: in all ITC2021 instances, teams therefore contains only one
+team.
  */
+void ca2(omtsched::Problem<std::string> &pr, std::string teams1, int min, int max, Mode mode, std::string teams2, std::string &slots, bool hard){
+
+    std::vector<std::string> slotIDs = split(slots);
+    std::vector<std::string> teams1IDs = split(teams1);
+    std::vector<std::string> teams2IDs = split(teams2);
+
+
+    // difficulty: get team in teams 1 for mode
+    MaxAssignment(max, ComponentIn(Game, teams1), ComponentIn(Game, teams2), ComponentIn(, slotIDs), InGroup(Game, mode + ));
+
+
+}
 
 
 /*
@@ -65,6 +118,14 @@ Each team in teams1 plays at most max home games (mode1 = "H"), away games (mode
 "A"), or games (mode1 = "HA") against teams in teams2 in each sequence of intp time
 slots (mode2 = "SLOTS"; the only mode we consider).
  */
+void ca3(omtsched::Problem<std::string> &pr, std::string teams1, int max, Mode mode, std::string teams2, int intp, bool hard){
+
+    std::vector<std::string> t1 = split(teams1);
+    std::vector<std::string> t2 = split(teams2);
+
+    MaxInSequence(max, intp, InGroup(Game, teams1), InGroup(Game, teams2), );
+
+}
 
 
 /*
@@ -73,8 +134,16 @@ slots ="0;1" type="HARD"/>
 Teams in teams1 play at most max home games (mode1 = "H"), away games (mode1 =
 "A"), or games (mode1 = "HA") against teams in teams2 during time slots in slots
 (mode2 = "GLOBAL") or during each time slot in slots (mode2 = "EVERY").
- */
 
+ In contrast to CA2 and CA3 that define restrictions for each team in teams1, CA4 considers
+teams1 as a single entity. This constraint is typically used to limit the total number of games
+between top teams, or to limit the total number of home games per time slot when e.g. two teams
+share a stadium.
+
+ */
+void ca4(omtsched::Problem<std::string> &pr, std::string teams1, int max, Mode mode, std::string teams2, int intp, bool hard){
+
+}
 
 /*
  * GA1 <GA1 min="0" max="0" meetings="0,1;1,2;" slots="3" type="HARD"/>
@@ -83,13 +152,24 @@ slots in slots. Game (0,1) and (1,2) cannot take place during time slot 3.
 The set slots triggers a deviation equal to the number of games in meetings less than min
 or more than max.
  */
+void ca4(omtsched::Problem<std::string> &pr, std::string teams1, int max, Mode mode, std::string teams2, int intp, bool hard){
+
+}
 
 /*
  * BR1 <BR1 teams="0" intp="0" mode2="HA" slots="1" type="HARD"/>
 Each team in teams has at most intp home breaks (mode2 = "H"), away breaks (mode2 =
 "A"), or breaks (mode2 = "HA") during time slots in slots. Team 0 cannot have a break
 on time slot 1
+
+ The BR1 constraint can forbid breaks at the beginning or end of the season, or can limit the total
+number of breaks per team. Note that a BR1 constraint where the set teams contains more than
+one team can be split into several BR1 constraints where the set teams contains one team: in all
+ITC2021 instances, teams therefore contains only one team.
  */
+void ca4(omtsched::Problem<std::string> &pr, std::string teams1, int max, Mode mode, std::string teams2, int intp, bool hard){
+
+}
 
 /*
  * BR2 <BR2 homeMode="HA" teams="0;1" mode2="LEQ" intp="2" slots="0;1;2;3" type="HARD
@@ -98,6 +178,9 @@ The sum over all breaks (homeMode = "HA", the only mode we consider) in teams is
 more than (mode2 = "LEQ", the only mode we consider) intp during time slots in slots.
 Team 0 and 1 together do not have more than two breaks during the first four time slots
  */
+void ca4(omtsched::Problem<std::string> &pr, std::string teams1, int max, Mode mode, std::string teams2, int intp, bool hard){
+
+}
 
 /*
  * FA2 <FA2 teams="0;1;2" mode="H" intp="1" slots=" 0;1;2;3 " type="HARD"/>
@@ -205,18 +288,18 @@ int main() {
 
         std::string name = node.first;
 
-        // CA1, CA2, CA3, CA4,
-        // GA1, BR1, BR2,
-        // FA2, SE1
         // TODO: oh my god burn this and burn me
         if(name == "CA1") {
             bool hard = node.second.get<std::string>("<xmlattr>.type") == "HARD";
             std::string team = node.second.get<std::string>("<xmlattr>.teams");
             std::string slots = node.second.get<std::string>("<xmlattr>.slots");
             int penalty = node.second.get<int>("<xmlattr>.penalty");
-            bool home = node.second.get<std::string>("<xmlattr>.mode") == "H";
+            std::string mode = node.second.get<std::string>("<xmlattr>.mode");
             int max = node.second.get<int>("<xmlattr>.max");
-            ca1(itc21, team, max, home, slots, hard);
+
+            std::vector<std::string> slotIDs = split(slots);
+            //TODO: adjust H, HA, A groups
+            itc21.addRule( MaxAssignment( max, InGroup(gameType, mode+team), ComponentIn(slotType, slots)), hard);
         }
         else if(name == "CA2") {
         }

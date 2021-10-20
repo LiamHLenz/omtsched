@@ -15,17 +15,17 @@ namespace omtsched {
     public:
         Rule(const Condition<ID> &condition);
         //Rule(const Rule &);
-        bool validate() const;
+        //bool validate() const;
 
-        void addAssignments(std::vector<Assignment<ID>*>);
-        void removeAssignments(std::vector<Assignment<ID>*>);
+        //void addAssignments(std::vector<Assignment<ID>*>);
+        //void removeAssignments(std::vector<Assignment<ID>*>);
 
         std::string to_string() const;
 
     private:
         std::unique_ptr<Condition<ID>> toplevel;
-        bool restrictedSet;
-        std::vector<std::vector<Assignment<ID>*>> applicableSets;
+        //bool restrictedSet;
+        //std::vector<std::vector<Assignment<ID>*>> applicableSets;
 
     };
 
@@ -33,10 +33,10 @@ namespace omtsched {
     Rule<ID>::Rule(const Condition<ID> &condition) : toplevel{std::make_unique<Condition<ID>>(condition)} {}
 
 
-    template<typename ID>
-    void Rule<ID>::addAssignments(std::vector<Assignment<ID>*> assignments) {
-        applicableSets.push_back(assignments);
-    }
+    //template<typename ID>
+    //void Rule<ID>::addAssignments(std::vector<Assignment<ID>*> assignments) {
+    //    applicableSets.push_back(assignments);
+    //}
 
     //TODO: the complication is finding different permutations
     // of the same set

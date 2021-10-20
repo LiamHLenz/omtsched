@@ -56,7 +56,8 @@ namespace omtsched {
 
         std::vector<Assignment<ID>> assignments;
 
-        std::vector<Rule<ID>> rules;
+        std::vector<Rule<ID>> rulesHard;
+        std::vector<std::pair<Rule<ID>, int>> rulesSoft;
 
         std::map<ID, std::vector<Component<ID>>> components;
 
@@ -66,8 +67,18 @@ namespace omtsched {
 
     template<typename ID>
     Rule<ID> &Problem<ID>::addRule(const Condition<ID> &&c) {
+        return rulesHard.emplace_back(std::move(c));
+    }
+
+    //itc21.addRule( MaxAssignment( max, InGroup(gameType, mode+team), ComponentIn(slotType, slots)), hard);
+    template<typename ID>
+    Rule<ID> &Problem<ID>::addRule(const Condition<ID> &&c, bool hard) {
+
+        Rule r {}
         return rules.template emplace_back(std::move(c));
     }
+
+
 /*
     // Reference can be subject to invalidation, only use locally!
     // TODO: returned iterator can be invalidated in newComponent and newAssignment
