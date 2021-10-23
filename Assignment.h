@@ -21,44 +21,48 @@ namespace omtsched {
     template<typename ID>
     struct ComponentSlot {
 
-        // Base
         ComponentSlot() = default;
 
         /*
          * Constructor for a variable component slot
          */
-        ComponentSlot(ID componentType, std::size_t number, bool optional) : type{componentType},
+        ComponentSlot(ID componentType, int number, bool optional) : type{componentType},
         number{number}, optional{optional}, fixed{false} {};
 
-        //TODO: how to use move correctly?
         /*
          * Constructor for a fixed component slot
          */
-        //ComponentSlot(std::string name, std::vector<Component<ID>> &&comps) : id{std::move(name)}, type{components.front().getType()},
-        //number{components.size()}, optional{false}, fixed{true}, components{std::move(comps)} {}
-
-        //TODO: passing and move
         ComponentSlot(std::vector<Component<ID>> &&comps) : type{comps.front().getType()},
         number{comps.size()}, optional{false}, fixed{true}, components{comps} {}
 
-        //TODO: fix awkward workaround in ComponentSlot constructor
-        //ComponentSlot(std::string name, Component<ID> component) : ComponentSlot(name, ) {components.push_back(component);}
-
-        //ComponentSlot<ID> &operator=(ComponentSlot<ID>&&);
+        ComponentSlot<ID> &operator=(ComponentSlot<ID>&&);
 
         std::string describe() const;
 
         void addComponent(const Component<ID> &);
 
         const ID type;
-        //TODO: either special type or int
-        std::size_t number;
+        int number;
         bool optional;
 
         bool fixed;
         std::vector<ID> components;
     };
 
+    template<typename ID>
+    ComponentSlot<ID> &ComponentSlot<ID>::operator=(ComponentSlot<ID> &&cs) {
+
+        if (&cs == this)
+            return *this;
+
+        type = cs.type;
+        number = cs.number;
+        optional = cs.optional;
+        fixed = cs.fixed;
+        components = std::move(cs.components);
+
+        return *this;
+    }
 
     template<typename ID>
     std::string ComponentSlot<ID>::describe() const {
@@ -120,7 +124,7 @@ namespace omtsched {
     template<typename ID>
     void Assignment<ID>::setVariable(const ID &name, ID componentType, int number, bool optional) {
 
-        componentSlots.emplace(name, {name, componentType, number, optional});
+        componentSlots[name] = {componentType, number, optional};
     }
 
     template<typename ID>

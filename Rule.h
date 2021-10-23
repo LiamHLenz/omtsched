@@ -21,17 +21,31 @@ namespace omtsched {
         //void removeAssignments(std::vector<Assignment<ID>*>);
 
         std::string to_string() const;
+        Condition<ID>* getTopCondition() const;
+
+        const std::vector<std::vector<Assignment<ID> *>> &getApplicableSets() const;
+
+        bool isRestricted() const;
 
     private:
         std::unique_ptr<Condition<ID>> toplevel;
-        //bool restrictedSet;
-        //std::vector<std::vector<Assignment<ID>*>> applicableSets;
+        bool restrictedSet;
+        std::vector<std::vector<Assignment<ID>*>> applicableSets;
 
     };
 
     template<typename ID>
     Rule<ID>::Rule(const Condition<ID> &condition) : toplevel{std::make_unique<Condition<ID>>(condition)} {}
 
+    template<typename ID>
+    bool Rule<ID>::isRestricted() const {
+        return restrictedSet;
+    }
+
+    template<typename ID>
+    const std::vector<std::vector<Assignment<ID> *>> &Rule<ID>::getApplicableSets() const {
+        return applicableSets;
+    }
 
     //template<typename ID>
     //void Rule<ID>::addAssignments(std::vector<Assignment<ID>*> assignments) {

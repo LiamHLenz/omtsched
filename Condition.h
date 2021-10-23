@@ -13,9 +13,12 @@ namespace omtsched {
 
     enum class CONDITION_TYPE {
 
+        BASE,
         NOT, OR, AND, XOR, IMPLIES, IFF,
-        COMPONENT_IS,
-        MAX_ASSIGNMENTS
+        COMPONENT_IS, COMPONENT_IN, SAME_COMPONENT,
+        IN_GROUP,
+        MAX_ASSIGNMENTS,
+        MAX_IN_SEQUENCE
 
     };
 
@@ -23,21 +26,20 @@ namespace omtsched {
     class Condition {
 
     public:
-        Condition() : Condition({}) {};
-        Condition(std::initializer_list<Condition<ID>> sc);
-        //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
+        const CONDITION_TYPE getType();
+        //virtual returnType evaluate(std::vector<std::vector<Component<ID>*>>& arguments) = 0;
         //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
 
     protected:
-        // specifies the types of
-        ID conditionID;
-        std::vector<ComponentType<ID>> paramenterTypes;
-        std::vector<Condition<ID>> subconditions;
+        CONDITION_TYPE conditionType = CONDITION_TYPE::BASE;
 
     };
 
     template<typename ID>
-    Condition<ID>::Condition(std::initializer_list<Condition<ID>> sc) : subconditions{sc} {}
+    const CONDITION_TYPE Condition<ID>::getType() {
+        return conditionType;
+    }
+
 
 }
 

@@ -19,7 +19,6 @@ namespace omtsched {
         //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
         //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
 
-    private:
         const std::string componentSlot;
         const ID component;
     };
@@ -28,17 +27,40 @@ namespace omtsched {
     ComponentIs<ID>::ComponentIs(std::string componentSlot, ID component) : componentSlot{componentSlot},
                                                                             component{component} {}
 
+
     template<typename ID>
-    class MaxAssignment : public Condition<ID> {
+    class InGroup : public Condition<ID> {
 
     public:
-        MaxAssignment(std::initializer_list<Condition<ID>> sc, const int &max);
-        const int max;
+        InGroup(const ID &componentType, ID groupID) : compType{componentType}, group{groupID} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::IN_GROUP;
+        const ID compType;
+        const ID group;
 
     };
 
+
     template<typename ID>
-    MaxAssignment<ID>::MaxAssignment(std::initializer_list<Condition <ID>> sc, const int &max) : max{ max }, Condition<ID>{sc} {}
+    class SameComponent : public Condition<ID> {
+
+    public:
+        SameComponent(const ID &slotType) : slot{slotType} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::SAME_COMPONENT;
+        const ID slot;
+    };
+
+
+    template<typename ID>
+    class ComponentIn : public Condition<ID> {
+
+    public:
+        ComponentIn(const ID &slotType, std::vector<ID> components) : slotType{slotType}, components{components} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IN;
+        const ID slotType;
+        const std::vector<ID> &components;
+    };
+
+
 }
 
 #endif //OMTSCHED_BASICCONDITIONS_H

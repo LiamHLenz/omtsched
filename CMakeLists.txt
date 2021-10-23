@@ -24,7 +24,7 @@ find_package(Z3 CONFIG REQUIRED)
     include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-             examples/itc21.cpp )
+             examples/itc21.cpp conditions/MinMaxConditions.h examples/itc19.cpp)
 
 
     target_link_libraries(examples omtsched)
