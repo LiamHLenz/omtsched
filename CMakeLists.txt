@@ -9,7 +9,7 @@ add_library(omtsched SHARED omtsched.h
         Assignment.h Component.h ComponentType.h Condition.h
         Model.h Problem.h Rule.h Translator.h
         conditions/BasicConditions.h conditions/BooleanConditions.h
-        z3/TranslatorZ3.h
+        z3/TranslatorZ3.h z3/ConditionsZ3.h
         )
 
 set_target_properties(omtsched PROPERTIES LINKER_LANGUAGE CXX)
@@ -24,7 +24,7 @@ find_package(Z3 CONFIG REQUIRED)
     include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-             examples/itc21.cpp conditions/MinMaxConditions.h examples/itc19.cpp)
+             examples/inrc2.cpp)
 
 
     target_link_libraries(examples omtsched)

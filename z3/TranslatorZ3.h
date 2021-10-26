@@ -91,45 +91,50 @@ namespace omtsched {
 
         z3::context &getContext();
 
-        const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot, int num);
-
         const z3::expr getComponent(const ID &component);
 
     private:
-        void setupVariables();
 
-        z3::expr resolveRule(const Rule <ID> &rule);
+        void setupVariables();
+        void setupConstants();
+        void setupUniqueness();
+
+        void resolveRule(const Rule <ID> &rule);
 
         void addToSolver(const z3::expr &condition, const bool &hard, const int &weight);
 
         int getAssignmentNumber(const Assignment <ID> &assignment);
 
+        const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
+        const z3::expr getConstant(const ID &component) const;
+
         z3::expr resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> asgnComb);
-        z3::expr resolveComponentIs(const ComponentIs <ID> &, const std::vector<Assignment<ID>*> asgnComb);
-        z3::expr resolveComponentIn(const ComponentIn <ID> &, const std::vector<Assignment<ID>*> asgnComb);
+        z3::expr resolveComponentIs(const ComponentIs <ID> &, const Assignment<ID>* asgn);
+        z3::expr resolveComponentIn(const ComponentIn <ID> &, const Assignment<ID>* asgn);
         z3::expr resolveSameComponent(const SameComponent <ID> &, const std::vector<Assignment<ID>*> asgnComb);
-        z3::expr resolveInGroup(const InGroup <ID> &, const std::vector<Assignment<ID>*> asgnComb);
+        z3::expr resolveInGroup(const InGroup <ID> &, const Assignment<ID> asgn);
         z3::expr resolveMaxAssignments(const MaxAssignment <ID> &, const std::vector<Assignment<ID>*> asgnComb);
 
         z3::context context;
         z3::solver solver;
         Problem<ID> &problem;
 
-        //TODO: double map
         boost::bimap<int, Assignment < ID>*> assignmentOrder;
 
         sortMap<ID> sortMap;
         boost::bimap<ID, z3::expr> components;
-        // tuple in order: assignment, slot name, i-th part
-        boost::bimap<std::tuple<int, std::string, int>, z3::expr> slots;
+        // tuple in order: assignment, slot name
+        boost::bimap<std::tuple<int, std::string>, z3::expr> slots;
 
-        z3::expr resolveComponentIs(const ComponentIs <ID> &c, const Assignment <ID> *&asgn);
     };
 
     template<typename ID>
     TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : problem{problem} {
 
-        setup(problem);
+        setupConstants();
+        setupVariables();
+        solver = z3::solver{context};
+        setupUniqueness();
     }
 
     template<typename ID>
@@ -144,11 +149,15 @@ namespace omtsched {
     }
 
     template<typename ID>
-    const z3::expr
-    TranslatorZ3<ID>::getVariable(const Assignment <ID> &assignment, const std::string &componentSlot, int num) {
+    const z3::expr TranslatorZ3<ID>::getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const {
 
         auto assignmentNumber = getAssignmentNumber(assignment);
-        return slots.left.at({assignmentNumber, componentSlot, num});
+        return slots.left.at({assignmentNumber, componentSlot});
+    }
+
+    template<typename ID>
+    const z3::expr TranslatorZ3<ID>::getConstant(const ID &component) const {
+        return components.left.at(component);
     }
 
     template<typename ID>
@@ -157,52 +166,58 @@ namespace omtsched {
     }
 
     template<typename ID>
-    void TranslatorZ3<ID>::setupVariables() {
-        //TODO: make this not like this
+    void TranslatorZ3<ID>::setupUniqueness(){
 
-        // Create component types and components
-        for (const auto &compType: this->problem.getComponentTypes()) {
-            const ID &typeID = compType.getID();
-            sortMap.set(typeID, context.uninterpreted_sort(compType));
-            // Components
-            size_t ccount = 0;
-            z3::expr_vector comps{context};
-            for (const auto &component: this->problem.getComponents(compType)) {
+        for(const auto &type : problem.getComponentTypes()){
 
-                // Assign an internal numerical ID
-                const z3::sort &type = sortMap.get(typeID);
-                const std::string name = "c" + std::to_string(ccount);
-                components[component] = context.constant(name.c_str(), type);
-                ccount++;
-                comps.push_back(components.at(component));
-            }
-            // Components are assumed to be unique
-            addRule(z3::distinct(comps));
+            z3::expr_vector vars {context};
+            for(const z3::expr &var : problem.getComponents(type))
+                vars.push_back(var);
+
+            solver.add( z3::distinct(vars));
         }
 
-        // Create Assignments
+    }
+
+    template<typename ID>
+    void TranslatorZ3<ID>::setupVariables() {
         int a = 0;
         for (const auto &assignment : this->problem.getAssignments()) {
             assignmentOrder[a] = &assignment;
             int c = 0;
             for (const auto &slot: assignment->getSlots()) {
-                int i = 0;
-                for (const auto &component : slot.components) {
-                    // create assignment variable
-                    const auto &type = sortMap.get(component.getType());
-                    std::string name = "a" + std::to_string(a) + "c" + std::to_string(c) + "i" + std::to_string(i);
-                    slots[{a, slot.getName(), i}] = context.constant(name.c_str(), type);
-                    i++;
-                }
+                // create assignment variable
+                const auto &type = sortMap.get(slot.getType());
+                std::string name = "a" + std::to_string(a) + "c" + std::to_string(c);
+                slots[{a, slot.getName()}] = context.constant(name.c_str(), type);
                 c++;
             }
             a++;
         }
 
-        solver = z3::solver{context};
-
     }
 
+    template<typename ID>
+    void TranslatorZ3<ID>::setupConstants() {
+
+        // components are stored in a map by type:
+        // std::map<ID, std::vector<Component<ID>>> components;
+
+        for(const ID &type : problem.getComponentTypes()) {
+
+            z3::expr typeExpr = context.uninterpreted_sort(type);
+            sortMap.set(type, typeExpr);
+
+            int count = 0;
+            for(const ID &component : problem.getComponentTypes(type)) {
+                z3::expr var = context.constant("c"+std::to_string(count), type);
+                components.left.insert(component, var);
+                count++;
+            }
+
+        }
+
+    }
 
     template<typename ID>
     void TranslatorZ3<ID>::solve() {
@@ -223,60 +238,9 @@ namespace omtsched {
     }
 
 
-    template<typename ID>
-    z3::expr TranslatorZ3<ID>::resolveComponentIs(const ComponentIs <ID> &c, const Assignment<ID>* &asgn){
-
-        /*
-         * //If there is more than one assignment: conjunction
-        z3::expr_vector equalities (t.getContext());
-        for(const auto &assignment : assignmentGroups) {
-            const z3::expr &var = t.getVariable(assignment, componentSlot);
-            const z3::expr &component = t.getComponent(component);
-            equalities.push_back(var == component);
-        }
-
-        return z3::mk_and(equalities);
-         *
-         */
-        // Slot of assignment ? is component ?
-        std::string compSlotID = components.componentSlot;
-        ComponentSlot<ID> slot = asgn->getComponentSlots(compSlotID);
-
-        z3::expr comp = components.at(c.component);
-        boost::bimap<std::tuple<int, std::string, int>, z3::expr> slots;
-
-        // TODO: ???
-    }
-
-
-    template<typename ID>
-    z3::expr TranslatorZ3<ID>::resolveComponentIn(const ComponentIn <ID> &c, const std::vector<Assignment<ID>*> &asgnComb){}
-
-
-    template<typename ID>
-    z3::expr TranslatorZ3<ID>::resolveSameComponent(const SameComponent <ID> &c, const std::vector<Assignment<ID>*> &asgnComb){}
-
-
-    template<typename ID>
-    z3::expr TranslatorZ3<ID>::resolveInGroup(const InGroup <ID> &c, const std::vector<Assignment<ID>*> &asgnComb){}
-
-
-    template<typename ID>
-    z3::expr TranslatorZ3<ID>::resolveMaxAssignment(const MaxAssignment <ID> &c, const std::vector<Assignment<ID>*> &asgnComb){
-
-        /*
-    * Resolved by:
-    * 1. creating a bitvector of (relevant) assignments
-    * 2. creating an implication for each assignment: if the conditions are met the
-    *    bit corresponding to the assignment is set
-    * 3. constraining the maximum number of set bits
-    */
-   }
-
-
-   template<typename ID>
-   z3::expr TranslatorZ3<ID>::resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb) {
-
+   //template<typename ID>
+   //z3::expr TranslatorZ3<ID>::resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb) {
+    /*
        z3::expr_vector z3args{context};
        CONDITION_TYPE type = condition->getType();
        switch (type) {
@@ -321,8 +285,8 @@ namespace omtsched {
                return resolveMaxAssignments(const Condition <ID> &);
 
        }
-
-   }
+    */
+   //}
 
    template<typename ID>
    bool isViable(const Condition<ID> &condition, const std::vector<Assignment<ID> *> &asgnSet) {
@@ -333,7 +297,7 @@ namespace omtsched {
    }
 
    template<typename ID>
-   z3::expr TranslatorZ3<ID>::resolveRule(const Rule <ID> &rule) {
+   void TranslatorZ3<ID>::resolveRule(const Rule <ID> &rule) {
 
        const Condition<ID> &c = rule.getTopCondition();
 

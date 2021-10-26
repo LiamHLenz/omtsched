@@ -20,13 +20,13 @@ namespace omtsched {
 
         virtual void solve() = 0;
 
-        virtual Model getSolution() = 0;
-        virtual std::vector<Model> getAllSolutions() = 0;
+        virtual Model getModel() = 0;
+        //virtual std::vector<Model> getAllSolutions() = 0;
 
-        virtual void printProblem(std::string path) const = 0;
-        virtual void printSolution(std::string path) const = 0;
-        virtual void printAllSolutions(std::string path) const = 0;
-        virtual void printExplanation(std::string path) const = 0;
+        //virtual void printProblem(std::string path) const = 0;
+        //virtual void printSolution(std::string path) const = 0;
+        //virtual void printAllSolutions(std::string path) const = 0;
+        //virtual void printExplanation(std::string path) const = 0;
 
         bool isGenerateAllSolution() const;
 

@@ -69,6 +69,21 @@ namespace omtsched {
         tags.at(id) = val;
     }
 
+    template<typename ID>
+    class OrderedComponent : public Component<ID> {
+
+        public:
+
+            OrderedComponent(const ID &id, const int &point) : Component<ID>{id}, point{point} {}
+
+            friend bool operator<(const OrderedComponent<ID> &lhs, const OrderedComponent<ID> &rhs);
+        private:
+            int point;
+        };
+
+    template<typename ID>
+    bool operator<(const OrderedComponent<ID> &lhs, const OrderedComponent<ID> &rhs) { return lhs.point < rhs.point; }
+
 }
 
 #endif //OMTSCHED_COMPONENT_H

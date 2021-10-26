@@ -49,6 +49,8 @@ namespace omtsched {
         const std::vector<Component<ID>> &getComponents(const ID &type);
         const ID addComponentType(const ID &);
 
+        void addGroup(const ID&);
+
     private:
 
         std::set<ID> tags;
@@ -81,6 +83,10 @@ namespace omtsched {
             return rulesSoft.emplace_back(std::forward(c), weight);
     }
 
+    template<typename ID>
+    void Problem<ID>::addGroup(const ID &g) {
+        groups.insert(g);
+    }
 
     // Reference can be subject to invalidation, only use locally!
     // TODO: returned iterator can be invalidated in newComponent and newAssignment

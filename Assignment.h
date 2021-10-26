@@ -98,13 +98,18 @@ namespace omtsched {
         void setFixed(const ID &name, const Component<ID>&);
         void setFixed(const ID &name, std::vector<Component<ID>>&);
 
-        void setVariable(const ID &name, ID componentType, int number, bool optional);
+        void setVariable(const ID &name, ID componentType, bool optional);
 
         const std::map<std::string, ComponentSlot<ID>> & getComponentSlots() const;
 
+        void setOptional(bool optional);
+
+        void setWeight(int weight);
+
     private:
         std::map<std::string, ComponentSlot<ID>> componentSlots;
-        //TODO: domains
+        bool optional;
+        int weight;
     
     };
 
@@ -130,6 +135,16 @@ namespace omtsched {
     template<typename ID>
     const std::map<std::string, ComponentSlot<ID>> & Assignment<ID>::getComponentSlots() const {
         return componentSlots;
+    }
+
+    template<typename ID>
+    void Assignment<ID>::setOptional(bool optional) {
+        Assignment::optional = optional;
+    }
+
+    template<typename ID>
+    void Assignment<ID>::setWeight(int weight) {
+        Assignment::weight = weight;
     }
 
 }
