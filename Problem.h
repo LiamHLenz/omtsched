@@ -25,7 +25,7 @@ namespace omtsched {
 
         Component<ID> &newComponent(const ID &id, const ID &type);
 
-        Assignment<ID> &newAssignment();
+        Assignment<ID> &newAssignment(const ID &id);
 
 
         const std::set<ID> &getAllGroups() const;
@@ -34,7 +34,7 @@ namespace omtsched {
 
         const std::vector<Component<ID>> &getComponents(const std::string &componentType) const;
 
-        const std::vector<Assignment<ID>> &getAssignments() const;
+        const std::map<ID, Assignment <ID>> &getAssignments() const;
 
         const std::vector<Rule<ID>> &getRules() const;
 
@@ -57,7 +57,7 @@ namespace omtsched {
 
         std::set<ID> groups;
 
-        std::vector<Assignment<ID>> assignments;
+        std::map<ID, Assignment<ID>> assignments;
 
         std::vector<Rule<ID>> rulesHard;
         std::vector<std::pair<Rule<ID>, int>> rulesSoft;
@@ -97,8 +97,8 @@ namespace omtsched {
 
     // Reference can be subject to invalidation, only use locally!
     template<typename ID>
-    Assignment<ID> &Problem<ID>::newAssignment() {
-        return assignments.emplace_back();
+    Assignment<ID> &Problem<ID>::newAssignment(const ID &id) {
+        return assignments[id];
     }
 
 
@@ -124,7 +124,6 @@ namespace omtsched {
         return id;
     }
 
-
     template<typename ID>
     const std::set<ID> &omtsched::Problem<ID>::getAllGroups() const {
         return groups;
@@ -136,12 +135,7 @@ namespace omtsched {
     }
 
     template<typename ID>
-    const std::vector<Component<ID>> &omtsched::Problem<ID>::getComponents(const std::string &componentType) const {
-        return components;
-    }
-
-    template<typename ID>
-    const std::vector<Assignment<ID>> &omtsched::Problem<ID>::getAssignments() const {
+    const std::map<ID, Assignment <ID>> &omtsched::Problem<ID>::getAssignments() const {
         return assignments;
     }
 

@@ -162,8 +162,8 @@ int main() {
                     // Create min assignments
                     for(int j = 0; j < min; j++){
 
-                        auto &asgn = inrc2.newAssignment();
                         const std::string name = "w"+std::to_string(weekCounter)+"d"+std::to_string(dayCounter);
+                        auto &asgn = inrc2.newAssignment(name);
                         auto &time = inrc2.newComponent(name, timeType);
                         time.addGroup(skill);
                         asgn.setFixed(timeSlot, time);
@@ -180,8 +180,8 @@ int main() {
                     if(opt != 0)
                         for(int j = 0; j < min; j++){
 
-                            auto &asgn = inrc2.newAssignment();
                             const std::string name = "w"+std::to_string(weekCounter)+"d"+std::to_string(dayCounter);
+                            auto &asgn = inrc2.newAssignment(name);
                             auto &time = inrc2.newComponent(name, timeType);
                             time.addGroup(skill);
                             asgn.setFixed(timeSlot, time);

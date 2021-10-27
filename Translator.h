@@ -20,7 +20,7 @@ namespace omtsched {
 
         virtual void solve() = 0;
 
-        virtual Model getModel() = 0;
+        virtual Model<ID> getModel() = 0;
         //virtual std::vector<Model> getAllSolutions() = 0;
 
         //virtual void printProblem(std::string path) const = 0;
@@ -37,7 +37,7 @@ namespace omtsched {
         void setGenerateExplanations(bool generateExplanations);
 
     protected:
-        Problem<ID> &problem;
+        const Problem<ID> &problem;
         bool generateAllSolution;
         bool generateExplanations;
 

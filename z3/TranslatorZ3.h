@@ -26,7 +26,7 @@ namespace omtsched {
     /*
     * z3::sort does not define an order so boost::bimap cannot be used directly
     * This is a simple wrapper to circumvent that issue.
-    */
+    /
     template<typename ID>
     struct sortMap {
 
@@ -59,11 +59,12 @@ namespace omtsched {
         return componentTypeNames.at(sort);
     }
 
+
     template<typename ID>
     void sortMap<ID>::set(const ID &id, const z3::sort &sort) {
         //TODO: any type of error checking anywhere
-        componentTypeNames[id] = sort;
-        componentTypeSorts[sort] = id;
+        componentTypeSorts.emplace(id, sort);
+        componentTypeNames.emplace(sort, id);
     }
 
     template<typename ID>
@@ -79,6 +80,7 @@ namespace omtsched {
         componentTypeNames.erase(sort);
         componentTypeSorts.erase(id);
     }
+*/
 
     template<typename ID>
     class TranslatorZ3 : public omtsched::Translator<ID> {
@@ -87,7 +89,7 @@ namespace omtsched {
 
         void solve() override;
 
-        Model getModel() override;
+        Model<ID> getModel() override;
 
         z3::context &getContext();
 
@@ -103,8 +105,6 @@ namespace omtsched {
 
         void addToSolver(const z3::expr &condition, const bool &hard, const int &weight);
 
-        int getAssignmentNumber(const Assignment <ID> &assignment);
-
         const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
         const z3::expr getConstant(const ID &component) const;
 
@@ -117,19 +117,17 @@ namespace omtsched {
 
         z3::context context;
         z3::solver solver;
-        Problem<ID> &problem;
+        //const Problem<ID> &problem;
 
-        boost::bimap<int, Assignment < ID>*> assignmentOrder;
-
-        sortMap<ID> sortMap;
+        std::map<ID, z3::sort> sortMap;
         boost::bimap<ID, z3::expr> components;
         // tuple in order: assignment, slot name
-        boost::bimap<std::tuple<int, std::string>, z3::expr> slots;
+        boost::bimap<std::pair<int, std::string>, z3::expr> slots;
 
     };
 
     template<typename ID>
-    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : problem{problem} {
+    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem}, context{}, solver{context} {
 
         setupConstants();
         setupVariables();
@@ -137,11 +135,6 @@ namespace omtsched {
         setupUniqueness();
     }
 
-    template<typename ID>
-    int TranslatorZ3<ID>::getAssignmentNumber(const Assignment <ID> &assignment) {
-
-        return assignmentOrder.at(assignment);
-    }
 
     template<typename ID>
     z3::context &TranslatorZ3<ID>::getContext() {
@@ -168,11 +161,11 @@ namespace omtsched {
     template<typename ID>
     void TranslatorZ3<ID>::setupUniqueness(){
 
-        for(const auto &type : problem.getComponentTypes()){
+        for(const auto &type : this->problem.getComponentTypes()){
 
             z3::expr_vector vars {context};
-            for(const z3::expr &var : problem.getComponents(type))
-                vars.push_back(var);
+            for(const Component<ID> &var : this->problem.getComponents(type))
+                vars.push_back(components.left.at(var.getID()));
 
             solver.add( z3::distinct(vars));
         }
@@ -182,14 +175,13 @@ namespace omtsched {
     template<typename ID>
     void TranslatorZ3<ID>::setupVariables() {
         int a = 0;
-        for (const auto &assignment : this->problem.getAssignments()) {
-            assignmentOrder[a] = &assignment;
+        for (const auto &[aid, assignment] : this->problem.getAssignments()) {
             int c = 0;
-            for (const auto &slot: assignment->getSlots()) {
+            for (const auto &[sname, slot] : assignment.getComponentSlots()) {
                 // create assignment variable
-                const auto &type = sortMap.get(slot.getType());
-                std::string name = "a" + std::to_string(a) + "c" + std::to_string(c);
-                slots[{a, slot.getName()}] = context.constant(name.c_str(), type);
+                const auto &type = sortMap.at(slot.type);
+                std::string name = "a" + std::to_string(a) + "c" + sname;
+                slots.left.insert(std::make_pair(std::make_pair(a, sname), context.constant(name.c_str(), type)));
                 c++;
             }
             a++;
@@ -203,15 +195,16 @@ namespace omtsched {
         // components are stored in a map by type:
         // std::map<ID, std::vector<Component<ID>>> components;
 
-        for(const ID &type : problem.getComponentTypes()) {
+        for(const ID &type : this->problem.getComponentTypes()) {
 
-            z3::expr typeExpr = context.uninterpreted_sort(type);
-            sortMap.set(type, typeExpr);
+            z3::sort typeExpr = context.uninterpreted_sort(static_cast<std::string>(type).c_str());
+            sortMap.emplace(type, typeExpr);
 
             int count = 0;
-            for(const ID &component : problem.getComponentTypes(type)) {
-                z3::expr var = context.constant("c"+std::to_string(count), type);
-                components.left.insert(component, var);
+            for(const auto &component : this->problem.getComponents(type)) {
+
+                z3::expr var = context.constant(("c"+std::to_string(count)).c_str(), sortMap.at(type));
+                components.left.insert(std::make_pair(component.getID(), var));
                 count++;
             }
 
@@ -237,6 +230,20 @@ namespace omtsched {
 
     }
 
+    template<typename ID>
+    Model<ID> TranslatorZ3<ID>::getModel() {
+
+        // TODO check whether in SAT state
+        // if(solver.)
+
+        z3::model m = solver.get_model();
+
+        //boost::bimap<std::tuple<ID, std::string>, z3::expr> slots;
+
+        for(const auto&[key, val] : slots.left)
+            std::cout << "Assignment " << key.first << ", slot " << key.second << ": " << m.eval(val) << std::endl;
+
+    }
 
    //template<typename ID>
    //z3::expr TranslatorZ3<ID>::resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb) {
@@ -306,7 +313,7 @@ namespace omtsched {
                addToSolver(resolveCondition(c, asgnSet));
 
        else
-           for(const std::vector<Assignment<ID> *> &asgnSet : problem.getAssignmentCombinations())
+           for(const std::vector<Assignment<ID> *> &asgnSet : this->problem.getAssignmentCombinations())
                if(isViable(c, asgnSet)) // TODO: check symmetry
                    addToSolver(resolveCondition(c, asgnSet));
 

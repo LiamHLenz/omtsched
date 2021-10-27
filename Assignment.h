@@ -110,7 +110,8 @@ namespace omtsched {
         std::map<std::string, ComponentSlot<ID>> componentSlots;
         bool optional;
         int weight;
-    
+
+        void setVariable(const ID &name, ID componentType, int number, bool optional);
     };
 
     template<typename ID>
