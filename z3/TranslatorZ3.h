@@ -108,7 +108,7 @@ namespace omtsched {
         const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
         const z3::expr getConstant(const ID &component) const;
 
-        z3::expr resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> asgnComb);
+        z3::expr resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb);
         z3::expr resolveComponentIs(const ComponentIs <ID> &, const Assignment<ID>* asgn);
         z3::expr resolveComponentIn(const ComponentIn <ID> &, const Assignment<ID>* asgn);
         z3::expr resolveSameComponent(const SameComponent <ID> &, const std::vector<Assignment<ID>*> asgnComb);
@@ -236,6 +236,7 @@ namespace omtsched {
         // TODO check whether in SAT state
         // if(solver.)
 
+        Model<ID> model;
         z3::model m = solver.get_model();
 
         //boost::bimap<std::tuple<ID, std::string>, z3::expr> slots;
@@ -243,11 +244,13 @@ namespace omtsched {
         for(const auto&[key, val] : slots.left)
             std::cout << "Assignment " << key.first << ", slot " << key.second << ": " << m.eval(val) << std::endl;
 
+        return model;
+
     }
 
-   //template<typename ID>
-   //z3::expr TranslatorZ3<ID>::resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb) {
-    /*
+   template<typename ID>
+   z3::expr TranslatorZ3<ID>::resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb) {
+
        z3::expr_vector z3args{context};
        CONDITION_TYPE type = condition->getType();
        switch (type) {
@@ -277,23 +280,23 @@ namespace omtsched {
                && z3::implies(resolveCondition(condition->consequent, asgnComb), resolveCondition(condition->antecedent, asgnComb));
 
            case CONDITION_TYPE::COMPONENT_IS:
-               return resolveComponentIs(const Condition <ID> &);
+               return resolveComponentIs(condition, asgnComb);
 
            case CONDITION_TYPE::COMPONENT_IN:
-               return resolveComponentIn(const Condition <ID> &);
+               return resolveComponentIn(condition, asgnComb);
 
            case CONDITION_TYPE::SAME_COMPONENT:
-               return resolveSameComponent(const Condition <ID> &);
+               return resolveSameComponent(condition, asgnComb);
 
            case CONDITION_TYPE::IN_GROUP:
-               return resolveInGroup(const Condition <ID> &);
+               return resolveInGroup(condition, asgnComb);
 
            case CONDITION_TYPE::MAX_ASSIGNMENTS:
-               return resolveMaxAssignments(const Condition <ID> &);
+               return resolveMaxAssignments(condition, asgnComb);
 
        }
-    */
-   //}
+
+   }
 
    template<typename ID>
    bool isViable(const Condition<ID> &condition, const std::vector<Assignment<ID> *> &asgnSet) {

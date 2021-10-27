@@ -32,9 +32,9 @@ namespace omtsched {
     class InGroup : public Condition<ID> {
 
     public:
-        InGroup(const ID &componentType, ID groupID) : compType{componentType}, group{groupID} {}
+        InGroup(const ID &componentType, ID groupID) : slot{slot}, group{groupID} {}
         static const CONDITION_TYPE type = CONDITION_TYPE::IN_GROUP;
-        const ID compType;
+        const ID slot;
         const ID group;
 
     };

@@ -32,7 +32,7 @@ namespace omtsched {
 
         const std::set<ID> &getAllTags() const;
 
-        const std::vector<Component<ID>> &getComponents(const std::string &componentType) const;
+        const std::vector<Component<ID>> &getComponents(const ID &componentType) const;
 
         const std::map<ID, Assignment <ID>> &getAssignments() const;
 
@@ -46,7 +46,6 @@ namespace omtsched {
         Rule<ID> &addRule(const Condition<ID> &&c, const bool &hard, const int &weight);
 
         std::vector<ID> getComponentTypes() const;
-        const std::vector<Component<ID>> &getComponents(const ID &type);
         const ID addComponentType(const ID &);
 
         void addGroup(const ID&);
@@ -114,7 +113,7 @@ namespace omtsched {
     }
 
     template<typename ID>
-    const std::vector<Component<ID>> &Problem<ID>::getComponents(const ID &type) {
+    const std::vector<Component<ID>> &Problem<ID>::getComponents(const ID &type) const {
         return components.at(type);
     }
 

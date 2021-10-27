@@ -26,8 +26,7 @@ namespace omtsched {
         /*
          * Constructor for a variable component slot
          */
-        ComponentSlot(ID componentType, int number, bool optional) : type{componentType},
-        number{number}, optional{optional}, fixed{false} {};
+        ComponentSlot(ID componentType, bool optional) : type{componentType}, optional{optional}, fixed{false} {};
 
         /*
          * Constructor for a fixed component slot
@@ -93,26 +92,24 @@ namespace omtsched {
     class Assignment {
 
     public:
-        std::vector<Component<ID>> &getDomain(const int &id);
 
         void setFixed(const ID &name, const Component<ID>&);
         void setFixed(const ID &name, std::vector<Component<ID>>&);
 
         void setVariable(const ID &name, ID componentType, bool optional);
 
-        const std::map<std::string, ComponentSlot<ID>> & getComponentSlots() const;
+        const std::map<ID, ComponentSlot<ID>> & getComponentSlots() const;
 
         void setOptional(bool optional);
 
         void setWeight(int weight);
 
     private:
-        std::map<std::string, ComponentSlot<ID>> componentSlots;
+        std::map<ID, ComponentSlot<ID>> componentSlots;
         bool optional;
         int weight;
 
-        void setVariable(const ID &name, ID componentType, int number, bool optional);
-    };
+        };
 
     template<typename ID>
     void Assignment<ID>::setFixed(const ID &name, const Component<ID> &comps) {
@@ -128,13 +125,13 @@ namespace omtsched {
     }
 
     template<typename ID>
-    void Assignment<ID>::setVariable(const ID &name, ID componentType, int number, bool optional) {
+    void Assignment<ID>::setVariable(const ID &name, ID componentType, bool optional) {
 
-        componentSlots[name] = {componentType, number, optional};
+        componentSlots.emplace(std::piecewise_construct, std::make_tuple(name), std::make_tuple(componentType, optional));
     }
 
     template<typename ID>
-    const std::map<std::string, ComponentSlot<ID>> & Assignment<ID>::getComponentSlots() const {
+    const std::map<ID, ComponentSlot<ID>> & Assignment<ID>::getComponentSlots() const {
         return componentSlots;
     }
 
