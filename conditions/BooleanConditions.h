@@ -14,9 +14,9 @@ namespace omtsched {
     class Not : public Condition<ID> {
 
     public:
-        Not(Condition<ID> subcondition) : subcondition{std::move(subcondition)} {}
+        Not(std::shared_ptr<Condition<ID>> subcondition) : subcondition{std::move(subcondition)} {}
         static const CONDITION_TYPE type = CONDITION_TYPE::NOT;
-        const Condition<ID> subcondition;
+        const std::shared_ptr<Condition<ID>> subcondition;
     };
 
 
@@ -24,9 +24,9 @@ namespace omtsched {
     class And : public Condition<ID> {
 
         public:
-            And(std::vector<Condition<ID>> subconditions) : subconditions{std::move(subconditions)} {}
+        And(std::vector<std::shared_ptr<Condition<ID>>> subconditions) : subconditions{std::move(subconditions)} {}
             static const CONDITION_TYPE type = CONDITION_TYPE::AND;
-            const std::vector<Condition<ID>> subconditions;
+            const std::vector<std::shared_ptr<Condition<ID>>> subconditions;
         };
 
 
@@ -34,25 +34,25 @@ namespace omtsched {
     class Or : public Condition<ID> {
 
     public:
-        Or(std::vector<Condition<ID>> subconditions) : subconditions{std::move(subconditions)} {}
+        Or(std::vector<std::shared_ptr<Condition<ID>>> subconditions) : subconditions{std::move(subconditions)} {}
         static const CONDITION_TYPE type = CONDITION_TYPE::OR;
-        const std::vector<Condition<ID>> subconditions;
+        const std::vector<std::shared_ptr<Condition<ID>>> subconditions;
     };
 
 
     template<typename ID>
     class Implies : public Condition<ID> {
     public:
-        Implies(Condition<ID> antecedent, Condition<ID> consequent) : antecedent{std::move(antecedent)}, consequent{std::move(consequent)} {}
+        Implies(std::shared_ptr<Condition<ID>> antecedent, std::shared_ptr<Condition<ID>> consequent) : antecedent{std::move(antecedent)}, consequent{std::move(consequent)} {}
         static const CONDITION_TYPE type = CONDITION_TYPE::IMPLIES;
-        const Condition<ID> antecedent;
-        const Condition<ID> consequent;
+        const std::shared_ptr<Condition<ID>> antecedent;
+        const std::shared_ptr<Condition<ID>> consequent;
     };
 
     template<typename ID>
     class Xor : public Condition<ID> {
     public:
-        Xor(Condition<ID> first, Condition<ID> second) : first{std::move(first)}, second{std::move(second)} {}
+        Xor(std::shared_ptr<Condition<ID>> first, std::shared_ptr<Condition<ID>> second) : first{std::move(first)}, second{std::move(second)} {}
         static const CONDITION_TYPE type = CONDITION_TYPE::XOR;
         const Condition<ID> first;
         const Condition<ID> second;
@@ -61,10 +61,10 @@ namespace omtsched {
     template<typename ID>
     class Iff : public Condition<ID> {
     public:
-        Iff(Condition<ID> first, Condition<ID> second) : first{std::move(first)}, second{std::move(second)} {}
+        Iff(std::shared_ptr<Condition<ID>> first, std::shared_ptr<Condition<ID>> second) : first{std::move(first)}, second{std::move(second)} {}
         static const CONDITION_TYPE type = CONDITION_TYPE::IFF;
-        const Condition<ID> first;
-        const Condition<ID> second;
+        const std::shared_ptr<Condition<ID>> first;
+        const std::shared_ptr<Condition<ID>> second;
     };
 
 }

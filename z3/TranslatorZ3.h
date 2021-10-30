@@ -108,6 +108,7 @@ namespace omtsched {
         const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
         const z3::expr getConstant(const ID &component) const;
 
+
         z3::expr resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb);
         z3::expr resolveComponentIs(const ComponentIs <ID> &, const Assignment<ID>* asgn);
         z3::expr resolveComponentIn(const ComponentIn <ID> &, const Assignment<ID>* asgn);

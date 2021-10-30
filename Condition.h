@@ -22,23 +22,37 @@ namespace omtsched {
 
     };
 
-    template<typename ID>
-    class Condition {
+        template<typename ID>
+        class Condition {
 
-    public:
-        const CONDITION_TYPE getType();
-        //virtual returnType evaluate(std::vector<std::vector<Component<ID>*>>& arguments) = 0;
-        //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
+        public:
+            const CONDITION_TYPE getType();
+            //virtual returnType evaluate(std::vector<std::vector<Assignment<ID>*>>&) = 0;
 
-    protected:
-        CONDITION_TYPE conditionType = CONDITION_TYPE::BASE;
+        protected:
+            CONDITION_TYPE conditionType = CONDITION_TYPE::BASE;
 
-    };
+        };
 
-    template<typename ID>
-    const CONDITION_TYPE Condition<ID>::getType() {
-        return conditionType;
-    }
+        template<typename ID>
+        const CONDITION_TYPE Condition<ID>::getType() {
+            return conditionType;
+        }
+
+        /*
+        template<typename ID, typename returnType>
+        class CompositeCondition : public Condition<ID, returnType> {
+
+        public:
+            const CONDITION_TYPE getType();
+            //virtual returnType evaluate(std::vector<std::vector<Component<ID>*>>& arguments) = 0;
+            //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
+
+        protected:
+            std::vector<std::shared_ptr<Condition<ID, returnType>>> subconditions;
+
+        };
+        */
 
 
 }

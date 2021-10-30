@@ -42,8 +42,8 @@ namespace omtsched {
 
         //void addRule(const Rule<ID> &&);
 
-        Rule<ID> &addRule(const Condition<ID> &&);
-        Rule<ID> &addRule(const Condition<ID> &&c, const bool &hard, const int &weight);
+        //Rule<ID> &addRule(std::shared_ptr<Condition<ID>> c);
+        void addRule(std::shared_ptr<Condition<ID>> c, const bool &hard, const int &weight);
 
         std::vector<ID> getComponentTypes() const;
         const ID addComponentType(const ID &);
@@ -58,8 +58,10 @@ namespace omtsched {
 
         std::map<ID, Assignment<ID>> assignments;
 
-        std::vector<Rule<ID>> rulesHard;
-        std::vector<std::pair<Rule<ID>, int>> rulesSoft;
+        //std::map<ID, Rule<ID>> rules;
+
+        std::vector<Rule<ID>> rules;
+        //std::vector<std::pair<Rule<ID>, int>> rulesSoft;
 
         std::map<ID, std::vector<Component<ID>>> components;
 
@@ -67,20 +69,23 @@ namespace omtsched {
 
     };
 
-    template<typename ID>
-    Rule<ID> &Problem<ID>::addRule(const Condition<ID> &&c) {
-        return rulesHard.emplace_back(std::move(c));
-    }
 
+
+    template<typename ID>
+    void Problem<ID>::addRule(std::shared_ptr<Condition<ID>> c, const bool &optional, const int &weight) {
+        rules.emplace_back(std::move(c), optional, weight);
+    }
+/*
     //itc21.addRule( MaxAssignment( max, InGroup(gameType, mode+team), ComponentIn(slotType, slots)), hard);
     template<typename ID>
-    Rule<ID> &Problem<ID>::addRule(const Condition<ID> &&c, const bool &hard, const int &weight) {
+    Rule<ID> &Problem<ID>::addRule(std::shared_ptr<Condition<ID>> c, const bool &hard, const int &weight) {
 
         if(hard)
-            return addRule(std::move(c));
+            return addRule(c);
         else
-            return rulesSoft.emplace_back(std::forward(c), weight);
+            return rulesSoft.emplace(std::forward(c), weight).first;
     }
+     */
 
     template<typename ID>
     void Problem<ID>::addGroup(const ID &g) {

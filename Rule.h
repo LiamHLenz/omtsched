@@ -13,29 +13,57 @@ namespace omtsched {
     class Rule {
 
     public:
-        Rule(const Condition<ID> &condition);
+        Rule(std::shared_ptr<Condition<ID>> condition) : toplevel{std::move(condition)} {}
+        Rule(std::shared_ptr<Condition<ID>> condition, const bool &optional, const int &weight) : toplevel{std::move(condition)}, optional{optional}, weight{weight} {}
+
+        Rule(const Rule<ID>& r);
+
+        Rule<ID>& operator=(Rule<ID>&& r);
+
         //Rule(const Rule &);
         //bool validate() const;
 
         //void addAssignments(std::vector<Assignment<ID>*>);
         //void removeAssignments(std::vector<Assignment<ID>*>);
 
-        std::string to_string() const;
-        Condition<ID>* getTopCondition() const;
+        const Condition<ID> &getTopCondition() const;
 
         const std::vector<std::vector<Assignment<ID> *>> &getApplicableSets() const;
 
         bool isRestricted() const;
 
     private:
-        std::unique_ptr<Condition<ID>> toplevel;
+        std::shared_ptr<Condition<ID>> toplevel;
         bool restrictedSet;
         std::vector<std::vector<Assignment<ID>*>> applicableSets;
-
+        bool optional;
+        int weight;
     };
 
     template<typename ID>
-    Rule<ID>::Rule(const Condition<ID> &condition) : toplevel{std::make_unique<Condition<ID>>(condition)} {}
+    Rule<ID>::Rule(const Rule<ID>& r) {
+
+        toplevel = r.toplevel;
+        optional = r.optional;
+        weight = r.weight;
+        restrictedSet = r.restrictedSet;
+        applicableSets = r.applicableSets;
+    }
+
+    template<typename ID>
+    Rule<ID> &Rule<ID>::operator=(Rule<ID> &&r){
+
+        if (&r == this)
+            return *this;
+
+        toplevel = std::move(r.toplevel);
+        optional = r.optional;
+        weight = r.weight;
+        restrictedSet = r.restrictedSet;
+        applicableSets = r.applicableSets;
+
+        return *this;
+    }
 
     template<typename ID>
     bool Rule<ID>::isRestricted() const {

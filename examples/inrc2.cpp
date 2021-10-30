@@ -10,6 +10,8 @@ using namespace omtsched;
 
 int main() {
 
+    using CondPtr = std::shared_ptr<Condition<std::string>>;
+
     omtsched::Problem<std::string> inrc2;
 
     const std::string nurseType = inrc2.addComponentType("N");
@@ -77,7 +79,6 @@ int main() {
 
         // Add contract data
         std::string contract = v.second.get<std::string>("Contract");
-        std::cout << "Nurse contract: " << contract << std::endl;
         for (pt::ptree::value_type &v: scenarioTree.get_child("Scenario.Contracts")) {
 
             if (v.second.get<std::string>("<xmlattr>.Id") == contract) {
@@ -85,8 +86,13 @@ int main() {
                 // Maximum and Minimum total number of assignments
                 int min = v.second.get<int>("NumberOfAssignments.Minimum");
                 int max = v.second.get<int>("NumberOfAssignments.Maximum");
-                //inrc2.addRule(MaxAssignment( max, , ComponentIs("Nurse", nurse) ));
-                //inrc2.addRule(MinAssignment( min, , ComponentIs("Nurse", nurse) ));
+
+                CondPtr condition = maxAssignment<std::string>( max, {componentIs(nurseSlot, id)});
+                inrc2.addRule(std::move(condition), false, 0);
+
+                //'vector<shared_ptr<omtsched::ComponentIs<std::__cxx11::basic_string<char> >>,allocator<shared_ptr<omtsched::ComponentIs<std::__cxx11::basic_string<char> >>>>' to
+                //'vector<shared_ptr<omtsched::Condition<std::__cxx11::basic_string<char> >>,allocator<shared_ptr<omtsched::Condition<std::__cxx11::basic_string<char> >>>>
+                //inrc2.addRule(MinAssignment( min, ComponentIs("Nurse", nurse) ));
 
                 // Maximum and Minimum consecutive work days
                 min = v.second.get<int>("ConsecutiveWorkingDays.Minimum");
@@ -99,7 +105,7 @@ int main() {
                 max = v.second.get<int>("ConsecutiveDaysOff.Maximum");
                 //inrc2.addRule(MaxBreak( max, , ComponentIs("Nurse", nurse) ));
                 //inrc2.addRule(MinBreak( min, , ComponentIs("Nurse", nurse) ));
-
+            /*
                 //TODO: working weekends: max and full-weekends
                 max = v.second.get<int>("MaximumNumberOfWorkingWeekends");
                 /*
@@ -124,14 +130,14 @@ int main() {
 
                     }
 
-                }*/
-
+                }/
+            */
                 break;
             }
         }
     }
 
-
+/*
     // Disregard History
     // Create Weeks
     int dayCounter = 1;
@@ -217,6 +223,6 @@ int main() {
     Model model = translator.getModel();
 
     // Generate solution files
-    
+  */
 }
 

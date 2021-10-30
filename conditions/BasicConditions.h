@@ -15,17 +15,18 @@ namespace omtsched {
     public:
         static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IS;
 
-        ComponentIs(std::string, ID);
-        //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
-        //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
+        ComponentIs(ID componentSlot, ID component) : componentSlot{componentSlot},
+        component{component} {};
 
-        const std::string componentSlot;
+        const ID componentSlot;
         const ID component;
     };
 
+
     template<typename ID>
-    ComponentIs<ID>::ComponentIs(std::string componentSlot, ID component) : componentSlot{componentSlot},
-                                                                            component{component} {}
+    std::shared_ptr<Condition<ID>> componentIs(const ID &slot, const ID &component) {
+        return std::make_shared<ComponentIs<ID>>(slot, component);
+    }
 
 
     template<typename ID>
