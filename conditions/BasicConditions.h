@@ -14,6 +14,7 @@ namespace omtsched {
 
     public:
         static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IS;
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
 
         ComponentIs(ID componentSlot, ID component) : componentSlot{componentSlot},
         component{component} {};
@@ -22,10 +23,29 @@ namespace omtsched {
         const ID component;
     };
 
-
     template<typename ID>
     std::shared_ptr<Condition<ID>> componentIs(const ID &slot, const ID &component) {
         return std::make_shared<ComponentIs<ID>>(slot, component);
+    }
+
+    template<typename ID>
+    void ComponentIs<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+
+        // (and (= a1s1 c1) ())
+        ostr << "(and ";
+
+        for(const Assignment<ID> *asgn : asgns) {
+
+            const ID &slotID = asgn->getComponentSlots().at(componentSlot);
+
+            ostr << "(= "
+                 << "a" << asgn->getID() << "s" << slotID << " "
+                 << "c" << component
+                 << ")";
+
+        }
+
+        ostr << ")" << std::endl;
     }
 
 
@@ -38,8 +58,22 @@ namespace omtsched {
         const ID slot;
         const ID group;
 
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+
     };
 
+    template<typename ID>
+    void InGroup<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+
+        ostr << "(and";
+        for(const Assignment<ID>* asgn : asgns) {
+
+            const ID &slotID = asgn->getComponentSlots().at(slot);
+            ostr << "(or "
+        }
+
+        ostr << ")" << std::endl;
+    }
 
     template<typename ID>
     class SameComponent : public Condition<ID> {
@@ -48,10 +82,24 @@ namespace omtsched {
         SameComponent(const ID &slotType) : slot{slotType} {}
         static const CONDITION_TYPE type = CONDITION_TYPE::SAME_COMPONENT;
         const ID slot;
+
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
     };
 
-
     template<typename ID>
+    void SameComponent<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+
+        ostr << " (=";
+        for(const Assignment<ID> *asgn : asgns) {
+            const ID &slotID = asgn->getComponentSlots().at(slot);
+            ostr << " a" << asgn->getID() << "s" << slotID;
+        }
+        ostr << ")";
+
+    }
+
+    /*
+template<typename ID>
     class ComponentIn : public Condition<ID> {
 
     public:
@@ -59,8 +107,15 @@ namespace omtsched {
         static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IN;
         const ID slotType;
         const std::vector<ID> &components;
+
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
     };
 
+    template<typename ID>
+    void ComponentIn<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+
+    }
+*/
 
 }
 

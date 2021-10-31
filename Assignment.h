@@ -31,21 +31,18 @@ namespace omtsched {
         /*
          * Constructor for a fixed component slot
          */
-        ComponentSlot(std::vector<Component<ID>> &&comps) : type{comps.front().getType()},
-        number{comps.size()}, optional{false}, fixed{true}, components{comps} {}
+        ComponentSlot(Component<ID> &&comp) : type{comp.getType()},
+         optional{false}, fixed{true}, component{comp} {}
 
         ComponentSlot<ID> &operator=(ComponentSlot<ID>&&);
 
         std::string describe() const;
 
-        void addComponent(const Component<ID> &);
-
         const ID type;
-        int number;
         bool optional;
 
         bool fixed;
-        std::vector<ID> components;
+        Component<ID> &component;
     };
 
     template<typename ID>
@@ -55,14 +52,14 @@ namespace omtsched {
             return *this;
 
         type = cs.type;
-        number = cs.number;
         optional = cs.optional;
         fixed = cs.fixed;
-        components = std::move(cs.components);
+        component = std::move(cs);
 
         return *this;
     }
 
+    /*
     template<typename ID>
     std::string ComponentSlot<ID>::describe() const {
 
@@ -82,16 +79,14 @@ namespace omtsched {
 
         return s;
     }
+*/
 
-    template<typename ID>
-    void ComponentSlot<ID>::addComponent(const Component<ID> &c) {
-        components.push_back(c.getID());
-    }
 
     template<typename ID>
     class Assignment {
 
     public:
+        Assignment(const ID &id) : id{id} {}
 
         void setFixed(const ID &name, const Component<ID>&);
         void setFixed(const ID &name, std::vector<Component<ID>>&);
@@ -104,11 +99,13 @@ namespace omtsched {
 
         void setWeight(int weight);
 
+        const ID getID() const;
+
     private:
         std::map<ID, ComponentSlot<ID>> componentSlots;
         bool optional;
         int weight;
-
+        const ID id;
         };
 
     template<typename ID>
@@ -143,6 +140,11 @@ namespace omtsched {
     template<typename ID>
     void Assignment<ID>::setWeight(int weight) {
         Assignment::weight = weight;
+    }
+
+    template<typename ID>
+    const ID Assignment<ID>::getID() const {
+        return id;
     }
 
 }

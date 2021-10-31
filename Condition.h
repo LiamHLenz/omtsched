@@ -17,7 +17,7 @@ namespace omtsched {
         NOT, OR, AND, XOR, IMPLIES, IFF,
         COMPONENT_IS, COMPONENT_IN, SAME_COMPONENT,
         IN_GROUP,
-        MAX_ASSIGNMENTS,
+        MAX_ASSIGNMENTS, MIN_ASSIGNMENTS,
         MAX_IN_SEQUENCE
 
     };
@@ -27,6 +27,7 @@ namespace omtsched {
 
         public:
             const CONDITION_TYPE getType();
+            virtual void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const = 0;
             //virtual returnType evaluate(std::vector<std::vector<Assignment<ID>*>>&) = 0;
 
         protected:

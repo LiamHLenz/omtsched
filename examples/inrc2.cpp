@@ -87,24 +87,20 @@ int main() {
                 int min = v.second.get<int>("NumberOfAssignments.Minimum");
                 int max = v.second.get<int>("NumberOfAssignments.Maximum");
 
-                CondPtr condition = maxAssignment<std::string>( max, {componentIs(nurseSlot, id)});
-                inrc2.addRule(std::move(condition), false, 0);
-
-                //'vector<shared_ptr<omtsched::ComponentIs<std::__cxx11::basic_string<char> >>,allocator<shared_ptr<omtsched::ComponentIs<std::__cxx11::basic_string<char> >>>>' to
-                //'vector<shared_ptr<omtsched::Condition<std::__cxx11::basic_string<char> >>,allocator<shared_ptr<omtsched::Condition<std::__cxx11::basic_string<char> >>>>
-                //inrc2.addRule(MinAssignment( min, ComponentIs("Nurse", nurse) ));
+                inrc2.addRule(maxAssignment<std::string>( max, {componentIs(nurseSlot, id)}), false, 0);
+                inrc2.addRule(minAssignment<std::string>( min, {componentIs(nurseSlot, id)}), false, 0);
 
                 // Maximum and Minimum consecutive work days
                 min = v.second.get<int>("ConsecutiveWorkingDays.Minimum");
                 max = v.second.get<int>("ConsecutiveWorkingDays.Maximum");
-                //inrc2.addRule(MaxConsecutive( max, , ComponentIs("Nurse", nurse) ));
-                //inrc2.addRule(MinConsecutive( min, , ComponentIs("Nurse", nurse) ));
+                inrc2.addRule(maxConsecutive( max, timeSlot, {componentIs(nurseSlot, id)} ), false, 0);
+                inrc2.addRule(minConsecutive( min, timeSlot, {componentIs(nurseSlot, id)} ), false, 0);
 
                 // Maximum and Minimum consecutive days off
                 min = v.second.get<int>("ConsecutiveDaysOff.Minimum");
                 max = v.second.get<int>("ConsecutiveDaysOff.Maximum");
-                //inrc2.addRule(MaxBreak( max, , ComponentIs("Nurse", nurse) ));
-                //inrc2.addRule(MinBreak( min, , ComponentIs("Nurse", nurse) ));
+                inrc2.addRule(MaxBreak( max, timeSlot, {componentIs(nurseSlot, id)} ), false, 0);
+                inrc2.addRule(MinBreak( min, timeSlot, {componentIs(nurseSlot, id)} ), false, 0);
             /*
                 //TODO: working weekends: max and full-weekends
                 max = v.second.get<int>("MaximumNumberOfWorkingWeekends");
@@ -137,7 +133,7 @@ int main() {
         }
     }
 
-/*
+
     // Disregard History
     // Create Weeks
     int dayCounter = 1;
@@ -145,23 +141,35 @@ int main() {
     for(int weekCounter = 0; weekCounter < weeks; weekCounter++){
 
         pt::ptree weekTree;
-        pt::read_xml(weekPath+std::to_string(weekCounter), weekTree);
+        pt::read_xml(weekPath+std::to_string(weekCounter)+".xml", weekTree);
+
+
+        /*
+         *  pt::read_xml("C:/Users/Betrieb-PC/Desktop/testdatasets_xml/n005w4/Sc-n005w4.xml", scenarioTree);
+            int weeks = scenarioTree.get<int>("Scenario.NumberOfWeeks");
+         // SKILLS
+        for (pt::ptree::value_type &v: scenarioTree.get_child("Scenario.Skills")) {
+         */
 
         // Create the shifts
-        for(pt::ptree::value_type &v: scenarioTree.get_child("WeekData.Requirements")){
+        for(pt::ptree::value_type &v: weekTree.get_child("WeekData.Requirements")){
 
             // It is given, for each shift, for each skill, for each week day, the optimal and minimum number
             // of nurses necessary to fulfil the working duties.
             const std::string shiftType = v.second.get<std::string>("ShiftType");
             const std::string skill = v.second.get<std::string>("Skill");
 
-            for(pt::ptree::value_type &r: v.second.get_child("")){
+            const std::vector<std::string> weekDayRequirements {"RequirementOnMonday", "RequirementOnTuesday",
+                                                          "RequirementOnWednesday", "RequirementOnThursday",
+                                                          "RequirementOnFriday", "RequirementOnSaturday", "RequirementOnSunday"};
+
+            for(const std::string &wdr: weekDayRequirements){
 
                 // -<RequirementOnMonday>
                 // <Minimum>1</Minimum>
                 // <Optimal>1</Optimal>
-                const int min = r.second.get<int>("Minimum");
-                const int opt = r.second.get<int>("Optimal");
+                const int min = v.second.get<int>(wdr + ".Minimum");
+                const int opt = v.second.get<int>(wdr + ".Optimal");
 
                 if(min != 0) {
 
@@ -209,7 +217,7 @@ int main() {
         }
 
         // Create the shift-off requests
-        for(pt::ptree::value_type &v: scenarioTree.get_child("WeekData.ShiftOffRequests")){
+        for(pt::ptree::value_type &v: weekTree.get_child("WeekData.ShiftOffRequests")){
 
             //inrc2.addRule( , true, )
 
@@ -217,12 +225,17 @@ int main() {
 
     }
 
-    TranslatorZ3 translator (inrc2);
-    translator.solve();
+    std::ofstream solfile;
+    solfile.open ("C:/Users/Betrieb-PC/Desktop/testproblem/n005w4.smt2");
+    inrc2.print(solfile);
+    solfile.close();
 
-    Model model = translator.getModel();
+    TranslatorZ3 translator (inrc2);
+    //translator.solve();
+
+    //Model model = translator.getModel();
 
     // Generate solution files
-  */
+
 }
 

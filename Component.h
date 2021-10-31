@@ -35,6 +35,11 @@ namespace omtsched {
         std::set<ID> groups;
     };
 
+    template<typename ID>
+    void Component<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *) {
+
+    }
+
 
     template<typename ID>
     const ID Component<ID>::getID() const {

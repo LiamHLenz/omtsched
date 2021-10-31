@@ -26,6 +26,23 @@ namespace omtsched {
     }
 
 
+    template<typename ID>
+    class MinAssignment : public Condition<ID> {
+
+        public:
+            MinAssignment(const int &min, std::vector<std::shared_ptr<Condition<ID>>> sc) : min{ min }, subconditions{std::move(sc)} {}
+            static const CONDITION_TYPE type = CONDITION_TYPE::MIN_ASSIGNMENTS;
+            const int min;
+            const std::vector<std::shared_ptr<Condition<ID>>> subconditions;
+
+        };
+
+    template<typename ID>
+    std::shared_ptr<Condition<ID>> minAssignment(const int &min, std::vector<std::shared_ptr<Condition<ID>>> c){
+        return std::make_shared<MaxAssignment<ID>>(min, c);
+    }
+
+
 
     template<typename ID>
     class MaxInSequence : public Condition<ID> {

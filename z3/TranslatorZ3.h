@@ -130,10 +130,10 @@ namespace omtsched {
     template<typename ID>
     TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem}, context{}, solver{context} {
 
-        setupConstants();
-        setupVariables();
-        solver = z3::solver{context};
-        setupUniqueness();
+        //setupConstants();
+        //setupVariables();
+        //solver = z3::solver{context};
+        //setupUniqueness();
     }
 
 

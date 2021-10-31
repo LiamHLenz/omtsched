@@ -32,6 +32,8 @@ namespace omtsched {
 
         bool isRestricted() const;
 
+        void print(std::ostream &) const;
+
     private:
         std::shared_ptr<Condition<ID>> toplevel;
         bool restrictedSet;
@@ -92,6 +94,23 @@ namespace omtsched {
         // A rule needs to be instantiated for every combination of assignments
 
     }*/
+
+    template<typename ID>
+    void Rule<ID>::print(std::ostream &ostr) const {
+
+        if(optional){ // TODO: optionality
+            }
+
+        // TODO: restricted sets
+
+        ostr << "(assert ";
+
+        // generate condition for each combination of assignments
+        for(const std::vector<Assignment<ID>*> &asgns : applicableSets)
+            toplevel->print(ostr, asgns);
+
+        ostr << ")" << std::endl;
+    }
 
 }
 

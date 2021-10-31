@@ -102,7 +102,7 @@ namespace omtsched {
     // Reference can be subject to invalidation, only use locally!
     template<typename ID>
     Assignment<ID> &Problem<ID>::newAssignment(const ID &id) {
-        return assignments[id];
+        return assignments.emplace(id, id);
     }
 
 
@@ -144,23 +144,70 @@ namespace omtsched {
     }
 
 
-
-
-
-    /*
     template<typename ID>
     void Problem<ID>::print(std::ostream &ostr) const {
 
-        for(const auto &comp : components)
-            comp.print(ostr);
+        ostr << "(set-logic QF_EQ)" << std::endl;
 
-        for(const auto &asgn : assignments)
-            asgn.print(ostr);
+        ostr << std::endl;
+        ostr << "; Component Types" << std::endl;
+        ostr << "; A component types name is t[typeID]" << std::endl;
+        ostr << std::endl;
 
+        // Create a sort for each types
+        // Format:
+        for(const auto &[typeID, components] : components)
+            ostr << "(declare-sort " << "t" << typeID << " 0)" << std::endl;
+
+        ostr << std::endl;
+        ostr << "; Components" << std::endl;
+        ostr << "; a components name is c[componentID]" << std::endl;
+        ostr << std::endl;
+
+        for(const auto &[typeID, components] : components){
+            for(const Component<ID> &component : components)
+                ostr << "(declare-fun c" << component.getID() << " () t" << typeID << ")" << std::endl;
+        }
+
+
+        ostr << std::endl;
+        ostr << "; Distinctness Constraints" << std::endl;
+        ostr << "; components are assumed to be unique" << std::endl;
+        ostr << std::endl;
+
+        for(const auto &[typeID, components] : components){
+
+            ostr << "(distinct";
+            for(const Component<ID> &component : components)
+                ostr << " c" << component.getID();
+
+            ostr << ")" << std::endl;
+        }
+
+        ostr << std::endl;
+        ostr << "; Assignments" << std::endl;
+        ostr << "; a slot variables name is a[assignmentID]s[slotID]" << std::endl;
+        ostr << std::endl;
+
+        // std::map<ID, Assignment<ID>> assignments;
+        for(const auto &[asgnID, asgn] : assignments) {
+            for(const auto &[slotID, slot] : asgn.getComponentSlots()){
+
+                ostr << "(declare-fun a" << asgnID << "s" << slotID << " () t" << slot.type << ")" << std::endl;
+
+                if(slot.fixed)
+                    ostr << "(assert (= a" << asgnID << "s" << slotID <<  " c" << slot.component.getID() << "))" << std::endl;
+            }
+        }
+
+        // rules specify their own
         for(const auto &rule : rules)
             rule.print(ostr);
 
-    } */
+        // TODO: optimization
+
+        ostr << "(check-sat)" << std::endl;
+    }
 
 }
 #endif //OMTSCHED_PROBLEM_H
