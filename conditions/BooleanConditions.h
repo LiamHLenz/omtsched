@@ -7,105 +7,65 @@
 
 #include "../Condition.h"
 
-//  ------------
-//      Not
+namespace omtsched {
 
-template<typename ID, typename ID, typename ID>
-class Not : public Condition<ID> {
 
-public:
-    Not(const std::vector<Condition<ID>*> subconditions);
-    virtual z3::expr instantiate(std::vector<Component < ID, ID, ID>*>& arguments) override;
-    virtual bool validParameters(std::vector<Component<ID>*>& arguments) override;
-};
-
-template<typename ID, typename ID, typename ID>
-z3::expr Not<ID>::instantiate(std::vector<Component < ID, ID, ID>*>& arguments) {
-
-    return !arguments.at(0).evaluate();
-}
-
-//  ------------
-//      And
-
-template<typename ID, typename ID, typename ID>
-class And : public Condition<ID> {
+    template<typename ID>
+    class Not : public Condition<ID> {
 
     public:
-        And(const std::vector<Condition<ID>*> subconditions);
-        virtual bool evaluate(std::vector<Component<ID>*>& arguments) override;
-        virtual bool validParameters(std::vector<Component<ID>*>& arguments) override;
-        virtual z3::expr instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) = 0;
+        Not(std::shared_ptr<Condition<ID>> subcondition) : subcondition{std::move(subcondition)} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::NOT;
+        const std::shared_ptr<Condition<ID>> subcondition;
     };
 
-template<typename ID, typename ID, typename ID>
-z3::expr And<ID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
 
-    z3::expr_vector z3args;
-    for(const auto s : subconditions)
-        z3args.push_back(s.instantiate(assignmentGroups));
+    template<typename ID>
+    class And : public Condition<ID> {
 
-    return z3::mk_and(z3args);
-}
+        public:
+        And(std::vector<std::shared_ptr<Condition<ID>>> subconditions) : subconditions{std::move(subconditions)} {}
+            static const CONDITION_TYPE type = CONDITION_TYPE::AND;
+            const std::vector<std::shared_ptr<Condition<ID>>> subconditions;
+        };
 
-//  ------------
-//      Not
 
-template<typename ID, typename ID, typename ID>
-class Or : public Condition<ID> {
+    template<typename ID>
+    class Or : public Condition<ID> {
 
     public:
-        Or(const Condition ... subconditions);
-        virtual bool evaluate(std::vector<Component<ID>*>& arguments) override;
-        virtual bool validParameters(std::vector<Component<ID>*>& arguments) override;
+        Or(std::vector<std::shared_ptr<Condition<ID>>> subconditions) : subconditions{std::move(subconditions)} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::OR;
+        const std::vector<std::shared_ptr<Condition<ID>>> subconditions;
     };
 
-template<typename ID, typename ID, typename ID>
-z3::expr Or<ID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
 
-    z3::expr_vector z3args;
-    for(const auto s : subconditions)
-        z3args.push_back(s.instantiate(assignmentGroups));
-
-    return z3::mk_or(z3args);
-}
-
-
-//  ------------
-//    Implies
-
-template<typename ID, typename ID, typename ID>
-class Implies : public Condition<ID> {
-
+    template<typename ID>
+    class Implies : public Condition<ID> {
     public:
-        Implies(const std::vector<Condition<ID>*> subconditions);
-        virtual bool evaluate(std::vector<Component<ID>*>& arguments) override;
-        virtual bool validParameters(std::vector<Component<ID>*>& arguments) override;
+        Implies(std::shared_ptr<Condition<ID>> antecedent, std::shared_ptr<Condition<ID>> consequent) : antecedent{std::move(antecedent)}, consequent{std::move(consequent)} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::IMPLIES;
+        const std::shared_ptr<Condition<ID>> antecedent;
+        const std::shared_ptr<Condition<ID>> consequent;
     };
 
-template<typename ID, typename ID, typename ID>
-z3::expr Implies<ID>::instantiate(const std::vector<const std::vector< const Assignment*>>& assignmentGroups) {
+    template<typename ID>
+    class Xor : public Condition<ID> {
+    public:
+        Xor(std::shared_ptr<Condition<ID>> first, std::shared_ptr<Condition<ID>> second) : first{std::move(first)}, second{std::move(second)} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::XOR;
+        const Condition<ID> first;
+        const Condition<ID> second;
+    };
 
-    return z3::implies(subconditions.at(0).evaluate(assignmentGroups), subconditions.at(1).evaluate(assignmentGroups));
+    template<typename ID>
+    class Iff : public Condition<ID> {
+    public:
+        Iff(std::shared_ptr<Condition<ID>> first, std::shared_ptr<Condition<ID>> second) : first{std::move(first)}, second{std::move(second)} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::IFF;
+        const std::shared_ptr<Condition<ID>> first;
+        const std::shared_ptr<Condition<ID>> second;
+    };
+
 }
-
-/*
-class Xor : public Condition {};
-z3::expr Xor::generate(std::vector<Condition> arguments) {
-
-for()
-generate();
-
-return mk_and();
-}
-
-class Iff : public Condition {};
-z3::expr Iff::generate(std::vector<Condition> arguments) {
-
-    assert(arguments.size() == 2 && "'Iff' Condition takes exactly two arguments.");
-    return z3::implies(generate(arguments.at(0)), generate(arguments.at(1)))
-        && z3::implies(generate(arguments.at(1)), generate(arguments.at(0)));
-}
-*/
-
 #endif //OMTSCHED_BOOLEANCONDITIONS_H

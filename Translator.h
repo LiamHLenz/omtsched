@@ -16,27 +16,17 @@ namespace omtsched {
 
     public:
 
+        Translator<ID>(const Problem<ID> &problem) : problem{problem} {};
+
         virtual void solve() = 0;
 
-        virtual Model getSolution() = 0;
-        virtual std::vector<Model> getAllSolutions() = 0;
+        virtual Model<ID> getModel() = 0;
+        //virtual std::vector<Model> getAllSolutions() = 0;
 
-        // TODO: generalize away from z3
-        virtual z3::context getContext() = 0;
-        virtual const z3::expr getVariable(const Assignment<ID> &assignment, const std::string &&componentSlot) = 0;
-        virtual const z3::expr getComponent(const ID &component) = 0;
-
-
-        virtual void printProblem(std::string path) const = 0;
-        virtual void printSolution(std::string path) const = 0;
-        virtual void printAllSolutions(std::string path) const = 0;
-        virtual void printExplanation(std::string path) const = 0;
-
-
-
-        Problem<ID> &getProblem() const;
-
-        void setProblem(Problem<ID> &problem);
+        //virtual void printProblem(std::string path) const = 0;
+        //virtual void printSolution(std::string path) const = 0;
+        //virtual void printAllSolutions(std::string path) const = 0;
+        //virtual void printExplanation(std::string path) const = 0;
 
         bool isGenerateAllSolution() const;
 
@@ -47,21 +37,12 @@ namespace omtsched {
         void setGenerateExplanations(bool generateExplanations);
 
     protected:
-        Problem<ID> &problem;
+        const Problem<ID> &problem;
         bool generateAllSolution;
         bool generateExplanations;
 
     };
 
-    template<typename ID>
-    Problem<ID> &Translator<ID>::getProblem() const {
-        return problem;
-    }
-
-    template<typename ID>
-    void Translator<ID>::setProblem(Problem<ID> &problem) {
-        Translator::problem = problem;
-    }
 
     template<typename ID>
     bool Translator<ID>::isGenerateAllSolution() const {

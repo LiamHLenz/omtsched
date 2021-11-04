@@ -5,66 +5,56 @@
 #ifndef OMTSCHED_CONDITION_H
 #define OMTSCHED_CONDITION_H
 
-#include <z3.h>
-#include <z3++.h>
+
 #include "ComponentType.h"
 #include "Component.h"
-#include "Translator.h"
 
 namespace omtsched {
-    template<typename ID>
-    class Condition {
 
-    public:
-        virtual z3::expr instantiate(const Translator<ID> &t,
-                                     const std::vector<const std::vector<const Assignment<ID> *>> &assignmentGroups) = 0;
-        //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
-        //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
+    enum class CONDITION_TYPE {
 
-    private:
-        // specifies the types of
-        std::vector<ComponentType> paramenterTypes;
-        std::vector<Condition *> subconditions;
+        BASE,
+        NOT, OR, AND, XOR, IMPLIES, IFF,
+        COMPONENT_IS, COMPONENT_IN, SAME_COMPONENT,
+        IN_GROUP,
+        MAX_ASSIGNMENTS, MIN_ASSIGNMENTS,
+        MAX_IN_SEQUENCE
 
     };
 
+        template<typename ID>
+        class Condition {
 
-// ------------------------------------
-// OR, AND,
+        public:
+            const CONDITION_TYPE getType();
+            virtual void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const = 0;
+            //virtual returnType evaluate(std::vector<std::vector<Assignment<ID>*>>&) = 0;
 
-//class NumAssigned
+        protected:
+            CONDITION_TYPE conditionType = CONDITION_TYPE::BASE;
 
+        };
 
-    template<typename ID>
-    class MaxAssignment : public Condition<ID> {
+        template<typename ID>
+        const CONDITION_TYPE Condition<ID>::getType() {
+            return conditionType;
+        }
 
-        MaxAssignment(std::vector<Condition<ID>>, const int &);
+        /*
+        template<typename ID, typename returnType>
+        class CompositeCondition : public Condition<ID, returnType> {
 
-        virtual z3::expr instantiate(const Translator<ID> &p,
-                                     const std::vector<const std::vector<const Assignment<ID> *>> &assignmentGroups) override;
+        public:
+            const CONDITION_TYPE getType();
+            //virtual returnType evaluate(std::vector<std::vector<Component<ID>*>>& arguments) = 0;
+            //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
 
-    private:
-        std::vector<Condition<ID>> conditions;
+        protected:
+            std::vector<std::shared_ptr<Condition<ID, returnType>>> subconditions;
 
-    };
-/*
-template<typename ID>
-MaxAssignment<ID>::MaxAssignment(std::vector<Condition<ID>> c, const int& m) :  {};
+        };
+        */
 
-template<typename ID>
-z3::expr MaxAssignment<ID>::instantiate(const std::vector<const std::vector< const Assignment<ID>*>>& assignmentGroups) {
-
-    /*
-     * Resolved by:
-     * 1. creating a bitvector of (relevant) assignments
-     * 2. creating an implication for each assignment: if the conditions are met the
-     *    bit corresponding to the assignment is set
-     * 3. constraining the maximum number of set bits
-     /
-
-    //
-}
-*/
 
 }
 

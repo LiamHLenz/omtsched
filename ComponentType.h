@@ -5,10 +5,52 @@
 #ifndef OMTSCHED_COMPONENTTYPE_H
 #define OMTSCHED_COMPONENTTYPE_H
 
-class ComponentType {
+namespace omtsched {
 
-public:
-    const std::string ID;
-};
+    template<typename ID>
+    class ComponentType{
+
+    public:
+        explicit ComponentType(const ID &id);
+        const ID &getID() const;
+        const ID id;
+    };
+
+    template<typename ID>
+    const ID &ComponentType<ID>::getID() const {
+        return id;
+    }
+
+    template<typename ID>
+    ComponentType<ID>::ComponentType(const ID &id) : id{id} {}
+/*
+    template<typename ID>
+    class Agent : public ComponentType<ID> {
+    public:
+        explicit Agent(const ID &id) : ComponentType<ID>(id) {};
+    };
+
+    template<typename ID>
+    class Task : public ComponentType<ID> {
+    public:
+        explicit Task(const ID &id) : ComponentType<ID>(id) {};
+    };
+
+    template<typename ID>
+    class Timeslot : public ComponentType<ID> {
+    public:
+        explicit Timeslot(const ID &id) : ComponentType<ID>(id) {};
+    };
+
+    template<typename ID, typename Unit>
+    class Time : public ComponentType<ID> {
+    public:
+        explicit Time(const ID &id) : ComponentType<ID>(id) {};
+    };
+
+    template<typename ID, typename Unit>
+    class TimedTask : public Timeslot<ID> {};
+*/
+}
 
 #endif //OMTSCHED_COMPONENTTYPE_H

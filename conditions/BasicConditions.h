@@ -13,36 +13,109 @@ namespace omtsched {
     class ComponentIs : public Condition<ID> {
 
     public:
-        ComponentIs(std::string, ID);
+        static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IS;
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
 
-        z3::expr instantiate(const Translator<ID> &t, const std::vector<const std::vector<const Assignment<ID> *>> &assignmentGroups);
-        //virtual bool evaluate(std::vector<Component<ID>*>& arguments) = 0;
-        //virtual bool validParameters(std::vector<Component<ID>*>& arguments) = 0;
+        ComponentIs(ID componentSlot, ID component) : componentSlot{componentSlot},
+        component{component} {};
 
-    private:
-        const std::string componentSlot;
+        const ID componentSlot;
         const ID component;
     };
 
     template<typename ID>
-    ComponentIs<ID>::ComponentIs(std::string componentSlot, ID component) : componentSlot{componentSlot},
-                                                                            component{component} {}
+    std::shared_ptr<Condition<ID>> componentIs(const ID &slot, const ID &component) {
+        return std::make_shared<ComponentIs<ID>>(slot, component);
+    }
 
     template<typename ID>
-    z3::expr
-    ComponentIs<ID>::instantiate(const Translator<ID> &t, const std::vector<const std::vector<const Assignment<ID> *>> &assignmentGroups) {
+    void ComponentIs<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
 
-        //If there is more than one assignment: conjunction
-        z3::expr_vector equalities (t.getContext());
-        for(const auto &assignment : assignmentGroups) {
-            const z3::expr &var = t.getVariable(assignment, componentSlot);
-            const z3::expr &component = t.getComponent(component);
-            equalities.push_back(var == component);
+        // (and (= a1s1 c1) ())
+        ostr << "(and ";
+
+        for(const Assignment<ID> *asgn : asgns) {
+
+            const ID &slotID = asgn->getComponentSlots().at(componentSlot);
+
+            ostr << "(= "
+                 << "a" << asgn->getID() << "s" << slotID << " "
+                 << "c" << component
+                 << ")";
+
         }
 
-        return z3::mk_and(equalities);
+        ostr << ")" << std::endl;
+    }
+
+
+    template<typename ID>
+    class InGroup : public Condition<ID> {
+
+    public:
+        InGroup(const ID &componentType, ID groupID) : slot{slot}, group{groupID} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::IN_GROUP;
+        const ID slot;
+        const ID group;
+
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+
+    };
+
+    template<typename ID>
+    void InGroup<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+
+        ostr << "(and";
+        for(const Assignment<ID>* asgn : asgns) {
+
+            const ID &slotID = asgn->getComponentSlots().at(slot);
+            ostr << "(or "
+        }
+
+        ostr << ")" << std::endl;
+    }
+
+    template<typename ID>
+    class SameComponent : public Condition<ID> {
+
+    public:
+        SameComponent(const ID &slotType) : slot{slotType} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::SAME_COMPONENT;
+        const ID slot;
+
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+    };
+
+    template<typename ID>
+    void SameComponent<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+
+        ostr << " (=";
+        for(const Assignment<ID> *asgn : asgns) {
+            const ID &slotID = asgn->getComponentSlots().at(slot);
+            ostr << " a" << asgn->getID() << "s" << slotID;
+        }
+        ostr << ")";
 
     }
+
+    /*
+template<typename ID>
+    class ComponentIn : public Condition<ID> {
+
+    public:
+        ComponentIn(const ID &slotType, std::vector<ID> components) : slotType{slotType}, components{components} {}
+        static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IN;
+        const ID slotType;
+        const std::vector<ID> &components;
+
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+    };
+
+    template<typename ID>
+    void ComponentIn<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+
+    }
+*/
 
 }
 

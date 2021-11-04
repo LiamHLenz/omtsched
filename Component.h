@@ -7,60 +7,88 @@
 
 #include <map>
 #include <set>
+#include <memory>
+#include "ComponentType.h"
 
-template<typename ID>
-class Component {
+namespace omtsched {
 
-public:
-    Component(const ID &id) : ID{id} {}
-    //virtual const std::string componentType() const = 0;
+    template<typename ID>
+    class Component {
 
-    const ID getId() const;
-    const std::map<ID, int> &getTags() const;
-    const std::set<ID> &getGroups() const;
+    public:
+        Component(const ID &id) : id{id} {}
+        //virtual const std::string componentType() const = 0;
 
-    void addGroup(const ID&);
-    void removeGroup(const ID&);
+        const ID getID() const;
 
-    void setTag(const ID &, const int);
+        const std::map<ID, int> &getTags() const;
+        const std::set<ID> &getGroups() const;
 
-private:
-    const ID id;
-    std::map<ID, int> tags;
-    std::set<ID> groups;
-};
+        void addGroup(const ID&);
+        void removeGroup(const ID&);
 
-template<typename ID>
-const ID Component<ID>::getId() const {
-    return id;
-}
+        void setTag(const ID &, const int);
 
-template<typename ID>
-const std::map<ID, int> &Component<ID>::getTags() const {
-    return tags;
-}
+    private:
+        const ID id;
+        std::map<ID, int> tags;
+        std::set<ID> groups;
+    };
 
-template<typename ID>
-const std::set<ID> &Component<ID>::getGroups() const {
-    return groups;
-}
+    template<typename ID>
+    void Component<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *) {
 
-template<typename ID>
-void Component<ID>::addGroup(const ID &id) {
+    }
 
-    groups.insert(id);
-}
 
-template<typename ID>
-void Component<ID>::removeGroup(const ID &id) {
+    template<typename ID>
+    const ID Component<ID>::getID() const {
+        return id;
+    }
 
-    groups.erase(id);
-}
+    template<typename ID>
+    const std::map<ID, int> &Component<ID>::getTags() const {
+        return tags;
+    }
 
-template<typename ID>
-void Component<ID>::setTag(const ID &id, const int val) {
+    template<typename ID>
+    const std::set<ID> &Component<ID>::getGroups() const {
+        return groups;
+    }
 
-    tags.at(id) = val;
+    template<typename ID>
+    void Component<ID>::addGroup(const ID &id) {
+
+        groups.insert(id);
+    }
+
+    template<typename ID>
+    void Component<ID>::removeGroup(const ID &id) {
+
+        groups.erase(id);
+    }
+
+    template<typename ID>
+    void Component<ID>::setTag(const ID &id, const int val) {
+
+        tags.at(id) = val;
+    }
+
+    template<typename ID>
+    class OrderedComponent : public Component<ID> {
+
+        public:
+
+            OrderedComponent(const ID &id, const int &point) : Component<ID>{id}, point{point} {}
+
+            friend bool operator<(const OrderedComponent<ID> &lhs, const OrderedComponent<ID> &rhs);
+        private:
+            int point;
+        };
+
+    template<typename ID>
+    bool operator<(const OrderedComponent<ID> &lhs, const OrderedComponent<ID> &rhs) { return lhs.point < rhs.point; }
+
 }
 
 #endif //OMTSCHED_COMPONENT_H

@@ -6,28 +6,11 @@
 #define OMTSCHED_TRANSLATOR_Z3HPP
 
 
-#include "TranslatorZ3.h"
-
-/*
-enum LABELS {
-
-};
+#include "../z3/TranslatorZ3.h"
 
 
 /*
-template <typename TaskID, typename TimeslotID, typename ID, typename ID>
-z3::expr TranslatorZ3<TaskID, TimeslotID, ID, ID>::get_assigned_expr(const TaskID &aid) {
 
-    z3::expr expr (context);
-
-    expr = context.bool_val(false);
-
-    for(const auto &[tsid, ts] : problem.getAllTimeslots())
-        expr = expr || assign_expr.get(tsid, aid);
-
-}*/
-
-/*
 template <typename TaskID, typename TimeslotID, typename ID, typename ID>
 bool TranslatorZ3<TaskID, TimeslotID, ID, ID>::solve(const Problem<TaskID, TimeslotID, ID, ID> &problem) {
 

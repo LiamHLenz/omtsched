@@ -6,7 +6,7 @@
 #define OMTSCHED_TIME_H
 
 #include "../Component.h"
-
+/*
 namespace omtsched {
     template<class ID, class ID, class ID, class Unit>
     class Time : public Component<ID> {
@@ -37,5 +37,5 @@ bool operator<(const omtsched::Time<ID, ID, ID, Unit> &lhs, const omtsched::Time
 
     return lhs.getTimepoint() < rhs.getTimepoint();
 }
-
+*/
 #endif //OMTSCHED_TIME_H
