@@ -8,7 +8,7 @@
 #include "../Condition.h"
 
 namespace omtsched {
-
+/*
     template<typename ID>
     class MaxAssignment : public Condition<ID> {
 
@@ -56,7 +56,7 @@ namespace omtsched {
 
     };
 
-
+*/
 }
 
 

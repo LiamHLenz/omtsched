@@ -24,7 +24,7 @@ find_package(Z3 CONFIG REQUIRED)
     include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-             examples/inrc2.cpp)
+             examples/simple.cpp)
 
 
     target_link_libraries(examples omtsched)

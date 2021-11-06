@@ -7,6 +7,7 @@
 
 
 #include "Condition.h"
+#include <iostream>
 
 namespace omtsched {
     template<typename ID>

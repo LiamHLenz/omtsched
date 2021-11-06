@@ -45,6 +45,8 @@ namespace omtsched {
         //Rule<ID> &addRule(std::shared_ptr<Condition<ID>> c);
         void addRule(std::shared_ptr<Condition<ID>> c, const bool &hard, const int &weight);
 
+        void addRule(std::shared_ptr<Condition<ID>> c);
+
         std::vector<ID> getComponentTypes() const;
         const ID addComponentType(const ID &);
 
@@ -69,7 +71,12 @@ namespace omtsched {
 
     };
 
+    template<typename ID>
+    void Problem<ID>::addRule(std::shared_ptr<Condition<ID>> c) {
 
+        rules.emplace_back(std::move(c), false, 0);
+
+    }
 
     template<typename ID>
     void Problem<ID>::addRule(std::shared_ptr<Condition<ID>> c, const bool &optional, const int &weight) {
@@ -102,7 +109,8 @@ namespace omtsched {
     // Reference can be subject to invalidation, only use locally!
     template<typename ID>
     Assignment<ID> &Problem<ID>::newAssignment(const ID &id) {
-        return assignments.emplace(id, id);
+        assignments.emplace(id, id);
+        return assignments.at(id);
     }
 
 

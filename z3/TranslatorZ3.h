@@ -111,10 +111,10 @@ namespace omtsched {
 
         z3::expr resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb);
         z3::expr resolveComponentIs(const ComponentIs <ID> &, const Assignment<ID>* asgn);
-        z3::expr resolveComponentIn(const ComponentIn <ID> &, const Assignment<ID>* asgn);
+        //z3::expr resolveComponentIn(const ComponentIn <ID> &, const Assignment<ID>* asgn);
         z3::expr resolveSameComponent(const SameComponent <ID> &, const std::vector<Assignment<ID>*> asgnComb);
         z3::expr resolveInGroup(const InGroup <ID> &, const Assignment<ID> asgn);
-        z3::expr resolveMaxAssignments(const MaxAssignment <ID> &, const std::vector<Assignment<ID>*> asgnComb);
+        //z3::expr resolveMaxAssignments(const MaxAssignment <ID> &, const std::vector<Assignment<ID>*> asgnComb);
 
         z3::context context;
         z3::solver solver;

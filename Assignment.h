@@ -32,9 +32,11 @@ namespace omtsched {
          * Constructor for a fixed component slot
          */
         ComponentSlot(Component<ID> &&comp) : type{comp.getType()},
-         optional{false}, fixed{true}, component{comp} {}
+         optional{false}, fixed{true}, component{comp.getID()} {}
 
         ComponentSlot<ID> &operator=(ComponentSlot<ID>&&);
+
+        void addComponent(const Component<ID>&);
 
         std::string describe() const;
 
@@ -42,8 +44,13 @@ namespace omtsched {
         bool optional;
 
         bool fixed;
-        Component<ID> &component;
+        ID component;
     };
+
+    template<typename ID>
+    void ComponentSlot<ID>::addComponent(const Component<ID> &c) {
+        component = c.getID();
+    }
 
     template<typename ID>
     ComponentSlot<ID> &ComponentSlot<ID>::operator=(ComponentSlot<ID> &&cs) {
