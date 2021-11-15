@@ -26,61 +26,76 @@ namespace omtsched {
     /*
     * z3::sort does not define an order so boost::bimap cannot be used directly
     * This is a simple wrapper to circumvent that issue.
-    /
+    */
     template<typename ID>
-    struct sortMap {
+    struct SortMap {
 
     public:
-        z3::sort getSort(const ID &) const;
+        Sort() = default;
+
+        z3::sort getSort(const ID &, const ID &) const;
 
         ID getType(const z3::sort &) const;
 
-        void set(const ID &, const z3::sort &);
+        auto &getSorts();
 
-        void remove(const ID &);
+        auto &getTypes();
+
+        void set(const ID &, const ID &, const z3::sort &);
+
+        void remove(const ID &, const ID &);
 
         void remove(const z3::sort &);
 
     private:
 
         // z3::sort does not define an order, so we use 2 unordered maps instead of a bimap
-        std::unordered_map<ID, z3::sort> componentTypeSorts;
-        std::unordered_map<z3::sort, ID> componentTypeNames;
+        std::unordered_map<std::pair<ID, ID>, z3::sort> componentTypeSorts;
+        std::unordered_map<z3::sort, std::pair<ID, ID>> componentTypeNames;
 
     };
 
     template<typename ID>
-    z3::sort sortMap<ID>::getSort(const ID &id) const {
-        return componentTypeSorts.at(id);
+    z3::sort SortMap<ID>::getSort(const ID &assignment, const ID &slot) const {
+        return componentTypeSorts.at({assignment, slot});
     }
 
     template<typename ID>
-    ID sortMap<ID>::getType(const z3::sort &sort) const {
+    ID SortMap<ID>::getType(const z3::sort &sort) const {
         return componentTypeNames.at(sort);
     }
 
 
     template<typename ID>
-    void sortMap<ID>::set(const ID &id, const z3::sort &sort) {
+    void SortMap<ID>::set(const ID &assignment, const ID &slot, const z3::sort &sort) {
         //TODO: any type of error checking anywhere
-        componentTypeSorts.emplace(id, sort);
-        componentTypeNames.emplace(sort, id);
+        componentTypeSorts.emplace({assignment, slot}, sort);
+        componentTypeNames.emplace(sort, {assignment, slot});
     }
 
     template<typename ID>
-    void sortMap<ID>::remove(const ID &id) {
-        const auto &sort = componentTypeSorts.at(id);
+    void SortMap<ID>::remove(const ID &assignment, const ID &slot) {
+        const auto &sort = componentTypeSorts.at({assignment, slot});
         componentTypeNames.erase(sort);
-        componentTypeSorts.erase(id);
+        componentTypeSorts.erase({assignment, slot});
     }
 
     template<typename ID>
-    void sortMap<ID>::remove(const z3::sort &sort) {
+    void SortMap<ID>::remove(const z3::sort &sort) {
         const auto &id = componentTypeNames.at(sort);
         componentTypeNames.erase(sort);
         componentTypeSorts.erase(id);
     }
-*/
+
+    template<typename ID>
+    auto &SortMap<ID>::getSorts() {
+        return componentTypeSorts;
+    }
+
+    template<typename ID>
+    auto &SortMap<ID>::getTypes() {
+        return componentTypeNames;
+    }
 
     template<typename ID>
     class TranslatorZ3 : public omtsched::Translator<ID> {
@@ -117,23 +132,23 @@ namespace omtsched {
         //z3::expr resolveMaxAssignments(const MaxAssignment <ID> &, const std::vector<Assignment<ID>*> asgnComb);
 
         z3::context context;
-        z3::solver solver;
-        //const Problem<ID> &problem;
+        std::unique_ptr<z3::solver> solver;
 
         std::map<ID, z3::sort> sortMap;
         boost::bimap<ID, z3::expr> components;
         // tuple in order: assignment, slot name
-        boost::bimap<std::pair<int, std::string>, z3::expr> slots;
+        //boost::bimap<std::pair<int, std::string>, z3::expr> slots;
+        SortMap<std::string> slots;
 
     };
 
     template<typename ID>
-    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem}, context{}, solver{context} {
+    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem} {
 
-        //setupConstants();
-        //setupVariables();
-        //solver = z3::solver{context};
-        //setupUniqueness();
+        setupConstants();
+        setupVariables();
+        solver = std::make_unique<z3::solver>(context);
+        setupUniqueness();
     }
 
 
@@ -146,7 +161,7 @@ namespace omtsched {
     const z3::expr TranslatorZ3<ID>::getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const {
 
         auto assignmentNumber = getAssignmentNumber(assignment);
-        return slots.left.at({assignmentNumber, componentSlot});
+        return slots.getSort(assignmentNumber, componentSlot);
     }
 
     template<typename ID>
@@ -168,7 +183,7 @@ namespace omtsched {
             for(const Component<ID> &var : this->problem.getComponents(type))
                 vars.push_back(components.left.at(var.getID()));
 
-            solver.add( z3::distinct(vars));
+            solver->add( z3::distinct(vars));
         }
 
     }
@@ -182,7 +197,7 @@ namespace omtsched {
                 // create assignment variable
                 const auto &type = sortMap.at(slot.type);
                 std::string name = "a" + std::to_string(a) + "c" + sname;
-                slots.left.insert(std::make_pair(std::make_pair(a, sname), context.constant(name.c_str(), type)));
+                slots.set(std::make_pair(a, sname), context.constant(name.c_str(), type));
                 c++;
             }
             a++;
@@ -216,7 +231,7 @@ namespace omtsched {
     template<typename ID>
     void TranslatorZ3<ID>::solve() {
 
-        const auto result = solver.check();
+        const auto result = solver->check();
 
         if (result == z3::unsat)
             std::cout << "UNSAT" << std::endl;
@@ -224,7 +239,7 @@ namespace omtsched {
         else if (result == z3::sat) {
 
             std::cout << "SAT" << std::endl;
-            z3::model m = solver.get_model();
+            z3::model m = solver->get_model();
         } else if (result == z3::unknown)
             std::cout << "UNKNOWN" << std::endl;
 
@@ -238,11 +253,11 @@ namespace omtsched {
         // if(solver.)
 
         Model<ID> model;
-        z3::model m = solver.get_model();
+        z3::model m = solver->get_model();
 
         //boost::bimap<std::tuple<ID, std::string>, z3::expr> slots;
 
-        for(const auto&[key, val] : slots.left)
+        for(const auto&[key, val] : slots.getSorts())
             std::cout << "Assignment " << key.first << ", slot " << key.second << ": " << m.eval(val) << std::endl;
 
         return model;

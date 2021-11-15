@@ -16,10 +16,11 @@ namespace omtsched {
     class Component {
 
     public:
-        Component(const ID &id) : id{id} {}
+        Component(const ID &id, const ID &type) : id{id}, type{type} {}
         //virtual const std::string componentType() const = 0;
 
         const ID getID() const;
+        const ID getType() const;
 
         const std::map<ID, int> &getTags() const;
         const std::set<ID> &getGroups() const;
@@ -31,15 +32,20 @@ namespace omtsched {
 
     private:
         const ID id;
+        const ID type;
         std::map<ID, int> tags;
         std::set<ID> groups;
     };
 
 
-
     template<typename ID>
     const ID Component<ID>::getID() const {
         return id;
+    }
+
+    template<typename ID>
+    const ID Component<ID>::getType() const {
+        return type;
     }
 
     template<typename ID>
@@ -75,7 +81,7 @@ namespace omtsched {
 
         public:
 
-            OrderedComponent(const ID &id, const int &point) : Component<ID>{id}, point{point} {}
+            OrderedComponent(const ID &id, const ID &type, const int &point) : Component<ID>{id, type}, point{point} {}
 
             friend bool operator<(const OrderedComponent<ID> &lhs, const OrderedComponent<ID> &rhs);
         private:

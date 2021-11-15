@@ -19,23 +19,66 @@ namespace omtsched {
 
     public:
 
-        void print(std::ostream &) const;
+       /**
+        * Outputs the problem formulation in SMT-LIB standard format (Version 2.6).
+        * If printed to a .smt2 file, this should be accepted as input by
+        * most solvers.
+        * @param ostr destination of the output
+        */
+        void print(std::ostream &ostr) const;
 
         //Component<ID> &newComponent(const ID &id, const ComponentType<ID> &type);
 
+        /**
+         * Creates a new standard component
+         * @param id a new ID that should be unique among components
+         * @param type the ID of the component type
+         * @return reference to the new component
+         */
         Component<ID> &newComponent(const ID &id, const ID &type);
 
+        /**
+         * Creates a new ordered component
+         * @param id a new ID that should be unique among components
+         * @param type the ID of the component type
+         * @param value a value used to order the component relative to others of its type
+         * @return reference to the new component
+         */
+        OrderedComponent<ID> &newOrderedComponent(const ID &id, const ID &type, const int &value);
+
+        /**
+         * Creates a new assignment
+         * @param id a new ID that should be unique among components
+         * @return reference to the newly created assignment
+         */
         Assignment<ID> &newAssignment(const ID &id);
 
-
+        /**
+         * Get the collection of all groups that can be used in the problem.
+         * @return all groups that were added to the problem, regardless whether they are currently used
+         */
         const std::set<ID> &getAllGroups() const;
 
+        /**
+         * Get the collection of all tags that can be used in the problem.
+         * @return all tags that were added to the problem, regardless whether they are currently used
+         */
         const std::set<ID> &getAllTags() const;
 
+        /**
+         * @param componentType ID of an existing type
+         * @return All components of the problem that have the type componentType
+         */
         const std::vector<Component<ID>> &getComponents(const ID &componentType) const;
 
+        /**
+	 * @return All assignments of the problem 
+	 */
         const std::map<ID, Assignment <ID>> &getAssignments() const;
 
+	/**
+	 * @return All rules belonging to the problem
+	 */
         const std::vector<Rule<ID>> &getRules() const;
 
         //void addRule(const std::string &);
@@ -43,6 +86,12 @@ namespace omtsched {
         //void addRule(const Rule<ID> &&);
 
         //Rule<ID> &addRule(std::shared_ptr<Condition<ID>> c);
+        
+        /**
+         *
+         *
+         *
+         */
         void addRule(std::shared_ptr<Condition<ID>> c, const bool &hard, const int &weight);
 
         void addRule(std::shared_ptr<Condition<ID>> c);
@@ -66,6 +115,7 @@ namespace omtsched {
         //std::vector<std::pair<Rule<ID>, int>> rulesSoft;
 
         std::map<ID, std::vector<Component<ID>>> components;
+        std::map<ID, std::vector<OrderedComponent<ID>>> orderedComponents;
 
         //std::vector<Rule> objectives;
 
@@ -103,7 +153,12 @@ namespace omtsched {
     // TODO: returned iterator can be invalidated in newComponent and newAssignment
     template<typename ID>
     Component<ID> &Problem<ID>::newComponent(const ID &id, const ID &type) {
-        return components[type].emplace_back(id);
+        return components[type].emplace_back(id, type);
+    }
+
+    template<typename ID>
+    OrderedComponent<ID> &Problem<ID>::newOrderedComponent(const ID &id, const ID &type, const int &value) {
+        return orderedComponents[type].emplace_back(id, type, value);
     }
 
     // Reference can be subject to invalidation, only use locally!
@@ -155,6 +210,8 @@ namespace omtsched {
     template<typename ID>
     void Problem<ID>::print(std::ostream &ostr) const {
 
+
+        // Pase 0: setup
         ostr << "(set-logic QF_EQ)" << std::endl;
 
         ostr << std::endl;
@@ -167,6 +224,11 @@ namespace omtsched {
         for(const auto &[typeID, components] : components)
             ostr << "(declare-sort " << "t" << typeID << " 0)" << std::endl;
 
+        for(const auto &[typeID, components] : orderedComponents)
+            ostr << "(declare-sort " << "t" << typeID << " 0)" << std::endl;
+
+        // Phase 1: declare constants and variables
+
         ostr << std::endl;
         ostr << "; Components" << std::endl;
         ostr << "; a components name is c[componentID]" << std::endl;
@@ -177,6 +239,15 @@ namespace omtsched {
                 ostr << "(declare-fun c" << component.getID() << " () t" << typeID << ")" << std::endl;
         }
 
+        for(const auto &[typeID, components] : orderedComponents){
+            for(const Component<ID> &component : components)
+                ostr << "(declare-fun c" << component.getID() << " () t" << typeID << ")" << std::endl;
+        }
+
+        for(const Rule<ID>& rule : rules)
+            rule.declareVariables(ostr);
+
+        // Phase 2: declare constraints
 
         ostr << std::endl;
         ostr << "; Distinctness Constraints" << std::endl;
@@ -184,6 +255,15 @@ namespace omtsched {
         ostr << std::endl;
 
         for(const auto &[typeID, components] : components){
+
+            ostr << "(distinct";
+            for(const Component<ID> &component : components)
+                ostr << " c" << component.getID();
+
+            ostr << ")" << std::endl;
+        }
+
+        for(const auto &[typeID, components] : orderedComponents){
 
             ostr << "(distinct";
             for(const Component<ID> &component : components)
@@ -204,7 +284,7 @@ namespace omtsched {
                 ostr << "(declare-fun a" << asgnID << "s" << slotID << " () t" << slot.type << ")" << std::endl;
 
                 if(slot.fixed)
-                    ostr << "(assert (= a" << asgnID << "s" << slotID <<  " c" << slot.component.getID() << "))" << std::endl;
+                    ostr << "(assert (= a" << asgnID << "s" << slotID <<  " c" << slot.component << "))" << std::endl;
             }
         }
 

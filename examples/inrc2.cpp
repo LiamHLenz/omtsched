@@ -23,7 +23,7 @@ int main() {
     namespace pt = boost::property_tree;
 
     pt::ptree scenarioTree;
-    pt::read_xml("C:/Users/Betrieb-PC/Desktop/testdatasets_xml/n005w4/Sc-n005w4.xml", scenarioTree);
+    pt::read_xml("/home/hal/Desktop/testdatasets_xml_INRC2/n005w4/Sc-n005w4.xml", scenarioTree);
 
     int weeks = scenarioTree.get<int>("Scenario.NumberOfWeeks");
 
@@ -76,7 +76,7 @@ int main() {
             const auto &skill = w.second.get<std::string>("");
             nurse.addGroup(skill);
         }
-
+        /*
         // Add contract data
         std::string contract = v.second.get<std::string>("Contract");
         for (pt::ptree::value_type &v: scenarioTree.get_child("Scenario.Contracts")) {
@@ -127,17 +127,16 @@ int main() {
                     }
 
                 }/
-            */
+
                 break;
             }
-        }
+        }*/
     }
 
 
     // Disregard History
     // Create Weeks
-    int dayCounter = 1;
-    const std::string &weekPath = "C:/Users/Betrieb-PC/Desktop/testdatasets_xml/n005w4/WD-n005w4-";
+    const std::string &weekPath = "/home/hal/Desktop/testdatasets_xml_INRC2/n005w4/WD-n005w4-";
     for(int weekCounter = 0; weekCounter < weeks; weekCounter++){
 
         pt::ptree weekTree;
@@ -163,6 +162,8 @@ int main() {
                                                           "RequirementOnWednesday", "RequirementOnThursday",
                                                           "RequirementOnFriday", "RequirementOnSaturday", "RequirementOnSunday"};
 
+            int dayCounter = 1;
+
             for(const std::string &wdr: weekDayRequirements){
 
                 // -<RequirementOnMonday>
@@ -174,9 +175,9 @@ int main() {
                 if(min != 0) {
 
                     // Create min assignments
-                    for(int j = 0; j < min; j++){
+                    for(int j = 0; j < min + opt; j++){
 
-                        const std::string name = "w"+std::to_string(weekCounter)+"d"+std::to_string(dayCounter);
+                        const std::string name = "w"+std::to_string(weekCounter)+"d"+std::to_string(dayCounter) + shiftType + skill + std::to_string(j);
                         auto &asgn = inrc2.newAssignment(name);
                         auto &time = inrc2.newComponent(name, timeType);
                         time.addGroup(skill);
@@ -188,54 +189,44 @@ int main() {
                             time.addGroup("Sunday" + std::to_string(weekCounter));
 
                         asgn.setVariable(nurseSlot, nurseType, false);
-                        asgn.setOptional(false);
+
+                        if(j >= min)
+                            asgn.setOptional(true);
+                        else
+                            asgn.setOptional(false);
                     }
 
-                    if(opt != 0)
-                        for(int j = 0; j < min; j++){
-
-                            const std::string name = "w"+std::to_string(weekCounter)+"d"+std::to_string(dayCounter);
-                            auto &asgn = inrc2.newAssignment(name);
-                            auto &time = inrc2.newComponent(name, timeType);
-                            time.addGroup(skill);
-                            asgn.setFixed(timeSlot, time);
-
-                            if(dayCounter % 6 == 0)
-                                time.addGroup("Saturday" + std::to_string(weekCounter));
-                            else if(dayCounter % 7 == 0)
-                                time.addGroup("Sunday" + std::to_string(weekCounter));
-
-                            asgn.setVariable(nurseSlot, nurseType, false);
-                            asgn.setOptional(true);
-
-                        }
                 }
 
                 dayCounter++;
             }
 
         }
-
+        /*
         // Create the shift-off requests
         for(pt::ptree::value_type &v: weekTree.get_child("WeekData.ShiftOffRequests")){
 
             //inrc2.addRule( , true, )
 
-        }
+        }*/
 
     }
 
-    std::ofstream solfile;
-    solfile.open ("C:/Users/Betrieb-PC/Desktop/testproblem/n005w4.smt2");
-    inrc2.print(solfile);
-    solfile.close();
 
-    TranslatorZ3 translator (inrc2);
-    //translator.solve();
+    //std::ofstream problemfile;
+    //problemfile.open("/home/hal/Documents/testproblem.smt2");
+    //inrc2.print(problemfile);
+
+    TranslatorZ3 trans (inrc2);
+    trans.solve();
 
     //Model model = translator.getModel();
 
     // Generate solution files
+    //std::ofstream solfile;
+    //solfile.open ("C:/Users/Betrieb-PC/Desktop/testproblem/n005w4.smt2");
+    //inrc2.print(solfile);
+    //solfile.close();
 
 }
 

@@ -10,11 +10,9 @@
 using And = omtsched::And<std::string>;
 using Or = omtsched::Or<std::string>;
 using ComponentIs = omtsched::ComponentIs<std::string>;
-using MaxAssignment = omtsched::MaxAssignment<std::string>;
 using Condition = omtsched::Condition<std::string>;
 using InGroup = omtsched::InGroup<std::string>;
 using SameComponent = omtsched::SameComponent<std::string>;
-using ComponentIn = omtsched::ComponentIn<std::string>;
 
 namespace pt = boost::property_tree;
 
@@ -114,14 +112,15 @@ int main() {
     // TODO: phasedness
     // Phased: season is split into two equally long 1RR intervals, where each pair plays
     // in one home-away configuration in both phases
-    bool phased = scenarioTree.get<std::string>("Instance.Structure.Format.gameMode") == "P";
-    if(phased){
+    //bool phased = scenarioTree.get<std::string>("Instance.Structure.Format.gameMode") == "P";
+    //if(phased){
         //addRule();
-    }
+    //}
 
     // TODO: compacted-ness
     // A timetable is time-constrained (also called compact) if it uses the
-    //minimal number of time slots needed, and is time-relaxed otherwise.
+    // minimal number of time slots needed, and is time-relaxed otherwise.
+    //
     bool compact = scenarioTree.get<std::string>("Instance.Structure.Format.compactness") == "C";
     if(compact){
         //addRule();
@@ -129,6 +128,7 @@ int main() {
 
     // Set Objective: minimize number of violated soft constraints, equally weighted
 
+    /*
     // Add Constraints
     for(pt::ptree::value_type &node : scenarioTree.get_child("Instance.Constraints.CapacityConstraints")){
 
@@ -212,6 +212,6 @@ int main() {
             // not needed yet
         }
     }
-
+    */
 
 }

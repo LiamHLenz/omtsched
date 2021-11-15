@@ -118,14 +118,7 @@ namespace omtsched {
     template<typename ID>
     void Assignment<ID>::setFixed(const ID &name, const Component<ID> &comps) {
 
-        componentSlots[name].addComponent(comps);
-    }
-
-    template<typename ID>
-    void Assignment<ID>::setFixed(const ID &name, std::vector<Component<ID>> &comps) {
-
-        for(const auto &c : comps)
-            componentSlots[name].addComponent(comps);
+        componentSlots.emplace(std::piecewise_construct, std::make_tuple(name), std::make_tuple(comps.getType(), false));
     }
 
     template<typename ID>

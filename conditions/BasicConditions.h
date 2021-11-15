@@ -16,6 +16,7 @@ namespace omtsched {
     public:
         static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IS;
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+        void declareVariables(std::ostream &) const;
 
         ComponentIs(ID componentSlot, ID component) : componentSlot{componentSlot},
         component{component} {};
@@ -64,6 +65,7 @@ namespace omtsched {
         const ID group;
 
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+        void declareVariables(std::ostream &) const;
 
     };
 
@@ -80,7 +82,10 @@ namespace omtsched {
         ostr << ")" << std::endl;
     }
 
-    template<typename ID>
+template<typename ID>
+void InGroup<ID>::declareVariables(std::ostream &) const {return;}
+
+template<typename ID>
     class SameComponent : public Condition<ID> {
 
     public:
@@ -89,6 +94,7 @@ namespace omtsched {
         const ID slot;
 
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+        void declareVariables(std::ostream &) const;
     };
 
     template<typename ID>
@@ -103,23 +109,24 @@ namespace omtsched {
 
     }
 
-    /*
+
+/*
 template<typename ID>
-    class ComponentIn : public Condition<ID> {
+class ComponentIn : public Condition<ID> {
 
-    public:
-        ComponentIn(const ID &slotType, std::vector<ID> components) : slotType{slotType}, components{components} {}
-        static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IN;
-        const ID slotType;
-        const std::vector<ID> &components;
+public:
+    ComponentIn(const ID &slotType, std::vector<ID> components) : slotType{slotType}, components{components} {}
+    static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IN;
+    const ID slotType;
+    const std::vector<ID> &components;
 
-        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
-    };
+    void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+};
 
-    template<typename ID>
-    void ComponentIn<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+template<typename ID>
+void ComponentIn<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
 
-    }
+}
 */
 
     template<typename ID>
@@ -128,6 +135,7 @@ template<typename ID>
     public:
         static const CONDITION_TYPE type = CONDITION_TYPE::DISTINCT;
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+        void declareVariables(std::ostream &) const;
 
         Distinct(ID componentSlot) : componentSlot{componentSlot} {};
 
@@ -149,7 +157,6 @@ template<typename ID>
 
         ostr << ") ";
     }
-
 
 
 }

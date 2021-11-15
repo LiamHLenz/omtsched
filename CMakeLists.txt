@@ -8,7 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(omtsched SHARED omtsched.h
         Assignment.h Component.h ComponentType.h Condition.h
         Model.h Problem.h Rule.h Translator.h
-        conditions/BasicConditions.h conditions/BooleanConditions.h
+        conditions/BasicConditions.h conditions/BooleanConditions.h conditions/OrderedConditions.h
         z3/TranslatorZ3.h z3/ConditionsZ3.h
         )
 
@@ -20,12 +20,19 @@ find_package(Boost REQUIRED)
 
 find_package(Z3 CONFIG REQUIRED)
 
+find_package(wxWidgets REQUIRED)
+include(${wxWidgets_USE_FILE})
+
 #if(Boost_FOUND)
     include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-             examples/simple.cpp)
+            examples/inrc2.cpp)
 
+#    add_executable(uitest
+#            ui/main.cpp ui/MainFrame.cpp ui/MainFrame.h)
+
+#    target_link_libraries(uitest PRIVATE ${wxWidgets_LIBRARIES})
 
     target_link_libraries(examples omtsched)
     target_link_libraries(examples Boost::boost)

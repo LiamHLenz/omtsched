@@ -35,6 +35,8 @@ namespace omtsched {
 
         void print(std::ostream &) const;
 
+        void declareVariables(std::ostream &) const;
+
     private:
         std::shared_ptr<Condition<ID>> toplevel;
         bool restrictedSet;
@@ -111,6 +113,12 @@ namespace omtsched {
             toplevel->print(ostr, asgns);
 
         ostr << ")" << std::endl;
+    }
+
+    template<typename ID>
+    void Rule<ID>::declareVariables(std::ostream &ostr) const {
+        for(const std::vector<Assignment<ID>*> &asgns : applicableSets)
+            toplevel->declareVariables(ostr, asgns);
     }
 
 }
