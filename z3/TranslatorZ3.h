@@ -28,74 +28,92 @@ namespace omtsched {
     * This is a simple wrapper to circumvent that issue.
     */
     template<typename ID>
-    struct SortMap {
+    struct SlotMap {
 
     public:
-        Sort() = default;
+        z3::expr getVariable(const ID &, const ID &) const;
 
-        z3::sort getSort(const ID &, const ID &) const;
+        std::pair<ID, ID> getSlot(const z3::expr &) const;
 
-        ID getType(const z3::sort &) const;
+        /**
+         *
+         * @return [{id, id}, expr]
+         */
+        auto &getSlotMap();
 
-        auto &getSorts();
+        /**
+         *
+         * @return [expr, {id, id}]
+         */
+        auto &getVariableMap();
 
-        auto &getTypes();
-
-        void set(const ID &, const ID &, const z3::sort &);
+        void set(const ID &, const ID &, const z3::expr &);
 
         void remove(const ID &, const ID &);
 
-        void remove(const z3::sort &);
+        void remove(const z3::expr &);
 
     private:
 
+        using bm_type = typename boost::bimap< std::pair<ID, ID>, z3::expr>::value_type;
+
         // z3::sort does not define an order, so we use 2 unordered maps instead of a bimap
-        std::unordered_map<std::pair<ID, ID>, z3::sort> componentTypeSorts;
-        std::unordered_map<z3::sort, std::pair<ID, ID>> componentTypeNames;
+        //std::map<std::pair<ID, ID>, z3::expr> variables;
+        //std::map<z3::expr, std::pair<ID, ID>> slots;
+        boost::bimap<std::pair<ID, ID>, z3::expr> slots;
 
     };
 
     template<typename ID>
-    z3::sort SortMap<ID>::getSort(const ID &assignment, const ID &slot) const {
-        return componentTypeSorts.at({assignment, slot});
+    z3::expr SlotMap<ID>::getVariable(const ID &assignment, const ID &slot) const {
+        return slots.left.at({assignment, slot});
     }
 
     template<typename ID>
-    ID SortMap<ID>::getType(const z3::sort &sort) const {
-        return componentTypeNames.at(sort);
+    std::pair<ID, ID> SlotMap<ID>::getSlot(const z3::expr &expr) const {
+        return slots.right.at(expr);
     }
 
 
     template<typename ID>
-    void SortMap<ID>::set(const ID &assignment, const ID &slot, const z3::sort &sort) {
+    void SlotMap<ID>::set(const ID &assignment, const ID &slot, const z3::expr &expr) {
         //TODO: any type of error checking anywhere
-        componentTypeSorts.emplace({assignment, slot}, sort);
-        componentTypeNames.emplace(sort, {assignment, slot});
+
+        /* typedef bimap< int, list_of< std::string > > bm_type;
+            bm_type bm;
+            bm.insert( bm_type::relation( 1, "one" ) );*/
+
+        slots.insert(bm_type(std::make_pair(assignment, slot), expr));
+        //slots.left.insert(std::make_pair(assignment, slot), expr);
     }
 
     template<typename ID>
-    void SortMap<ID>::remove(const ID &assignment, const ID &slot) {
-        const auto &sort = componentTypeSorts.at({assignment, slot});
-        componentTypeNames.erase(sort);
-        componentTypeSorts.erase({assignment, slot});
+    void SlotMap<ID>::remove(const ID &assignment, const ID &slot) {
+        //const auto &sort = componentTypeSorts.at({assignment, slot});
+        //slots.erase(sort);
+        //variables.erase({assignment, slot});
+        slots.left.erase({assignment, slot});
     }
 
     template<typename ID>
-    void SortMap<ID>::remove(const z3::sort &sort) {
-        const auto &id = componentTypeNames.at(sort);
-        componentTypeNames.erase(sort);
-        componentTypeSorts.erase(id);
+    void SlotMap<ID>::remove(const z3::expr &expr) {
+        //const auto &id = componentTypeNames.at(sort);
+        //componentTypeNames.erase(sort);
+        //componentTypeSorts.erase(id);
+        slots.right.erase(expr);
     }
 
     template<typename ID>
-    auto &SortMap<ID>::getSorts() {
-        return componentTypeSorts;
+    auto &SlotMap<ID>::getSlotMap() {
+        return slots.left;
     }
 
     template<typename ID>
-    auto &SortMap<ID>::getTypes() {
-        return componentTypeNames;
+    auto &SlotMap<ID>::getVariableMap() {
+        return slots.right;
     }
+
+
 
     template<typename ID>
     class TranslatorZ3 : public omtsched::Translator<ID> {
@@ -138,7 +156,7 @@ namespace omtsched {
         boost::bimap<ID, z3::expr> components;
         // tuple in order: assignment, slot name
         //boost::bimap<std::pair<int, std::string>, z3::expr> slots;
-        SortMap<std::string> slots;
+        SlotMap<ID> slots;
 
     };
 
@@ -197,7 +215,7 @@ namespace omtsched {
                 // create assignment variable
                 const auto &type = sortMap.at(slot.type);
                 std::string name = "a" + std::to_string(a) + "c" + sname;
-                slots.set(std::make_pair(a, sname), context.constant(name.c_str(), type));
+                slots.set(aid, sname, context.constant(name.c_str(), type));
                 c++;
             }
             a++;
@@ -257,8 +275,8 @@ namespace omtsched {
 
         //boost::bimap<std::tuple<ID, std::string>, z3::expr> slots;
 
-        for(const auto&[key, val] : slots.getSorts())
-            std::cout << "Assignment " << key.first << ", slot " << key.second << ": " << m.eval(val) << std::endl;
+        for(const auto&[key, val] : slots.getSlotMap())
+            std::cout << "Assignment " << key.first << ", slot " << key.second << ": " << val << std::endl;
 
         return model;
 

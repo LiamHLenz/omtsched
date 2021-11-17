@@ -35,11 +35,16 @@ MyFrame::MyFrame()
     notebook = new wxNotebook(this, wxID_ANY);
     sizer->Add(notebook, wxEXPAND);
 
+    // ProjectPanel *projectPanel = new ProjectPanel(notebook, taskManager);
+    //    notebook->AddPage(projectPanel, "Projects");
+
     //notebook->AddPage( , "Overview");
 
-    //notebook->AddPage( , "Components");
+    std::unique_ptr<ComponentPanel> componentPanel = std::make_unique<ComponentPanel>();
+    //notebook->AddPage(componentPanel, "Components");
 
-    //notebook->AddPage( , "Assignments");
+    //std::unique_ptr<AssignmentPanel> assignmentPanel = std::make_unique<AssignmentPanel>();
+    //notebook->AddPage(assignmentPanel, "Assignments");
 
     //SetClientSize(notebook->GetBestSize());
 
