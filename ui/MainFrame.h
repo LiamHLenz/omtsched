@@ -7,11 +7,15 @@
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
+#include <memory>
+#include "ComponentPanel.h"
 
-class MyFrame : public wxFrame
-{
+class MainFrame : public wxFrame {
+
+    using Problem = omtsched::Problem<std::string>;
+
 public:
-    MyFrame();
+    MainFrame(Problem &problem);
 private:
     void OnHello(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
@@ -19,9 +23,16 @@ private:
 
     wxMenu *menuFile;
     wxMenu *menuHelp;
+    wxMenuBar *menuBar;
+
+    wxBoxSizer *sizer;
 
     wxPanel *m_panel; // Panel containing notebook and other controls
     wxNotebook *notebook;
+
+    ComponentPanel *componentPanel;
+
+    Problem &problem;
 };
 enum
 {

@@ -5,16 +5,23 @@
 #ifndef OMTSCHED_COMPONENTPANEL_H
 #define OMTSCHED_COMPONENTPANEL_H
 
+#include <wx/wx.h>
+#include <wx/dataview.h>
+#include <memory>
+#include "../Problem.h"
 
 class ComponentPanel : public wxPanel {
 
+    using Problem = omtsched::Problem<std::string>;
+    using Component = omtsched::Component<std::string>;
+    using ComponentType = omtsched::ComponentType<std::string>;
+
 public:
-    ComponentPanel(wxWindow * parent, Project &project);
-    ~ComponentPanel();
+    ComponentPanel(wxWindow * parent, Problem &problem);
 
-    void addComponentType();
+    void addComponentType(const ComponentType &type);
 
-    void addComponent();
+    void addComponent(const Component &component);
 
 protected:
 
@@ -37,9 +44,6 @@ private:
 
         std::unique_ptr<wxButton> button_edit_groups;
         std::unique_ptr<wxButton> button_edit_tags;
-
-        void addComponent(const Component<std::string> &component);
-        void addType(const ComponentType<std::string> &type);
 
 };
 

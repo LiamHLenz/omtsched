@@ -21,14 +21,14 @@ ComponentDialog::ComponentDialog(wxWindow *parent, Problem &pr, wxWindowID id, c
 
     label_type = std::make_unique<wxStaticText>(this, wxID_ANY, wxT("Type"));
     combo_type = std::make_unique<wxComboBox>(this, ID_COMP_comboType);
-   //combo_project = new wxComboBox(this, ID_comboProject, project_name, wxDefaultPosition, wxDefaultSize, project_strings.size(), project_strings.data());
+    //combo_project = new wxComboBox(this, ID_comboProject, project_name, wxDefaultPosition, wxDefaultSize, project_strings.size(), project_strings.data());
 
     std::unique_ptr sizer_comp = std::make_unique<wxGridSizer>(2);
-    sizer_comp->Add(label_id);
-    sizer_comp->Add(text_id);
+    sizer_comp->Add(label_id.get());
+    sizer_comp->Add(text_id.get());
 
-    sizer_comp->Add(label_type);
-    sizer_comp->Add(combo_type);
+    sizer_comp->Add(label_type.get());
+    sizer_comp->Add(combo_type.get());
 
     // ---------------------------------------------------------------------------------
     // -------------------------------- Layout -----------------------------------------
@@ -36,20 +36,20 @@ ComponentDialog::ComponentDialog(wxWindow *parent, Problem &pr, wxWindowID id, c
 
     auto sizer_buttons = std::make_unique<wxBoxSizer>(wxHORIZONTAL);
 
-    button_save = std::make_unique<wxButton>(this, IDPROJECT_buttonSave, wxT("Save"));
-    button_cancel = std::make_unique<wxButton>(this, IDPROJECT_buttonSave, wxT("Cancel"));
+    button_save = std::make_unique<wxButton>(this, ID_COMP_buttonSave, wxT("Save"));
+    button_cancel = std::make_unique<wxButton>(this, ID_COMP_buttonSave, wxT("Cancel"));
 
-    sizer_buttons->Add(button_save);
-    sizer_buttons->Add(button_cancel);
+    sizer_buttons->Add(button_save.get());
+    sizer_buttons->Add(button_cancel.get());
 
 
-    sizer_top->Add(sizer_comp, 1, wxEXPAND);
-    sizer_top->Add(sizer_button, 0);
+    sizer_top->Add(sizer_comp.get(), 1, wxEXPAND);
+    sizer_top->Add(sizer_buttons.get(), 0);
 
     Bind(wxEVT_BUTTON, &ComponentDialog::OnCancel, this, ID_COMP_buttonCancel);
     Bind(wxEVT_BUTTON, &ComponentDialog::OnSave, this, ID_COMP_buttonSave);
 
-    SetSizerAndFit(sizer_top);
+    SetSizerAndFit(sizer_top.get());
     Centre();
 
 }
@@ -57,8 +57,8 @@ ComponentDialog::ComponentDialog(wxWindow *parent, Problem &pr, wxWindowID id, c
 
 void ComponentDialog::OnSave(wxCommandEvent &event) {
 
-    std::string id = text_id->GetLineText(0).ToStdString(wxConvUTF8);
-    std::string type = combo_project->GetValue();
+    std::string id = text_id->GetLineText(0).ToStdString();
+    std::string type = combo_type->GetValue().ToStdString();
 
     problem.newComponent(id, type);
 

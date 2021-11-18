@@ -4,19 +4,20 @@
 
 #include "MainFrame.h"
 
-MyFrame::MyFrame()
-        : wxFrame(NULL, wxID_ANY, "Hello World")
+MainFrame::MainFrame(Problem &problem)
+        : wxFrame(NULL, wxID_ANY, "Hello World"), problem(problem)
 {
-    menuFile = new wxMenu;
+
+    menuFile = new wxMenu();
 
     menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
                      "Help string shown in status bar for this menu item");
     menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
 
-    menuHelp = new wxMenu;
+    menuHelp = new wxMenu();
     menuHelp->Append(wxID_ABOUT);
-    wxMenuBar *menuBar = new wxMenuBar;
+    menuBar = new wxMenuBar();
     menuBar->Append(menuFile, "&File");
     menuBar->Append(menuHelp, "&Help");
 
@@ -24,48 +25,45 @@ MyFrame::MyFrame()
     CreateStatusBar();
     SetStatusText("Welcome to wxWidgets!");
 
-    Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
-    Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
-    Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+    Bind(wxEVT_MENU, &MainFrame::OnHello, this, ID_Hello);
+    Bind(wxEVT_MENU, &MainFrame::OnAbout, this, wxID_ABOUT);
+    Bind(wxEVT_MENU, &MainFrame::OnExit, this, wxID_EXIT);
 
     // ---------------------------------------------------------------------------------
 
 
-    wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+    sizer = new wxBoxSizer(wxVERTICAL);
     notebook = new wxNotebook(this, wxID_ANY);
     sizer->Add(notebook, wxEXPAND);
 
-    // ProjectPanel *projectPanel = new ProjectPanel(notebook, taskManager);
-    //    notebook->AddPage(projectPanel, "Projects");
 
     //notebook->AddPage( , "Overview");
 
-    std::unique_ptr<ComponentPanel> componentPanel = std::make_unique<ComponentPanel>();
+    componentPanel = new ComponentPanel(this, problem);
     //notebook->AddPage(componentPanel, "Components");
 
     //std::unique_ptr<AssignmentPanel> assignmentPanel = std::make_unique<AssignmentPanel>();
     //notebook->AddPage(assignmentPanel, "Assignments");
 
-    //SetClientSize(notebook->GetBestSize());
-
+    SetSizer(sizer);
 
 }
 
 
-void MyFrame::OnExit(wxCommandEvent& event)
+void MainFrame::OnExit(wxCommandEvent& event)
 {
     Close(true);
 }
 
 
-void MyFrame::OnAbout(wxCommandEvent& event)
+void MainFrame::OnAbout(wxCommandEvent& event)
 {
     wxMessageBox("This is a wxWidgets Hello World example",
                  "About Hello World", wxOK | wxICON_INFORMATION);
 }
 
 
-void MyFrame::OnHello(wxCommandEvent& event)
+void MainFrame::OnHello(wxCommandEvent& event)
 {
     wxLogMessage("Hello world from wxWidgets!");
 }

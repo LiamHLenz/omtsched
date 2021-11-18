@@ -5,8 +5,12 @@
 #ifndef OMTSCHED_COMPONENTDIALOG_H
 #define OMTSCHED_COMPONENTDIALOG_H
 
+#include <wx/wx.h>
+#include "../omtsched.h"
 
 class ComponentDialog : public wxDialog {
+
+using Problem = omtsched::Problem<std::string>;
 
 public:
     ComponentDialog(wxWindow * parent, Problem &problem, wxWindowID id = wxID_ANY, const wxString &title = "Project", const wxPoint &position = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE);

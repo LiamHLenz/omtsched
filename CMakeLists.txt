@@ -34,11 +34,11 @@ include(${wxWidgets_USE_FILE})
             ui/ComponentPanel.cpp ui/ComponentPanel.h
             ui/ComponentDialog.cpp ui/ComponentDialog.h)
 
-    target_link_libraries(uitest PRIVATE ${wxWidgets_LIBRARIES})
+    target_link_libraries(uitest ${wxWidgets_LIBRARIES})
     target_link_libraries(uitest omtsched)
     target_link_libraries(uitest Boost::boost)
-    target_include_directories(uitest PRIVATE ${Z3_CXX_INCLUDE_DIRS})
-    target_link_libraries(uitest ${Z3_LIBRARIES})
+#    target_include_directories(uitest ${Z3_CXX_INCLUDE_DIRS})
+#    target_link_libraries(uitest ${Z3_LIBRARIES})
 
 #    target_link_libraries(examples omtsched)
 #    target_link_libraries(examples Boost::boost)
