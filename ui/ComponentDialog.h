@@ -19,14 +19,14 @@ private:
 
     Problem &problem;
 
-    std::unique_ptr<wxTextCtrl> text_id;
-    std::unique_ptr<wxStaticText> label_id;
+    wxTextCtrl *text_id;
+    wxStaticText *label_id;
 
-    std::unique_ptr<wxComboBox> combo_type;
-    std::unique_ptr<wxStaticText> label_type;
+    wxComboBox *combo_type;
+    wxStaticText *label_type;
 
-    std::unique_ptr<wxButton> button_save;
-    std::unique_ptr<wxButton> button_cancel;
+    wxButton *button_save;
+    wxButton *button_cancel;
 
     void OnSave(wxCommandEvent &event);
     void OnCancel(wxCommandEvent &event);

@@ -32,7 +32,7 @@ include(${wxWidgets_USE_FILE})
     add_executable(uitest
             ui/main.cpp ui/MainFrame.cpp ui/MainFrame.h
             ui/ComponentPanel.cpp ui/ComponentPanel.h
-            ui/ComponentDialog.cpp ui/ComponentDialog.h)
+            ui/ComponentDialog.cpp ui/ComponentDialog.h ui/TypeDialog.cpp ui/TypeDialog.h ui/AssignmentPanel.cpp ui/AssignmentPanel.h)
 
     target_link_libraries(uitest ${wxWidgets_LIBRARIES})
     target_link_libraries(uitest omtsched)

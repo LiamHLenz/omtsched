@@ -31,19 +31,25 @@ protected:
         void OnEditGroups(wxCommandEvent& event);
         void OnEditTags(wxCommandEvent& event);
 
+        void OnAddType(wxCommandEvent& event);
+        void OnDeleteType(wxCommandEvent& event);
+
         void refresh();
 
 private:
 
-        std::unique_ptr<wxDataViewListCtrl> complistctrl;
-        std::unique_ptr<wxDataViewListCtrl> typelistctrl;
+        wxDataViewListCtrl *complistctrl;
+        wxDataViewListCtrl *typelistctrl;
         Problem& problem;
 
-        std::unique_ptr<wxButton> button_add;
-        std::unique_ptr<wxButton> button_delete;
+        wxButton *button_add;
+        wxButton *button_delete;
 
-        std::unique_ptr<wxButton> button_edit_groups;
-        std::unique_ptr<wxButton> button_edit_tags;
+        wxButton *button_edit_groups;
+        wxButton *button_edit_tags;
+
+        wxButton *button_addType;
+        wxButton *button_deleteType;
 
 };
 
@@ -51,7 +57,9 @@ enum {
     ID_COMP_Add = 2,
     ID_COMP_Delete = 3,
     ID_COMP_EditG = 4,
-    ID_COMP_EditT = 5
+    ID_COMP_EditT = 5,
+    ID_COMP_AddType = 6,
+    ID_COMP_DeleteType = 7
 };
 
 

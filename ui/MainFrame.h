@@ -9,6 +9,7 @@
 #include <wx/notebook.h>
 #include <memory>
 #include "ComponentPanel.h"
+#include "AssignmentPanel.h"
 
 class MainFrame : public wxFrame {
 
@@ -21,6 +22,9 @@ private:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
 
+    void OnLoad(wxCommandEvent& event);
+    void OnSave(wxCommandEvent& event);
+
     wxMenu *menuFile;
     wxMenu *menuHelp;
     wxMenuBar *menuBar;
@@ -31,12 +35,15 @@ private:
     wxNotebook *notebook;
 
     ComponentPanel *componentPanel;
+    AssignmentPanel *assignmentPanel;
 
     Problem &problem;
 };
 enum
 {
-    ID_Hello = 1
+    ID_Hello = 1,
+    ID_Load = 2,
+    ID_Save = 3
 };
 
 

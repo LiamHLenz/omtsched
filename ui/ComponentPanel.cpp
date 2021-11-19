@@ -4,52 +4,65 @@
 
 #include "ComponentPanel.h"
 #include "ComponentDialog.h"
+#include "TypeDialog.h"
 
 ComponentPanel::ComponentPanel(wxWindow *parent, Problem &problem) : wxPanel{parent}, problem{problem} {
 
-    std::unique_ptr sizer_top = std::make_unique<wxBoxSizer>(wxVERTICAL);
-    std::unique_ptr sizer_complist = std::make_unique<wxBoxSizer>(wxHORIZONTAL);
-    std::unique_ptr sizer_typelist = std::make_unique<wxBoxSizer>(wxHORIZONTAL);
+    wxBoxSizer *sizer_top = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer *sizer_complist = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer *sizer_typelist = new wxBoxSizer(wxHORIZONTAL);
 
-    typelistctrl = std::make_unique<wxDataViewListCtrl>(this, wxID_ANY, wxDefaultPosition, wxSize(1200,300));
+    typelistctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(1200,300));
     typelistctrl->AppendTextColumn("Type");
 
-    sizer_typelist->Add(typelistctrl.get(), 1, wxEXPAND);
+    button_addType = new wxButton(this, ID_COMP_AddType, wxString("&Add"));
+    button_deleteType = new wxButton(this, ID_COMP_Delete, wxString("&Delete"));
+    sizer_typelist->Add(typelistctrl, 1, wxEXPAND);
 
-    complistctrl = std::make_unique<wxDataViewListCtrl>(this, wxID_ANY, wxDefaultPosition, wxSize(1200,300));
+    wxBoxSizer *sizer_type_buttons = new wxBoxSizer(wxVERTICAL);
+    sizer_type_buttons->Add(button_addType);
+    sizer_type_buttons->Add(button_deleteType);
+    sizer_typelist->Add(sizer_type_buttons);
+
+    Bind(wxEVT_BUTTON, &ComponentPanel::OnAddType, this, ID_COMP_AddType);
+    Bind(wxEVT_BUTTON, &ComponentPanel::OnDeleteType, this, ID_COMP_DeleteType);
+
+    complistctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(1200,300));
     complistctrl->AppendTextColumn("ID");
     complistctrl->AppendTextColumn("Type");
     complistctrl->AppendTextColumn("Groups");
     complistctrl->AppendTextColumn("Tags");
 
-    sizer_complist->Add(complistctrl.get(), 1, wxEXPAND);
-    sizer_top->Add(sizer_typelist.get(), 1, wxEXPAND);
-    sizer_top->Add(sizer_complist.get(), 1, wxEXPAND);
+    sizer_complist->Add(complistctrl, 1, wxEXPAND);
+    sizer_top->Add(sizer_typelist, 1, wxEXPAND);
 
-    button_add = std::make_unique<wxButton>(this, ID_COMP_Add, wxString("&Add"));
-    button_delete = std::make_unique<wxButton>(this, ID_COMP_Delete, wxString("&Delete"));
-    button_edit_groups = std::make_unique<wxButton>(this, ID_COMP_EditG, wxString("&Edit Groups"));
-    button_edit_tags = std::make_unique<wxButton>(this, ID_COMP_EditT, wxString("&Edit Tags"));
+    button_add = new wxButton(this, ID_COMP_Add, wxString("&Add"));
+    button_delete = new wxButton(this, ID_COMP_Delete, wxString("&Delete"));
+    button_edit_groups = new wxButton(this, ID_COMP_EditG, wxString("&Edit Groups"));
+    button_edit_tags = new wxButton(this, ID_COMP_EditT, wxString("&Edit Tags"));
 
     Bind(wxEVT_BUTTON, &ComponentPanel::OnAdd, this, ID_COMP_Add);
     Bind(wxEVT_BUTTON, &ComponentPanel::OnDelete, this, ID_COMP_Delete);
     Bind(wxEVT_BUTTON, &ComponentPanel::OnEditGroups, this, ID_COMP_EditG);
     Bind(wxEVT_BUTTON, &ComponentPanel::OnEditTags, this, ID_COMP_EditT);
 
-    std::unique_ptr sizer_buttons = std::make_unique<wxBoxSizer>(wxHORIZONTAL);
-    sizer_buttons->Add(button_add.get());
-    sizer_buttons->Add(button_edit_groups.get());
-    sizer_buttons->Add(button_edit_tags.get());
-    sizer_buttons->Add(button_delete.get());
 
-    sizer_top->Add(sizer_buttons.get(), 0, wxALIGN_CENTER_HORIZONTAL);
+    wxBoxSizer *sizer_buttons = new wxBoxSizer(wxVERTICAL);
+    sizer_buttons->Add(button_add);
+    sizer_buttons->Add(button_edit_groups);
+    sizer_buttons->Add(button_edit_tags);
+    sizer_buttons->Add(button_delete);
+
+    sizer_complist->Add(sizer_buttons, 0, wxALIGN_CENTER_HORIZONTAL);
+    sizer_top->Add(sizer_complist);
+
     refresh();
-    SetSizerAndFit(sizer_top.get());
+    SetSizerAndFit(sizer_top);
 }
 
 void ComponentPanel::OnAdd(wxCommandEvent& event) {
 
-    std::unique_ptr dialog = std::make_unique<ComponentDialog>(this, problem);
+    ComponentDialog *dialog = new ComponentDialog(this, problem);
     dialog->ShowModal();
     refresh();
 
@@ -82,13 +95,6 @@ void ComponentPanel::OnEditTags(wxCommandEvent &event) {
     */
 }
 
-void ComponentPanel::addComponentType(const ComponentType &type){
-
-    wxVector<wxVariant> data;
-    data.push_back(wxVariant(type.getID()));
-    typelistctrl->AppendItem(data);
-}
-
 
 void ComponentPanel::addComponent(const Component &component) {
 
@@ -114,16 +120,34 @@ void ComponentPanel::addComponent(const Component &component) {
     complistctrl->AppendItem(data);
 }
 
+void ComponentPanel::OnAddType(wxCommandEvent &event) {
+
+    TypeDialog *dialog = new TypeDialog(this, problem);
+    dialog->ShowModal();
+    refresh();
+}
+
+void ComponentPanel::OnDeleteType(wxCommandEvent &event) {
+/*
+    auto row = complistctrl->GetSelectedRow();
+    std::string id = complistctrl->GetTextValue(row, 0).ToStdString(wxConvUTF8);
+    problem.deleteComponentType(id);
+    refresh();*/
+}
 
 void ComponentPanel::refresh() {
 
-    // TODO: types
-
-    // Components
+    typelistctrl->DeleteAllItems();
     complistctrl->DeleteAllItems();
 
-    for(std::string type : problem.getComponentTypes())
+    for(const std::string &type : problem.getComponentTypes()) {
+
+        wxVector<wxVariant> data;
+        data.push_back(wxVariant(type));
+        typelistctrl->AppendItem(data);
+
         for(const Component &component : problem.getComponents(type))
             addComponent(component);
+    }
 
 }

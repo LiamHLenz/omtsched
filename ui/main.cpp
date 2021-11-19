@@ -9,6 +9,7 @@
 #endif
 
 #include "MainFrame.h"
+#include "../examples/zebra.cpp"
 
 class MyApp : public wxApp
 {
@@ -24,6 +25,7 @@ bool MyApp::OnInit()
         return false;
 
     omtsched::Problem<std::string> problem;
+    getZebra(problem);
     //std::shared_ptr frame = std::make_shared<MainFrame>(problem);
     MainFrame *frame = new MainFrame(problem);
     frame->Show(true);

@@ -106,7 +106,11 @@ namespace omtsched {
 
         void setWeight(int weight);
 
+        int getWeight() const;
+
         const ID getID() const;
+
+        bool isOptional() const;
 
     private:
         std::map<ID, ComponentSlot<ID>> componentSlots;
@@ -146,6 +150,17 @@ namespace omtsched {
     const ID Assignment<ID>::getID() const {
         return id;
     }
+
+    template<typename ID>
+    bool Assignment<ID>::isOptional() const {
+        return optional;
+    }
+
+    template<typename ID>
+    int Assignment<ID>::getWeight() const {
+        return weight;
+    }
+
 
 }
 
