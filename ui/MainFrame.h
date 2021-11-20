@@ -10,6 +10,7 @@
 #include <memory>
 #include "ComponentPanel.h"
 #include "AssignmentPanel.h"
+#include "ModelPanel.h"
 
 class MainFrame : public wxFrame {
 
@@ -36,6 +37,7 @@ private:
 
     ComponentPanel *componentPanel;
     AssignmentPanel *assignmentPanel;
+    ModelPanel *modelPanel;
 
     Problem &problem;
 };

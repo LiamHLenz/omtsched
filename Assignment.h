@@ -93,7 +93,7 @@ namespace omtsched {
     class Assignment {
 
     public:
-        Assignment(const ID &id) : id{id} {}
+        Assignment(const ID &id) : id{id}, optional{false}, weight{0} {}
 
         void setFixed(const ID &name, const Component<ID>&);
         void setFixed(const ID &name, std::vector<Component<ID>>&);
