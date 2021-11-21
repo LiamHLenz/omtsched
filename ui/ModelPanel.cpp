@@ -33,11 +33,11 @@ ModelPanel::ModelPanel(wxWindow *parent, Problem &problem) : wxPanel{parent}, pr
 void ModelPanel::OnGenerate(wxCommandEvent &event) {
 
     omtsched::TranslatorZ3<std::string> translatorZ3 {problem};
-    translatorZ3.solve();
+/*    translatorZ3.solve();
 
     if(!translatorZ3.isSAT())
         return;
 
     Model<std::string> model = translatorZ3.getModel();
-
+*/
 }

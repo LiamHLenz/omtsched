@@ -190,7 +190,7 @@ namespace omtsched {
 
     template<typename ID>
     const z3::expr TranslatorZ3<ID>::getVariable(const ID &assignment, const ID &componentSlot) const {
-        slots.getSlot(assignment, componentSlot);
+        return slots.getVariable(assignment, componentSlot);
     }
 
     template<typename ID>
