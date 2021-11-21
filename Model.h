@@ -13,26 +13,25 @@ class Model {
     // A model must assign a component to each component slot a component
     // TODO: empty assignments -> NONE component?
 public:
-    void set(const ID &assignment, const std::string &slot, const ID &component);
-    const ID &get(const ID &assignment, const std::string &slot);
+    void setComponent(const ID &assignment, const std::string &slot, const ID &component);
+    const ID &getComponent(const ID &assignment, const std::string &slot);
 
     void addPenalty(const int &);
     int getPenalty() const;
 
 private:
     // map between (assignment, slotName) and components
-    std::map<std::pair<ID, std::string>, ID> assignments;
-
+    std::map<std::pair<ID, ID>, ID> assignments;
     int penalty;
 };
 
 template<typename ID>
-void Model<ID>::set(const ID &assignment, const std::string &slot, const ID &component) {
+void Model<ID>::setComponent(const ID &assignment, const std::string &slot, const ID &component) {
     assignments[assignment, slot] = component;
 }
 
 template<typename ID>
-const ID &Model<ID>::get(const ID &assignment, const std::string &slot) {
+const ID &Model<ID>::getComponent(const ID &assignment, const std::string &slot) {
     return assignments.at({assignment, slot});
 }
 

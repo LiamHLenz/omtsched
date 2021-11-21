@@ -36,6 +36,8 @@ namespace omtsched {
 
         void setGenerateExplanations(bool generateExplanations);
 
+        virtual bool isSAT();
+
     protected:
         const Problem<ID> &problem;
         bool generateAllSolution;

@@ -126,7 +126,11 @@ namespace omtsched {
 
         z3::context &getContext();
 
-        const z3::expr getComponent(const ID &component);
+        //const z3::expr getComponent(const ID &component);
+
+        const ID getComponent(const z3::expr &) const;
+
+        bool isSAT() override;
 
     private:
 
@@ -138,7 +142,8 @@ namespace omtsched {
 
         void addToSolver(const z3::expr &condition, const bool &hard, const int &weight);
 
-        const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
+        //const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
+        const z3::expr getVariable(const ID &assignment, const ID &componentSlot) const;
         const z3::expr getConstant(const ID &component) const;
 
 
@@ -175,11 +180,17 @@ namespace omtsched {
         return context;
     }
 
+    /*
     template<typename ID>
     const z3::expr TranslatorZ3<ID>::getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const {
 
         auto assignmentNumber = getAssignmentNumber(assignment);
         return slots.getSort(assignmentNumber, componentSlot);
+    }*/
+
+    template<typename ID>
+    const z3::expr TranslatorZ3<ID>::getVariable(const ID &assignment, const ID &componentSlot) const {
+        slots.getSlot(assignment, componentSlot);
     }
 
     template<typename ID>
@@ -187,10 +198,10 @@ namespace omtsched {
         return components.left.at(component);
     }
 
-    template<typename ID>
-    const z3::expr TranslatorZ3<ID>::getComponent(const ID &component) {
-        return components.at(component);
-    }
+    //   template<typename ID>
+    //   const z3::expr TranslatorZ3<ID>::getComponent(const ID &component) {
+    //      return components.at(component);
+    //   }
 
     template<typename ID>
     void TranslatorZ3<ID>::setupUniqueness(){
@@ -267,16 +278,22 @@ namespace omtsched {
     template<typename ID>
     Model<ID> TranslatorZ3<ID>::getModel() {
 
-        // TODO check whether in SAT state
-        // if(solver.)
-
         Model<ID> model;
+
+        if(!solver->check() == z3::sat)
+            return model;
+
         z3::model m = solver->get_model();
 
-        //boost::bimap<std::tuple<ID, std::string>, z3::expr> slots;
+        for(const auto &[aid, asgn] : this->problem.getAssignments())
+            for(const auto &[sid, slot] : asgn.getComponentSlots()){
 
-        for(const auto&[key, val] : slots.getSlotMap())
-            std::cout << "Assignment " << key.first << ", slot " << key.second << ": " << val << std::endl;
+                const z3::expr &var = getVariable(aid, sid);
+                const z3::expr &result = m.eval(var);
+                const ID component = getComponent(result);
+
+                model.setComponent(aid, sid, component);
+            }
 
         return model;
 
@@ -357,6 +374,20 @@ namespace omtsched {
    }
 
 
+template<typename ID>
+bool TranslatorZ3<ID>::isSAT() {
+
+    return solver->check() == z3::sat;
 }
+
+
+template<typename ID>
+const ID TranslatorZ3<ID>::getComponent(const z3::expr &variable) const {
+    return components.at(variable);
+}
+
+
+}
+
 
 #endif //OMTSCHED_TRANSLATORZ3_H
