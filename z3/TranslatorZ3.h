@@ -14,14 +14,6 @@
 #include <boost/bimap.hpp>
 
 
-template<>
-struct std::hash<z3::sort> {
-    std::size_t operator()(const z3::sort &sort) const noexcept {
-        return sort.hash();
-    }
-};
-
-
 namespace omtsched {
 
     template<typename ID>
@@ -52,8 +44,8 @@ namespace omtsched {
         void addToSolver(const z3::expr &condition, const bool &hard, const int &weight);
 
         //const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
-        const z3::expr getVariable(const ID &assignment, const ID &componentSlot) const;
-        const z3::expr getConstant(const ID &component) const;
+        const z3::expr &getVariable(const ID &assignment, const ID &componentSlot) const;
+        const z3::expr &getConstant(const ID &component) const;
 
 
         z3::expr resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb);
@@ -66,21 +58,20 @@ namespace omtsched {
         z3::context context;
         std::unique_ptr<z3::solver> solver;
 
-        std::map<ID, z3::sort> sortMap;
+        SortMap<ID> sorts;
         ComponentMap<ID> components;
-        // tuple in order: assignment, slot name
-        //boost::bimap<std::pair<int, std::string>, z3::expr> slots;
         SlotMap<ID> slots;
 
     };
 
     template<typename ID>
-    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem} {
+    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem}, sorts{context},
+        components{context}, slots{context} {
 
         setupConstants();
         setupVariables();
-        //solver = std::make_unique<z3::solver>(context);
-        //setupUniqueness();
+        solver = std::make_unique<z3::solver>(context);
+        setupUniqueness();
     }
 
 
@@ -98,19 +89,14 @@ namespace omtsched {
     }*/
 
     template<typename ID>
-    const z3::expr TranslatorZ3<ID>::getVariable(const ID &assignment, const ID &componentSlot) const {
+    const z3::expr &TranslatorZ3<ID>::getVariable(const ID &assignment, const ID &componentSlot) const {
         return slots.getVariable(assignment, componentSlot);
     }
 
     template<typename ID>
-    const z3::expr TranslatorZ3<ID>::getConstant(const ID &component) const {
-        return components.left.at(component);
+    const z3::expr &TranslatorZ3<ID>::getConstant(const ID &component) const {
+        return components.getVariable(component);
     }
-
-    //   template<typename ID>
-    //   const z3::expr TranslatorZ3<ID>::getComponent(const ID &component) {
-    //      return components.at(component);
-    //   }
 
     template<typename ID>
     void TranslatorZ3<ID>::setupUniqueness(){
@@ -121,7 +107,8 @@ namespace omtsched {
             for(const Component<ID> &component : this->problem.getComponents(type))
                 vars.push_back(components.getVariable(component.getID()));
 
-            solver->add( z3::distinct(vars));
+            if(!vars.empty())
+                solver->add( z3::distinct(vars));
         }
 
     }
@@ -133,9 +120,9 @@ namespace omtsched {
             int c = 0;
             for (const auto &[sname, slot] : assignment.getComponentSlots()) {
                 // create assignment variable
-                const auto &type = sortMap.at(slot.type);
-                std::string name = "a" + std::to_string(a) + "c" + sname;
-                slots.set(aid, sname, name, type, context);
+                const z3::sort &type = sorts.getSort(slot.type);
+                const std::string &name = "a" + std::to_string(a) + "c" + sname;
+                slots.set(aid, sname, type, name);
                 c++;
             }
             a++;
@@ -146,21 +133,18 @@ namespace omtsched {
     template<typename ID>
     void TranslatorZ3<ID>::setupConstants() {
 
-        // components are stored in a map by type:
-        // std::map<ID, std::vector<Component<ID>>> components;
-
+        int typeCount = 0;
         for(const ID &type : this->problem.getComponentTypes()) {
 
-            z3::sort typeExpr = context.uninterpreted_sort(static_cast<std::string>(type).c_str());
-            sortMap.emplace(type, typeExpr);
+            sorts.set(type, "s" + std::to_string(typeCount));
+            typeCount++;
 
             int count = 0;
             for(const auto &component : this->problem.getComponents(type)) {
 
                 std::string name = "c"+std::to_string(count);
-                z3::sort srt = sortMap.at(type);
-                z3::expr var = context.constant(name.c_str(), srt);
-                components.set(component.getID(), name, srt, context);
+                const z3::sort &srt = sorts.getSort(type);
+                components.set(component.getID(), name, srt);
                 count++;
             }
 
