@@ -7,6 +7,7 @@
 
 
 #include "../Translator.h"
+#include "maps.h"
 #include <z3.h>
 #include <z3++.h>
 #include <map>
@@ -22,98 +23,6 @@ struct std::hash<z3::sort> {
 
 
 namespace omtsched {
-
-    /*
-    * z3::sort does not define an order so boost::bimap cannot be used directly
-    * This is a simple wrapper to circumvent that issue.
-    */
-    template<typename ID>
-    struct SlotMap {
-
-    public:
-        z3::expr getVariable(const ID &, const ID &) const;
-
-        std::pair<ID, ID> getSlot(const z3::expr &) const;
-
-        /**
-         *
-         * @return [{id, id}, expr]
-         */
-        auto &getSlotMap();
-
-        /**
-         *
-         * @return [expr, {id, id}]
-         */
-        auto &getVariableMap();
-
-        void set(const ID &, const ID &, const z3::expr &);
-
-        void remove(const ID &, const ID &);
-
-        void remove(const z3::expr &);
-
-    private:
-
-        using bm_type = typename boost::bimap< std::pair<ID, ID>, z3::expr>::value_type;
-
-        // z3::sort does not define an order, so we use 2 unordered maps instead of a bimap
-        //std::map<std::pair<ID, ID>, z3::expr> variables;
-        //std::map<z3::expr, std::pair<ID, ID>> slots;
-        boost::bimap<std::pair<ID, ID>, z3::expr> slots;
-
-    };
-
-    template<typename ID>
-    z3::expr SlotMap<ID>::getVariable(const ID &assignment, const ID &slot) const {
-        return slots.left.at({assignment, slot});
-    }
-
-    template<typename ID>
-    std::pair<ID, ID> SlotMap<ID>::getSlot(const z3::expr &expr) const {
-        return slots.right.at(expr);
-    }
-
-
-    template<typename ID>
-    void SlotMap<ID>::set(const ID &assignment, const ID &slot, const z3::expr &expr) {
-        //TODO: any type of error checking anywhere
-
-        /* typedef bimap< int, list_of< std::string > > bm_type;
-            bm_type bm;
-            bm.insert( bm_type::relation( 1, "one" ) );*/
-
-        slots.insert(bm_type(std::make_pair(assignment, slot), expr));
-        //slots.left.insert(std::make_pair(assignment, slot), expr);
-    }
-
-    template<typename ID>
-    void SlotMap<ID>::remove(const ID &assignment, const ID &slot) {
-        //const auto &sort = componentTypeSorts.at({assignment, slot});
-        //slots.erase(sort);
-        //variables.erase({assignment, slot});
-        slots.left.erase({assignment, slot});
-    }
-
-    template<typename ID>
-    void SlotMap<ID>::remove(const z3::expr &expr) {
-        //const auto &id = componentTypeNames.at(sort);
-        //componentTypeNames.erase(sort);
-        //componentTypeSorts.erase(id);
-        slots.right.erase(expr);
-    }
-
-    template<typename ID>
-    auto &SlotMap<ID>::getSlotMap() {
-        return slots.left;
-    }
-
-    template<typename ID>
-    auto &SlotMap<ID>::getVariableMap() {
-        return slots.right;
-    }
-
-
 
     template<typename ID>
     class TranslatorZ3 : public omtsched::Translator<ID> {
@@ -158,7 +67,7 @@ namespace omtsched {
         std::unique_ptr<z3::solver> solver;
 
         std::map<ID, z3::sort> sortMap;
-        boost::bimap<ID, z3::expr> components;
+        ComponentMap<ID> components;
         // tuple in order: assignment, slot name
         //boost::bimap<std::pair<int, std::string>, z3::expr> slots;
         SlotMap<ID> slots;
@@ -170,8 +79,8 @@ namespace omtsched {
 
         setupConstants();
         setupVariables();
-        solver = std::make_unique<z3::solver>(context);
-        setupUniqueness();
+        //solver = std::make_unique<z3::solver>(context);
+        //setupUniqueness();
     }
 
 
@@ -209,8 +118,8 @@ namespace omtsched {
         for(const auto &type : this->problem.getComponentTypes()){
 
             z3::expr_vector vars {context};
-            for(const Component<ID> &var : this->problem.getComponents(type))
-                vars.push_back(components.left.at(var.getID()));
+            for(const Component<ID> &component : this->problem.getComponents(type))
+                vars.push_back(components.getVariable(component.getID()));
 
             solver->add( z3::distinct(vars));
         }
@@ -226,7 +135,7 @@ namespace omtsched {
                 // create assignment variable
                 const auto &type = sortMap.at(slot.type);
                 std::string name = "a" + std::to_string(a) + "c" + sname;
-                slots.set(aid, sname, context.constant(name.c_str(), type));
+                slots.set(aid, sname, name, type, context);
                 c++;
             }
             a++;
@@ -248,8 +157,10 @@ namespace omtsched {
             int count = 0;
             for(const auto &component : this->problem.getComponents(type)) {
 
-                z3::expr var = context.constant(("c"+std::to_string(count)).c_str(), sortMap.at(type));
-                components.left.insert(std::make_pair(component.getID(), var));
+                std::string name = "c"+std::to_string(count);
+                z3::sort srt = sortMap.at(type);
+                z3::expr var = context.constant(name.c_str(), srt);
+                components.set(component.getID(), name, srt, context);
                 count++;
             }
 
@@ -383,7 +294,7 @@ bool TranslatorZ3<ID>::isSAT() {
 
 template<typename ID>
 const ID TranslatorZ3<ID>::getComponent(const z3::expr &variable) const {
-    return components.at(variable);
+    return components.getComponent(variable);
 }
 
 

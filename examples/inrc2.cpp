@@ -217,8 +217,8 @@ int main() {
     //problemfile.open("/home/hal/Documents/testproblem.smt2");
     //inrc2.print(problemfile);
 
-    TranslatorZ3 trans (inrc2);
-    trans.solve();
+    TranslatorZ3<std::string> trans (inrc2);
+    //trans.solve();
 
     //Model model = translator.getModel();
 

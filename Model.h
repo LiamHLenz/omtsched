@@ -27,12 +27,12 @@ private:
 
 template<typename ID>
 void Model<ID>::setComponent(const ID &assignment, const std::string &slot, const ID &component) {
-    assignments[assignment, slot] = component;
+    assignments[std::make_pair(assignment, slot)] = component;
 }
 
 template<typename ID>
 const ID &Model<ID>::getComponent(const ID &assignment, const std::string &slot) {
-    return assignments.at({assignment, slot});
+    return assignments.at(std::make_pair(assignment, slot));
 }
 
 template<typename ID>
