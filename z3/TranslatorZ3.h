@@ -46,6 +46,8 @@ namespace omtsched {
         //const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
         const z3::expr &getVariable(const ID &assignment, const ID &componentSlot) const;
         const z3::expr &getConstant(const ID &component) const;
+        
+        z3::expr getComponentExpr(const ID &id);
 
 
         z3::expr resolveCondition(const Condition <ID> &condition, const std::vector<Assignment<ID>*> &asgnComb);
@@ -61,17 +63,42 @@ namespace omtsched {
         SortMap<ID> sorts;
         ComponentMap<ID> components;
         SlotMap<ID> slots;
+        
+        std::vector<z3::func_decl_vector> enum_consts;
+        std::vector<z3::func_decl_vector> enum_testers;
 
     };
 
     template<typename ID>
-    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem}, sorts{context},
-        components{context}, slots{context} {
+    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem},
+        components{problem}, slots{context}, sorts{context, components} {
 
-        setupConstants();
-        setupVariables();
+        //setupConstants();
+        //setupVariables();
+        
+        //define sorts
+        int typeCount = 0;
+        
+        for(const ID &type : this->problem.getComponentTypes()) {
+
+            std::string name = "s" + std::to_string(typeCount);
+            
+            enum_consts.emplace_back(context);
+            enum_testers.emplace_back(context);
+            
+            //set(const ID &type, const std::string &name, std::vector<z3::func_decl_vector>&, std::vector<z3::func_decl_vector>&);
+
+            sorts.set(type, name, this->problem.getComponents(type), enum_consts, enum_testers);
+   
+            typeCount++; 
+
+        }
+        
+        //define slots
+        //setupVariables();
+        
         solver = std::make_unique<z3::solver>(context);
-        setupUniqueness();
+        //setupUniqueness();
     }
 
 
@@ -97,6 +124,12 @@ namespace omtsched {
     const z3::expr &TranslatorZ3<ID>::getConstant(const ID &component) const {
         return components.getVariable(component);
     }
+    
+    template<typename ID>
+    z3::expr TranslatorZ3<ID>::getComponentExpr(const ID &id) {
+        
+        
+    }
 
     template<typename ID>
     void TranslatorZ3<ID>::setupUniqueness(){
@@ -105,7 +138,7 @@ namespace omtsched {
 
             z3::expr_vector vars {context};
             for(const Component<ID> &component : this->problem.getComponents(type))
-                vars.push_back(components.getVariable(component.getID()));
+                vars.push_back(getComponentExpr(component.getID()));
 
             if(!vars.empty())
                 solver->add( z3::distinct(vars));
@@ -133,22 +166,28 @@ namespace omtsched {
     template<typename ID>
     void TranslatorZ3<ID>::setupConstants() {
 
+    
+        /*
         int typeCount = 0;
         for(const ID &type : this->problem.getComponentTypes()) {
 
-            sorts.set(type, "s" + std::to_string(typeCount));
+            std::string name = "t" + std::to_string(typeCount);
+            //sorts.set(type, name);
             typeCount++;
 
-            int count = 0;
+            sorts.set(type, name, this->problem.getComponents(type));
+            
+            
             for(const auto &component : this->problem.getComponents(type)) {
 
                 std::string name = "c"+std::to_string(count);
                 const z3::sort &srt = sorts.getSort(type);
                 components.set(component.getID(), name, srt);
+                
                 count++;
             }
 
-        }
+        }*/
 
     }
 
@@ -179,15 +218,22 @@ namespace omtsched {
             return model;
 
         z3::model m = solver->get_model();
-
+        
+        std::cout << m << std::endl;
+    
+        std::cout << "Test model: " << std::endl;
         for(const auto &[aid, asgn] : this->problem.getAssignments())
             for(const auto &[sid, slot] : asgn.getComponentSlots()){
 
                 const z3::expr &var = getVariable(aid, sid);
                 const z3::expr &result = m.eval(var);
-                const ID component = getComponent(result);
+                
+                std::cout << "Slot: (" << aid << ", " << sid << "): " << result << std::endl;
+                
+                
+                //const ID component = getComponent(result);
 
-                model.setComponent(aid, sid, component);
+                //model.setComponent(aid, sid, component);
             }
 
         return model;

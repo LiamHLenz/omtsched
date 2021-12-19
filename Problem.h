@@ -69,7 +69,7 @@ namespace omtsched {
          * @param componentType ID of an existing type
          * @return All components of the problem that have the type componentType
          */
-        const std::vector<Component<ID>> &getComponents(const ID &componentType) const;
+        const std::vector<std::shared_ptr<Component<ID>>> &getComponents(const ID &componentType) const;
 
         /**
 	 * @return All assignments of the problem 
@@ -114,8 +114,8 @@ namespace omtsched {
         std::vector<Rule<ID>> rules;
         //std::vector<std::pair<Rule<ID>, int>> rulesSoft;
 
-        std::map<ID, std::vector<Component<ID>>> components;
-        std::map<ID, std::vector<OrderedComponent<ID>>> orderedComponents;
+        std::map<ID, std::vector<std::shared_ptr<Component<ID>>>> components;
+        //std::map<ID, std::vector<OrderedComponent<ID>>> orderedComponents;
 
         //std::vector<Rule> objectives;
 
@@ -153,12 +153,14 @@ namespace omtsched {
     // TODO: returned iterator can be invalidated in newComponent and newAssignment
     template<typename ID>
     Component<ID> &Problem<ID>::newComponent(const ID &id, const ID &type) {
-        return components[type].emplace_back(id, type);
+        components[type].push_back(std::make_shared<Component<ID>>(id, type));
+        return *(components[type].back());
     }
 
     template<typename ID>
     OrderedComponent<ID> &Problem<ID>::newOrderedComponent(const ID &id, const ID &type, const int &value) {
-        return orderedComponents[type].emplace_back(id, type, value);
+        components[type].push_back(std::make_shared<OrderedComponent<ID>>(id, type, value));
+        return *(std::dynamic_pointer_cast<OrderedComponent<ID>>(components[type].back()));
     }
 
     // Reference can be subject to invalidation, only use locally!
@@ -181,7 +183,7 @@ namespace omtsched {
     }
 
     template<typename ID>
-    const std::vector<Component<ID>> &Problem<ID>::getComponents(const ID &type) const {
+    const std::vector<std::shared_ptr<Component<ID>>> &Problem<ID>::getComponents(const ID &type) const {
         return components.at(type);
     }
 
@@ -224,8 +226,8 @@ namespace omtsched {
         for(const auto &[typeID, components] : components)
             ostr << "(declare-sort " << "t" << typeID << " 0)" << std::endl;
 
-        for(const auto &[typeID, components] : orderedComponents)
-            ostr << "(declare-sort " << "t" << typeID << " 0)" << std::endl;
+        //for(const auto &[typeID, components] : orderedComponents)
+        //    ostr << "(declare-sort " << "t" << typeID << " 0)" << std::endl;
 
         // Phase 1: declare constants and variables
 
@@ -235,14 +237,14 @@ namespace omtsched {
         ostr << std::endl;
 
         for(const auto &[typeID, components] : components){
-            for(const Component<ID> &component : components)
-                ostr << "(declare-fun c" << component.getID() << " () t" << typeID << ")" << std::endl;
+            for(const auto &component : components)
+                ostr << "(declare-fun c" << component->getID() << " () t" << typeID << ")" << std::endl;
         }
-
+        /*
         for(const auto &[typeID, components] : orderedComponents){
             for(const Component<ID> &component : components)
                 ostr << "(declare-fun c" << component.getID() << " () t" << typeID << ")" << std::endl;
-        }
+        }*/
 
         for(const Rule<ID>& rule : rules)
             rule.declareVariables(ostr);
@@ -257,12 +259,12 @@ namespace omtsched {
         for(const auto &[typeID, components] : components){
 
             ostr << "(distinct";
-            for(const Component<ID> &component : components)
-                ostr << " c" << component.getID();
+            for(const std::shared_ptr<Component<ID>> &component : components)
+                ostr << " c" << component->getID();
 
             ostr << ")" << std::endl;
         }
-
+        /*
         for(const auto &[typeID, components] : orderedComponents){
 
             ostr << "(distinct";
@@ -270,7 +272,7 @@ namespace omtsched {
                 ostr << " c" << component.getID();
 
             ostr << ")" << std::endl;
-        }
+        }*/
 
         ostr << std::endl;
         ostr << "; Assignments" << std::endl;

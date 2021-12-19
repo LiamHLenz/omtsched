@@ -17,6 +17,7 @@ namespace omtsched {
 
     public:
         Component(const ID &id, const ID &type) : id{id}, type{type} {}
+        virtual ~Component() = default;
         //virtual const std::string componentType() const = 0;
 
         const ID getID() const;
