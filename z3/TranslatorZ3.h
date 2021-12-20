@@ -73,9 +73,6 @@ namespace omtsched {
     TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem},
         components{problem}, slots{context}, sorts{context, components} {
 
-        //setupConstants();
-        //setupVariables();
-        
         //define sorts
         int typeCount = 0;
         
@@ -95,7 +92,7 @@ namespace omtsched {
         }
         
         //define slots
-        //setupVariables();
+        setupVariables();
         
         solver = std::make_unique<z3::solver>(context);
         //setupUniqueness();
