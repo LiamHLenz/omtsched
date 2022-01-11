@@ -28,6 +28,8 @@ namespace omtsched {
 
         void addGroup(const ID&);
         void removeGroup(const ID&);
+        
+        bool inGroup(const ID &group) const;
 
         void setTag(const ID &, const int);
 
@@ -69,6 +71,11 @@ namespace omtsched {
     void Component<ID>::removeGroup(const ID &id) {
 
         groups.erase(id);
+    }
+    
+    template<typename ID>
+    bool Component<ID>::inGroup(const ID &group) const {
+        return groups.find(group) != groups.end();
     }
 
     template<typename ID>

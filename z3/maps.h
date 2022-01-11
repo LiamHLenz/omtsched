@@ -50,7 +50,7 @@ namespace omtsched {
     
     template<typename ID>
     const z3::expr &ComponentMap<ID>::getVariable(const ID &id) const {
-        return idMap.at(id);
+        return variableMap.at(id);
     }
 
     template<typename ID>

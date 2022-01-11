@@ -344,7 +344,7 @@ z3::expr TranslatorZ3<ID>::resolveComponentIs(const std::shared_ptr<Condition <I
 
     auto c = std::dynamic_pointer_cast<ComponentIs<ID>>(condition);                                                        
     const z3::expr &component = getConstant(c->component);
-    const z3::expr &var = getVariable(asgnComb.at(0), c->componentSlot);
+    const z3::expr &var = getVariable(asgnComb.at(0)->getID(), c->componentSlot);
     return var == component;
 
 }
@@ -367,12 +367,12 @@ z3::expr TranslatorZ3<ID>::resolveSameComponent(const std::shared_ptr<Condition 
 
     auto c = std::dynamic_pointer_cast<SameComponent<ID>>(condition);  
     
-    z3::expr_vector equalities;
+    z3::expr_vector equalities (context);
     for(auto it1 = asgnComb.begin(); it1 != asgnComb.end(); it1++)
-        for(auto it2 = it1.next(); it2 != asgnComb.end(); it2++) {
+        for(auto it2 = std::next(it1); it2 != asgnComb.end(); it2++) {
 
-            const z3::expr &var1 = getVariable(*it1, c.slot);
-            const z3::expr &var2 = getVariable(*it2, c.slot);
+            const z3::expr &var1 = getVariable((*it1)->getID(), c->slot);
+            const z3::expr &var2 = getVariable((*it2)->getID(), c->slot);
             equalities.push_back(var1 == var2);
         }
     return z3::mk_and(equalities);
@@ -389,17 +389,17 @@ z3::expr TranslatorZ3<ID>::resolveInGroup(const std::shared_ptr<Condition <ID>> 
         const ID group;
      */
 
-    const z3::expr &var = getVariable(asgnComb.at(0), c.slot);
+    const z3::expr &var = getVariable(asgnComb.at(0)->getID(), c->slot);
     // limits domain
     // get slot type
-    const ID &type = asgnComb.at(0)->getSlot(c.slot).type;
+    const ID &type = asgnComb.at(0)->getSlot(c->slot).type;
 
     // std::map<ID, std::vector<Component<ID>>> components;
-    z3::expr_vector equalities;
-    for(const Component<ID> &component : this->problem.getComponents(type)){
+    z3::expr_vector equalities (context);
+    for(const auto &component : this->problem.getComponents(type)){
 
-        if(component.inGroup(c.group)) {
-            const z3::expr &comp = getConstant(component.getID());
+        if(component->inGroup(c->group)) {
+            const z3::expr &comp = getConstant(component->getID());
             equalities.push_back( var == comp );
         }
 
