@@ -27,7 +27,7 @@ namespace omtsched {
         //void addAssignments(std::vector<Assignment<ID>*>);
         //void removeAssignments(std::vector<Assignment<ID>*>);
 
-        const Condition<ID> &getTopCondition() const;
+        const std::shared_ptr<Condition<ID>> &getTopCondition() const;
 
         const std::vector<std::vector<Assignment<ID> *>> &getApplicableSets() const;
 
@@ -119,6 +119,11 @@ namespace omtsched {
     void Rule<ID>::declareVariables(std::ostream &ostr) const {
         for(const std::vector<Assignment<ID>*> &asgns : applicableSets)
             toplevel->declareVariables(ostr, asgns);
+    }
+    
+    template<typename ID>
+    const std::shared_ptr<Condition<ID>> &Rule<ID>::getTopCondition() const {
+        return toplevel;
     }
 
 }

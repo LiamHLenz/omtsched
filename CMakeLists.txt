@@ -9,7 +9,7 @@ add_library(omtsched SHARED omtsched.h
         Assignment.h Component.h ComponentType.h Condition.h
         Model.h Problem.h Rule.h Translator.h
         conditions/BasicConditions.h conditions/BooleanConditions.h conditions/OrderedConditions.h
-        z3/TranslatorZ3.h z3/ConditionsZ3.h
+        z3/TranslatorZ3.h
         )
 
 set_target_properties(omtsched PROPERTIES LINKER_LANGUAGE CXX)
@@ -27,7 +27,7 @@ include(${wxWidgets_USE_FILE})
     include_directories(${BOOST_INCLUDE_DIRS})
 
     add_executable(examples
-            examples/example.cpp z3/maps.h)
+            examples/example.cpp)
 
 #    add_executable(uitest
 #            ui/main.cpp ui/MainFrame.cpp ui/MainFrame.h

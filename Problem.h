@@ -87,6 +87,7 @@ namespace omtsched {
 
         //Rule<ID> &addRule(std::shared_ptr<Condition<ID>> c);
         
+        
         /**
          *
          *
@@ -143,6 +144,13 @@ namespace omtsched {
             return rulesSoft.emplace(std::forward(c), weight).first;
     }
      */
+  
+    template<typename ID> 
+    const std::vector<Rule<ID>> &Problem<ID>::getRules() const {
+        return rules;
+    
+    }
+     
 
     template<typename ID>
     void Problem<ID>::addGroup(const ID &g) {

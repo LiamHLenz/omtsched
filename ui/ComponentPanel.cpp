@@ -146,8 +146,8 @@ void ComponentPanel::refresh() {
         data.push_back(wxVariant(type));
         typelistctrl->AppendItem(data);
 
-        for(const Component &component : problem.getComponents(type))
-            addComponent(component);
+        for(const auto &component : problem.getComponents(type))
+            addComponent(*component);
     }
 
 }
