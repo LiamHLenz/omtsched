@@ -38,6 +38,7 @@ namespace omtsched {
         void setupVariables();
         void setupConstants();
         void setupUniqueness();
+        void setupExistence();
 
         void resolveRule(const Rule <ID> &rule);
 
@@ -97,7 +98,9 @@ namespace omtsched {
         setupVariables();
         
         solver = std::make_unique<z3::solver>(context);
-        //setupUniqueness();
+        
+        setupExistence();
+        setupUniqueness();
         
         for(const Rule<ID> &rule : problem.getRules())
             resolveRule(rule);
@@ -137,6 +140,27 @@ namespace omtsched {
     template<typename ID>
     z3::expr TranslatorZ3<ID>::getComponentExpr(const ID &id) {
         
+        
+    }
+
+    template<typename ID>
+    void TranslatorZ3<ID>::setupExistence(){
+        
+        //Every assignment slot variable needs to have a value
+        for(const auto &[aid, asgn] : problem.getAssignments()) {
+            for(const auto &[sid, slot] : asgn.getComponentSlots()) {
+                
+                z3::expr_vector potentialValues {context};
+                // TODO: optional slots
+                // TODO: slots with limited set of potential values
+                const z3::expr &slotVariable = getVariable(aid, sid);
+                for(const auto &component : problem.getComponents(slot.type)){
+                    potentialValues.push_back( slotVariable == component);
+                }
+                solver->add( z3::make_or(potentialValues));
+            }
+                
+        }
         
     }
 
