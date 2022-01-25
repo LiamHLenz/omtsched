@@ -58,6 +58,8 @@ namespace omtsched {
         z3::expr resolveInGroup(const std::shared_ptr<Condition <ID>> &, const std::vector<Assignment<ID>*> &asgnComb);
         //z3::expr resolveMaxAssignments(const std::shared_ptr<Condition <ID> &, const std::vector<Assignment<ID>*> &asgnComb);
 
+        const Problem<ID> &problem;
+
         z3::context context;
         std::unique_ptr<z3::solver> solver;
 
@@ -73,7 +75,7 @@ namespace omtsched {
     };
 
     template<typename ID>
-    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem},
+    TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem}, problem{problem},
         components{problem}, slots{context}, sorts{context, components} {
 
         //define sorts
@@ -93,14 +95,16 @@ namespace omtsched {
             typeCount++; 
 
         }
-        
+
+        //define
+
         //define slots
         setupVariables();
         
         solver = std::make_unique<z3::solver>(context);
         
         setupExistence();
-        setupUniqueness();
+        //setupUniqueness();
         
         for(const Rule<ID> &rule : problem.getRules())
             resolveRule(rule);
@@ -149,15 +153,17 @@ namespace omtsched {
         //Every assignment slot variable needs to have a value
         for(const auto &[aid, asgn] : problem.getAssignments()) {
             for(const auto &[sid, slot] : asgn.getComponentSlots()) {
-                
+
                 z3::expr_vector potentialValues {context};
                 // TODO: optional slots
                 // TODO: slots with limited set of potential values
                 const z3::expr &slotVariable = getVariable(aid, sid);
-                for(const auto &component : problem.getComponents(slot.type)){
-                    potentialValues.push_back( slotVariable == component);
+                for(const auto &comp : problem.getComponents(slot.type)){
+                    const z3::expr &component = getComponentExpr(comp->getID());
+                    z3::expr eqls {slotVariable == component};
+                    //potentialValues.push_back(eqls);
                 }
-                solver->add( z3::make_or(potentialValues));
+                //solver->add( z3::mk_or(potentialValues));
             }
                 
         }
@@ -181,6 +187,10 @@ namespace omtsched {
 
     template<typename ID>
     void TranslatorZ3<ID>::setupVariables() {
+
+        slots.initialize(this->problem.getAssignments());
+
+        /*
         int a = 0;
         for (const auto &[aid, assignment] : this->problem.getAssignments()) {
             int c = 0;
@@ -192,7 +202,7 @@ namespace omtsched {
                 c++;
             }
             a++;
-        }
+        }*/
 
     }
 
