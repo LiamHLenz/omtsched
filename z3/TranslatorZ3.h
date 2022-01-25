@@ -64,11 +64,11 @@ namespace omtsched {
         std::unique_ptr<z3::solver> solver;
 
         SortMap<ID> sorts;
-        ComponentMap<ID> components;
+        //ComponentMap<ID> components;
         SlotMap<ID> slots;
         
-        std::vector<z3::func_decl_vector> enum_consts;
-        std::vector<z3::func_decl_vector> enum_testers;
+        //std::vector<z3::func_decl_vector> enum_consts;
+        //std::vector<z3::func_decl_vector> enum_testers;
         
         void addToSolver(const z3::expr &);
 
@@ -76,7 +76,7 @@ namespace omtsched {
 
     template<typename ID>
     TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem}, problem{problem},
-        components{problem}, slots{context}, sorts{context, components} {
+    slots{context}, sorts{context} {
 
         //define sorts
         int typeCount = 0;
@@ -138,7 +138,7 @@ namespace omtsched {
 
     template<typename ID>
     const z3::expr &TranslatorZ3<ID>::getConstant(const ID &component) const {
-        return components.getVariable(component);
+        return sorts.getConstant(component);
     }
     
     template<typename ID>

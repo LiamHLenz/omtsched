@@ -36,6 +36,9 @@ namespace omtsched {
         std::map<ID, z3::expr> constantMap;
         std::map<unsigned, ID> componentMap;
 
+        std::vector<z3::func_decl_vector> enum_consts;
+        std::vector<z3::func_decl_vector> enum_testers;
+
     };
 
     template<typename ID>
@@ -63,8 +66,7 @@ namespace omtsched {
             std::string comp_name = name + "_c" + std::to_string(i);
             z3::expr expr = enum_consts.back()[i]();
         }
-    }
-*/
+    }*/
     //template<typename ID>
     //void SortMap<ID>::set(const ID &type, std::vector<std::string> &names) {
         //sortMap.emplace(type, context.uninterpreted_sort(name.c_str()));
@@ -79,6 +81,22 @@ namespace omtsched {
         //context.enumeration_sort(name, names.size(), names.data(), enum_consts, enum_testers);
     //}
 
+        int typeCount = 0;
+
+        for(const ID &type : this->problem.getComponentTypes()) {
+
+            std::string name = "s" + std::to_string(typeCount);
+
+            enum_consts.emplace_back(context);
+            enum_testers.emplace_back(context);
+
+            //set(const ID &type, const std::string &name, std::vector<z3::func_decl_vector>&, std::vector<z3::func_decl_vector>&);
+
+            sorts.set(type, name, this->problem.getComponents(type), enum_consts, enum_testers);
+
+            typeCount++;
+
+        }
 
 
     }
