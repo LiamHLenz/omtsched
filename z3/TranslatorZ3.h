@@ -76,30 +76,8 @@ namespace omtsched {
 
     template<typename ID>
     TranslatorZ3<ID>::TranslatorZ3(const Problem <ID> &problem) : Translator<ID>{problem}, problem{problem},
-    slots{context}, sorts{context} {
+    sorts{context, problem}, slots{context, problem, sorts} {
 
-        //define sorts
-        int typeCount = 0;
-        
-        for(const ID &type : this->problem.getComponentTypes()) {
-
-            std::string name = "s" + std::to_string(typeCount);
-            
-            enum_consts.emplace_back(context);
-            enum_testers.emplace_back(context);
-            
-            //set(const ID &type, const std::string &name, std::vector<z3::func_decl_vector>&, std::vector<z3::func_decl_vector>&);
-
-            sorts.set(type, name, this->problem.getComponents(type), enum_consts, enum_testers);
-   
-            typeCount++; 
-
-        }
-
-        //define
-
-        //define slots
-        setupVariables();
         
         solver = std::make_unique<z3::solver>(context);
         
@@ -188,7 +166,7 @@ namespace omtsched {
     template<typename ID>
     void TranslatorZ3<ID>::setupVariables() {
 
-        slots.initialize(this->problem.getAssignments());
+        //slots.initialize(this->problem.getAssignments());
 
         /*
         int a = 0;
@@ -368,7 +346,8 @@ bool TranslatorZ3<ID>::isSAT() {
 
 template<typename ID>
 const ID TranslatorZ3<ID>::getComponent(const z3::expr &variable) const {
-    return components.getComponent(variable);
+    return sorts.getComponent(variable);
+    //return components.getComponent(variable);
 }
 
 

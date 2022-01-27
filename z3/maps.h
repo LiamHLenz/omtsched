@@ -18,7 +18,7 @@ namespace omtsched {
     struct SortMap {
 
     public:
-        SortMap(z3::context &context) : context{context} {};
+        SortMap(z3::context &context, const Problem<ID> &problem);
 
         const z3::sort &getSort(const ID &type) const;
 
@@ -26,9 +26,11 @@ namespace omtsched {
 
         const ID &getComponent(const z3::expr &) const;
 
-        void initialize(const std::vector<ID> &sorts);
-
     private:
+
+        void initialize();
+
+        const Problem<ID> &problem;
         z3::context &context;
 
         std::map<ID, z3::sort> sortMap;
@@ -42,7 +44,12 @@ namespace omtsched {
     };
 
     template<typename ID>
-    void SortMap<ID>::initialize(const std::vector<ID> &sorts) {
+    SortMap<ID>::SortMap(z3::context &context, const Problem<ID> &problem) : context{context}, problem{problem} {
+        initialize();
+    };
+
+    template<typename ID>
+    void SortMap<ID>::initialize() {
 
 
         /*
@@ -92,7 +99,30 @@ namespace omtsched {
 
             //set(const ID &type, const std::string &name, std::vector<z3::func_decl_vector>&, std::vector<z3::func_decl_vector>&);
 
-            sorts.set(type, name, this->problem.getComponents(type), enum_consts, enum_testers);
+            //sorts.set(type, name, this->problem.getComponents(type), enum_consts, enum_testers);
+
+            const auto &names = this->problem.getComponents(type);
+
+            // create array needed for enum type
+            const char * enum_names[names.size()];
+            for(int i = 0; i < names.size(); i++) {
+                std::string comp_name = name + "_c" + std::to_string(i);
+                enum_names[i] = comp_name.data();
+            }
+
+            // make sort
+            z3::sort sort = context.enumeration_sort(name.data(), names.size(), enum_names, enum_consts.back(), enum_testers.back());
+            sortMap.emplace(type, sort);
+
+            // save components
+            size_t i = 0;
+            for(const auto &component : names) {
+                const ID &id = component->getID();
+                std::string comp_name = name + "_c" + std::to_string(i);
+                z3::expr expr = enum_consts.back()[i]();
+                constantMap.emplace(id, expr);
+                i++;
+            }
 
             typeCount++;
 
@@ -116,42 +146,39 @@ namespace omtsched {
         return componentMap.at(expr.id());
     }
 
+
     template<typename ID>
     struct SlotMap {
 
     public:
-        SlotMap(z3::context &context) : context{context} {};
+        SlotMap(z3::context &context, const Problem<ID> &problem, const SortMap<ID> &sorts);
 
         const z3::expr &getVariable(const ID &, const ID &) const;
 
         const std::pair<ID, ID> &getSlot(const z3::expr &) const;
 
-        void initialize(const std::map<ID, Assignment <ID>> &assignments, const SortMap<ID> &sorts);
-
     private:
-
-        z3::context &context;
         std::map<std::pair<ID, ID>, z3::expr> variableMap;
         std::map<std::string, std::pair<ID, ID>> slotMap;
 
     };
 
-template<typename ID>
-void SlotMap<ID>::initialize(const std::map<ID, Assignment<ID>> &assignments, const SortMap<ID> &sorts) {
+    template<typename ID>
+    SlotMap<ID>::SlotMap(z3::context &context, const Problem<ID> &problem, const SortMap<ID> &sorts) {
 
-    int a = 0;
-    for (const auto &[aid, assignment] : assignments) {
-        int c = 0;
-        for (const auto &[sname, slot] : assignment.getComponentSlots()) {
-            // create assignment variable
-            const z3::sort &type = sorts.getSort(slot.type);
-            const std::string &name = "a" + std::to_string(a) + "c" + sname;
-            variableMap.emplace({assignments.getID(), slot.id}, context.constant(name.c_str(), type));
-            c++;
+        int a = 0;
+        for (const auto &[aid, assignment] : problem.getAssignments()) {
+            int c = 0;
+            for (const auto &[sid, slot] : assignment.getComponentSlots()) {
+                // create assignment variable
+                const z3::sort &type = sorts.getSort(slot.type);
+                const std::string &name = "a" + std::to_string(a) + "c" + sid;
+                variableMap.emplace(std::make_pair(assignment.getID(), sid), context.constant(name.c_str(), type));
+                c++;
+            }
+            a++;
         }
-        a++;
     }
-}
 
     template<typename ID>
     const z3::expr &SlotMap<ID>::getVariable(const ID &assignment, const ID &slot) const {
