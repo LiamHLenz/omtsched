@@ -81,8 +81,8 @@ namespace omtsched {
         
         solver = std::make_unique<z3::solver>(context);
         
-        setupExistence();
-        //setupUniqueness();
+        //setupExistence();
+        setupUniqueness();
         
         for(const Rule<ID> &rule : problem.getRules())
             resolveRule(rule);
@@ -118,12 +118,6 @@ namespace omtsched {
     const z3::expr &TranslatorZ3<ID>::getConstant(const ID &component) const {
         return sorts.getConstant(component);
     }
-    
-    template<typename ID>
-    z3::expr TranslatorZ3<ID>::getComponentExpr(const ID &id) {
-        
-        
-    }
 
     template<typename ID>
     void TranslatorZ3<ID>::setupExistence(){
@@ -155,10 +149,15 @@ namespace omtsched {
 
             z3::expr_vector vars {context};
             for(const auto &component : this->problem.getComponents(type))
-                vars.push_back(getComponentExpr(component->getID()));
+                vars.push_back(getConstant(component->getID()));
 
-            if(!vars.empty())
-                solver->add( z3::distinct(vars));
+            if(!vars.empty()) {
+                for(const z3::expr &v : vars)
+                    std::cout << v << std::endl;
+
+                z3::expr dis = z3::distinct(vars);
+                solver->add(dis);
+            }
         }
 
     } 
