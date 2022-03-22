@@ -64,7 +64,6 @@ namespace omtsched {
 
                 std::string comp_name = name + "_c" + std::to_string(i);
                 enum_names[i] = new char;
-                //TODO: delete
                 std::strcpy(enum_names[i], comp_name.data());
 
             }
@@ -72,6 +71,9 @@ namespace omtsched {
             // make sort
             z3::sort sort = context.enumeration_sort(name.data(), names.size(), enum_names, enum_consts.back(), enum_testers.back());
             sortMap.emplace(type, sort);
+
+            for(char * pointer : enum_names)
+                delete pointer;
 
             // save components
             size_t i = 0;
