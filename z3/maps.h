@@ -7,6 +7,7 @@
 
 #include <z3.h>
 #include <z3++.h>
+#include <cstring>
 
 namespace omtsched {
 
@@ -26,9 +27,9 @@ namespace omtsched {
 
         const ID &getComponent(const z3::expr &) const;
 
-    private:
+        void print() const;
 
-        void initialize();
+    private:
 
         const Problem<ID> &problem;
         z3::context &context;
@@ -45,48 +46,6 @@ namespace omtsched {
 
     template<typename ID>
     SortMap<ID>::SortMap(z3::context &context, const Problem<ID> &problem) : context{context}, problem{problem} {
-        initialize();
-    };
-
-    template<typename ID>
-    void SortMap<ID>::initialize() {
-
-
-        /*
-         * template<typename ID>
-    void SortMap<ID>::set(const ID &type, const std::string &name, const std::vector<std::shared_ptr<Component<ID>>> &names, std::vector<z3::func_decl_vector> &enum_consts, std::vector<z3::func_decl_vector> &enum_testers) {
-
-        assert(!names.empty() && "Attempting to create empty sort");
-
-        const char * enum_names[names.size()];
-        for(int i = 0; i < names.size(); i++) {
-            std::string comp_name = name + "_c" + std::to_string(i);
-
-            enum_names[i] = comp_name.data();
-
-        }
-
-        z3::sort sort = context.enumeration_sort(name.data(), names.size(), enum_names, enum_consts.back(), enum_testers.back());
-        sortMap.emplace(type, sort);
-
-        for(int i = 0; i < names.size(); i++) {
-            std::string comp_name = name + "_c" + std::to_string(i);
-            z3::expr expr = enum_consts.back()[i]();
-        }
-    }*/
-    //template<typename ID>
-    //void SortMap<ID>::set(const ID &type, std::vector<std::string> &names) {
-        //sortMap.emplace(type, context.uninterpreted_sort(name.c_str()));
-        //componentMap.emplace(name, type);
-        // "Return an enumeration sort: enum_names[0], ..., enum_names[n-1]. cs and ts are output parameters.
-        // The method stores in cs the constants corresponding to the enumerated
-        // elements, and in ts the predicates for testing if terms of the enumeration
-        // sort correspond to an enumeration."
-        //z3::func_decl_vector enum_consts(context);
-        //z3::func_decl_vector enum_testers(context);
-        //sort s = ctx.enumeration_sort("enumT", 3, enum_names, enum_consts, enum_testers);
-        //context.enumeration_sort(name, names.size(), names.data(), enum_consts, enum_testers);
-    //}
 
         int typeCount = 0;
 
@@ -97,17 +56,17 @@ namespace omtsched {
             enum_consts.emplace_back(context);
             enum_testers.emplace_back(context);
 
-            //set(const ID &type, const std::string &name, std::vector<z3::func_decl_vector>&, std::vector<z3::func_decl_vector>&);
-
-            //sorts.set(type, name, this->problem.getComponents(type), enum_consts, enum_testers);
-
             const auto &names = this->problem.getComponents(type);
 
             // create array needed for enum type
-            const char * enum_names[names.size()];
+            char * enum_names [names.size()];
             for(int i = 0; i < names.size(); i++) {
+
                 std::string comp_name = name + "_c" + std::to_string(i);
-                enum_names[i] = comp_name.data();
+                enum_names[i] = new char;
+                //TODO: delete
+                std::strcpy(enum_names[i], comp_name.data());
+
             }
 
             // make sort
@@ -118,7 +77,6 @@ namespace omtsched {
             size_t i = 0;
             for(const auto &component : names) {
                 const ID &id = component->getID();
-                std::string comp_name = name + "_c" + std::to_string(i);
                 z3::expr expr = enum_consts.back()[i]();
                 constantMap.emplace(id, expr);
                 i++;
@@ -127,9 +85,7 @@ namespace omtsched {
             typeCount++;
 
         }
-
-
-    }
+    };
 
     template<typename ID>
     const z3::sort &SortMap<ID>::getSort(const ID &type) const {
@@ -146,6 +102,30 @@ namespace omtsched {
         return componentMap.at(expr.id());
     }
 
+    template<typename ID>
+    void SortMap<ID>::print() const {
+
+        std::cout << std::endl << "START SORT MAP TEST PRINT" << std::endl << std::endl;
+
+        std::cout << "Sorts: " <<   std::endl;
+
+        for(const auto &[id, sort] : sortMap)
+            std::cout << "ID: " << id << " Value: " << sort <<   std::endl;
+
+        std::cout << std::endl << "Constants:" <<   std::endl;
+
+        for(const auto &[id, expr] : constantMap)
+            std::cout << "ID: " << id << " Value: " << expr <<   std::endl;
+
+        std::cout << std::endl << "Sorts:" <<   std::endl;
+
+        for(const auto &[uns, id] : sortMap)
+            std::cout << "Value: " << uns << " ID: " << id <<   std::endl;
+
+        std::cout << std::endl << "END SORT MAP TEST PRINT" << std::endl << std::endl;
+
+    }
+
 
     template<typename ID>
     struct SlotMap {
@@ -156,6 +136,8 @@ namespace omtsched {
         const z3::expr &getVariable(const ID &, const ID &) const;
 
         const std::pair<ID, ID> &getSlot(const z3::expr &) const;
+
+        void print() const;
 
     private:
         std::map<std::pair<ID, ID>, z3::expr> variableMap;
@@ -188,6 +170,29 @@ namespace omtsched {
     template<typename ID>
     const std::pair<ID, ID> &SlotMap<ID>::getSlot(const z3::expr &expr) const {
         return slotMap.at(expr.get_string());
+    }
+
+    template<typename ID>
+    void SlotMap<ID>::print() const {
+
+        // std::map<std::pair<ID, ID>, z3::expr> variableMap;
+        // std::map<std::string, std::pair<ID, ID>> slotMap;
+
+        std::cout << std::endl << "START SLOT MAP TEST PRINT" << std::endl << std::endl;
+
+        std::cout << "VariableMap: " <<   std::endl;
+
+        for(const auto &[pair, expr] : variableMap)
+            std::cout << "ID: " << pair.first << ", " << pair.second << " Value: " << expr << std::endl;
+
+        std::cout << std::endl << "Constants:" <<   std::endl;
+
+        for(const auto &[name, pair] : slotMap)
+            std::cout << "Slot: " << name << " Value: " << pair.first << ", " << pair.second << std::endl;
+
+        std::cout << std::endl << "END SORT MAP TEST PRINT" << std::endl << std::endl;
+
+
     }
 
 }

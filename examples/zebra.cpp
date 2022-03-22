@@ -52,32 +52,32 @@ void getZebra (omtsched::Problem<std::string> &simple) {
 
 
         // 2. The Englishman lives in the red house.
-        simple.addRule(implies(componentIs<std::string>("Nationality", "English"), componentIs<std::string>("Colour", "Red")));
+        //simple.addRule(implies(componentIs<std::string>("Nationality", "English"), componentIs<std::string>("Colour", "Red")));
 
         // 3. The Spaniard owns the dog.
-        simple.addRule(implies(componentIs<std::string>("Nationality", "Spanish"), componentIs<std::string>("Pet", "Dog")));
+        //simple.addRule(implies(componentIs<std::string>("Nationality", "Spanish"), componentIs<std::string>("Pet", "Dog")));
 
         // 4. Coffee is drunk in the green house.
-        simple.addRule(implies(componentIs<std::string>("Colour", "Green"), componentIs<std::string>("Drink", "Coffee")));
+        //simple.addRule(implies(componentIs<std::string>("Colour", "Green"), componentIs<std::string>("Drink", "Coffee")));
 
         // 5. The Ukrainian "Drink" tea.
-        simple.addRule(implies(componentIs<std::string>("Nationality", "Ukrainian"), componentIs<std::string>("Colour", "Tea")));
+        //simple.addRule(implies(componentIs<std::string>("Nationality", "Ukrainian"), componentIs<std::string>("Colour", "Tea")));
 
         // 6. The green house is immediately to the right of the ivory house.
         //simple.addRule(blocked("Position", orC<std::string>({componentIs<std::string>("Colour", "Green"), componentIs<std::string>("Colour", "Ivory")})));
         //simple.addRule(greater("Position", componentIs<std::string>("Colour", "Green"), componentIs<std::string>("Colour", "Ivory")));
 
         // 7. The Old Gold "Smoke"r owns snails.
-        simple.addRule(implies(componentIs<std::string>("Smoke", "Old Gold"), componentIs<std::string>("Pet", "Snails")));
+        //simple.addRule(implies(componentIs<std::string>("Smoke", "Old Gold"), componentIs<std::string>("Pet", "Snails")));
 
         // 8. Kools are "Smoke"d in the yellow house.
-        simple.addRule(implies(componentIs<std::string>("Smoke", "Kools"), componentIs<std::string>("Colour", "Yellow")));
+        //simple.addRule(implies(componentIs<std::string>("Smoke", "Kools"), componentIs<std::string>("Colour", "Yellow")));
 
         // 9. Milk is drunk in the middle house.
-        simple.addRule(implies(componentIs<std::string>("Drink", "Milk"), componentIs<std::string>("Position", "3")));
+        //simple.addRule(implies(componentIs<std::string>("Drink", "Milk"), componentIs<std::string>("Position", "3")));
 
         // 10. The Norwegian lives in the first house.
-        simple.addRule(implies(componentIs<std::string>("Nationality", "Norwegian"), componentIs<std::string>("Position", "1")));
+        //simple.addRule(implies(componentIs<std::string>("Nationality", "Norwegian"), componentIs<std::string>("Position", "1")));
 
         // 11. The man who "Smoke" Chesterfields lives in the house next to the man with the fox.
         //simple.addRule(blocked("Position", componentIs<std::string>("Smoke", "Chesterfields"), componentIs<std::string>("Pet", "Fox")));
@@ -86,10 +86,10 @@ void getZebra (omtsched::Problem<std::string> &simple) {
         //simple.addRule(blocked("Position", componentIs<std::string>("Smoke", "Kools"), componentIs<std::string>("Pet", "Horse")));
 
         // 13. The Lucky Strike "Smoke"r "Drink" orange juice.
-        simple.addRule(implies(componentIs<std::string>("Smoke", "Lucky Strike"), componentIs<std::string>("Drink", "Orange Juice")));
+        //simple.addRule(implies(componentIs<std::string>("Smoke", "Lucky Strike"), componentIs<std::string>("Drink", "Orange Juice")));
 
         // 14. The Japanese "Smoke" Parliaments.
-        simple.addRule(implies(componentIs<std::string>("Nationality", "Japanese"), componentIs<std::string>("Smoke", "Parliaments")));
+        //simple.addRule(implies(componentIs<std::string>("Nationality", "Japanese"), componentIs<std::string>("Smoke", "Parliaments")));
 
         // 15. The Norwegian lives next to the blue house.
         //simple.addRule(blocked("Position", componentIs<std::string>("Nationality", "Norwegian"), componentIs<std::string>("Colour", "Blue")));

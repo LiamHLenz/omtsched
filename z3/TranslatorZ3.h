@@ -33,6 +33,8 @@ namespace omtsched {
 
         bool isSAT() override;
 
+        void print() const;
+
     private:
 
         void setupVariables();
@@ -426,6 +428,19 @@ z3::expr TranslatorZ3::resolveMaxAssignments(const std::shared_ptr<MaxAssignment
 
 
 }*/
+
+    template<typename ID>
+    void TranslatorZ3<ID>::print() const {
+
+        std::cout << "START TZ3 TEST PRINT" << std::endl;
+
+        sorts.print();
+
+        slots.print();
+
+        std::cout << "END TZ3 TEST PRINT" << std::endl;
+
+    }
 
 
 }
