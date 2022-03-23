@@ -81,6 +81,7 @@ namespace omtsched {
                 const ID &id = component->getID();
                 z3::expr expr = enum_consts.back()[i]();
                 constantMap.emplace(id, expr);
+                componentMap.emplace(expr.id(), id);
                 i++;
             }
 
@@ -119,10 +120,11 @@ namespace omtsched {
         for(const auto &[id, expr] : constantMap)
             std::cout << "ID: " << id << " Value: " << expr <<   std::endl;
 
-        std::cout << std::endl << "Sorts:" <<   std::endl;
+        std::cout << std::endl << "ComponentMap:" << std::endl;
+        // std::map<unsigned, ID> componentMap;
 
-        for(const auto &[uns, id] : sortMap)
-            std::cout << "Value: " << uns << " ID: " << id <<   std::endl;
+        for(const auto &[uns, id] : componentMap)
+            std::cout << "Unsigned: " << uns << " ID: " << id <<   std::endl;
 
         std::cout << std::endl << "END SORT MAP TEST PRINT" << std::endl << std::endl;
 
@@ -158,6 +160,7 @@ namespace omtsched {
                 const z3::sort &type = sorts.getSort(slot.type);
                 const std::string &name = "a" + std::to_string(a) + "c" + sid;
                 variableMap.emplace(std::make_pair(assignment.getID(), sid), context.constant(name.c_str(), type));
+                slotMap.emplace(name, std::make_pair(assignment.getID(), sid));
                 c++;
             }
             a++;
@@ -187,12 +190,12 @@ namespace omtsched {
         for(const auto &[pair, expr] : variableMap)
             std::cout << "ID: " << pair.first << ", " << pair.second << " Value: " << expr << std::endl;
 
-        std::cout << std::endl << "Constants:" <<   std::endl;
+        std::cout << std::endl << "Slots:" <<   std::endl;
 
         for(const auto &[name, pair] : slotMap)
-            std::cout << "Slot: " << name << " Value: " << pair.first << ", " << pair.second << std::endl;
+            std::cout << "Value: " << name << ", Slot: " << pair.first << ", " << pair.second << std::endl;
 
-        std::cout << std::endl << "END SORT MAP TEST PRINT" << std::endl << std::endl;
+        std::cout << std::endl << "END SLOT MAP TEST PRINT" << std::endl << std::endl;
 
 
     }

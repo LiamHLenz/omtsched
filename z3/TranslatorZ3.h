@@ -154,9 +154,6 @@ namespace omtsched {
                 vars.push_back(getConstant(component->getID()));
 
             if(!vars.empty()) {
-                for(const z3::expr &v : vars)
-                    std::cout << v << std::endl;
-
                 z3::expr dis = z3::distinct(vars);
                 solver->add(dis);
             }

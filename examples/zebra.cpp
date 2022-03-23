@@ -96,8 +96,8 @@ void getZebra (omtsched::Problem<std::string> &simple) {
 
     }
 
-    std::fstream problemFile;
-    problemFile.open("/home/hal/Documents/simple.smt2");
-    simple.print(problemFile);
+    //std::fstream problemFile;
+    //problemFile.open("/home/hal/Documents/simple.smt2");
+    //simple.print(problemFile);
 
 }
