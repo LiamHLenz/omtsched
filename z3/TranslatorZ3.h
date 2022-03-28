@@ -49,8 +49,6 @@ namespace omtsched {
         //const z3::expr getVariable(const Assignment <ID> &assignment, const std::string &componentSlot) const;
         const z3::expr &getVariable(const ID &assignment, const ID &componentSlot) const;
         const z3::expr &getConstant(const ID &component) const;
-        
-        z3::expr getComponentExpr(const ID &id);
 
 
         z3::expr resolveCondition(const std::shared_ptr<Condition <ID>> &condition, const std::vector<Assignment<ID>*> &asgnComb);
@@ -83,7 +81,7 @@ namespace omtsched {
         
         solver = std::make_unique<z3::solver>(context);
         
-        //setupExistence();
+        setupExistence();
         setupUniqueness();
         
         for(const Rule<ID> &rule : problem.getRules())
@@ -121,6 +119,7 @@ namespace omtsched {
         return sorts.getConstant(component);
     }
 
+
     template<typename ID>
     void TranslatorZ3<ID>::setupExistence(){
         
@@ -133,11 +132,11 @@ namespace omtsched {
                 // TODO: slots with limited set of potential values
                 const z3::expr &slotVariable = getVariable(aid, sid);
                 for(const auto &comp : problem.getComponents(slot.type)){
-                    const z3::expr &component = getComponentExpr(comp->getID());
+                    const z3::expr &component = getConstant(comp->getID());
                     z3::expr eqls {slotVariable == component};
-                    //potentialValues.push_back(eqls);
+                    potentialValues.push_back(eqls);
                 }
-                //solver->add( z3::mk_or(potentialValues));
+                solver->add( z3::mk_or(potentialValues));
             }
                 
         }
@@ -237,25 +236,15 @@ namespace omtsched {
             return model;
 
         z3::model m = solver->get_model();
-        
-        std::cout << m << std::endl;
-    
-        std::cout << "Test model: " << std::endl;
+
         for(const auto &[aid, asgn] : this->problem.getAssignments())
             for(const auto &[sid, slot] : asgn.getComponentSlots()){
 
                 const z3::expr &var = getVariable(aid, sid);
                 const z3::expr &result = m.eval(var);
-                
-                std::cout << "Eval " << "(" << aid << ", " << sid << "): ";
-                std::cout << var << "->" << m.eval(var) << std::endl;
-                
-                std::cout << "Slot: (" << aid << ", " << sid << "): " << result << std::endl;
-                
-                
-                //const ID component = getComponent(result);
 
-                //model.setComponent(aid, sid, component);
+                const ID &component = getComponent(result);
+                model.setComponent(aid, sid, component);
             }
 
         return model;

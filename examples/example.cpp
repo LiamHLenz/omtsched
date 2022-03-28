@@ -11,11 +11,12 @@ int main() {
     getZebra(problem);
     omtsched::TranslatorZ3<std::string> translatorZ3(problem);
     translatorZ3.print();
-    //translatorZ3.solve();
-    //omtsched::Model<std::string> model = translatorZ3.getModel();
-    //model.print(std::cout);
-    
-    /* //copied example for testing
+    translatorZ3.solve();
+    omtsched::Model<std::string> mod = translatorZ3.getModel();
+    mod.print(std::cout);
+
+    /*
+     //copied example for testing
     using namespace z3;
     std::cout << "enumeration sort example\n";
     context ctx;
@@ -49,5 +50,5 @@ int main() {
         std::cout << "Var: " << comp.name() << "intr: " << m.get_const_interp(comp) << std::endl;
     
     }
-    */
+*/
 }
