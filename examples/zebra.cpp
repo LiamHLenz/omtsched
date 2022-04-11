@@ -42,6 +42,7 @@ void getZebra (omtsched::Problem<std::string> &simple) {
         asgn.setVariable("Drink", drinkT, false);
         asgn.setVariable("Smoke", smokeT, false);
         asgn.setVariable("Pet", petT, false);
+    }
 
         // All different
         simple.addRule(distinct<std::string>("Colour"));
@@ -94,7 +95,7 @@ void getZebra (omtsched::Problem<std::string> &simple) {
         // 15. The Norwegian lives next to the blue house.
         //simple.addRule(blocked("Position", componentIs<std::string>("Nationality", "Norwegian"), componentIs<std::string>("Colour", "Blue")));
 
-    }
+
 
     //std::fstream problemFile;
     //problemFile.open("/home/hal/Documents/simple.smt2");

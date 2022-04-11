@@ -136,13 +136,19 @@ void ComponentIn<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>
         static const CONDITION_TYPE type = CONDITION_TYPE::DISTINCT;
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
         void declareVariables(std::ostream &) const;
+        const CONDITION_TYPE getType() const override;
 
         Distinct(ID componentSlot) : componentSlot{componentSlot} {};
 
         const ID componentSlot;
     };
 
-    template<typename ID>
+template<typename ID>
+const CONDITION_TYPE Distinct<ID>::getType() const {
+    return CONDITION_TYPE::DISTINCT;
+}
+
+template<typename ID>
     std::shared_ptr<Condition<ID>> distinct(const ID &slot) {
         return std::make_shared<Distinct<ID>>(slot);
     }

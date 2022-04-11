@@ -26,7 +26,7 @@ namespace omtsched {
         class Condition {
 
         public:
-            const CONDITION_TYPE getType() const;
+            virtual const CONDITION_TYPE getType() const;
             virtual void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const = 0;
             //virtual returnType evaluate(std::vector<std::vector<Assignment<ID>*>>&) = 0;
             virtual void declareVariables(std::ostream &, const std::vector<Assignment<ID>*> &) const;
