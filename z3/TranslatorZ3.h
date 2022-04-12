@@ -53,8 +53,8 @@ namespace omtsched {
         const z3::expr &getConstant(const ID &component) const;
 
 
-        z3::expr resolveCondition(const std::shared_ptr<Condition <ID>> &condition, const std::vector<Assignment<ID>*> &asgnComb = {});
-        z3::expr resolveComponentIs(const std::shared_ptr<Condition <ID>> &, const std::vector<Assignment<ID>*> &asgnComb = {});
+        z3::expr resolveCondition(const std::shared_ptr<Condition <ID>> &condition, const Assignment<ID>* asgn = nullptr);
+        z3::expr resolveComponentIs(const std::shared_ptr<Condition <ID>> &, const Assignment<ID> *asgn);
         //z3::expr resolveComponentIn(const std::shared_ptr<Condition <ID> &, const std::vector<Assignment<ID>*> &asgnComb);
         z3::expr resolveSameComponent(const std::shared_ptr<Condition <ID>> &,const std::vector<Assignment<ID>*> &asgnComb = {});
         z3::expr resolveInGroup(const std::shared_ptr<Condition <ID>> &, const std::vector<Assignment<ID>*> &asgnComb = {});
@@ -255,7 +255,7 @@ namespace omtsched {
     }
 
    template<typename ID>
-   z3::expr TranslatorZ3<ID>::resolveCondition(const std::shared_ptr<Condition <ID>> &condition, const std::vector<Assignment<ID>*> &asgnComb) {
+   z3::expr TranslatorZ3<ID>::resolveCondition(const std::shared_ptr<Condition <ID>> &condition, const Assignment<ID>* asgn) {
 
        z3::expr_vector z3args{context};
        CONDITION_TYPE type = condition->getType();
@@ -281,15 +281,21 @@ namespace omtsched {
                return (resolveCondition(condition->subconditions.at(0)) && !resolveCondition(condition->subconditions.at(1)))
                || (!resolveCondition(condition->subconditions.at(0)) && resolveCondition(condition->subconditions.at(1)));
 
-           case CONDITION_TYPE::IMPLIES:
-               return z3::implies(resolveCondition(condition->subconditions.at(0)), resolveCondition(condition->subconditions.at(1)));
+           case CONDITION_TYPE::IMPLIES:{
+
+               for(auto &[id, asgn] : problem.getAssignments()){
+                   z3args.push_back(z3::implies(resolveCondition(condition->subconditions.at(0), &asgn),
+                                                resolveCondition(condition->subconditions.at(1), &asgn)));
+               }
+               return z3::mk_and(z3args);
+           }
 
            case CONDITION_TYPE::IFF:
                return z3::implies(resolveCondition(condition->subconditions.at(0)), resolveCondition(condition->subconditions.at(1)))
                && z3::implies(resolveCondition(condition->subconditions.at(1)), resolveCondition(condition->subconditions.at(0)));
 
            case CONDITION_TYPE::COMPONENT_IS:
-               return resolveComponentIs(condition);
+               return resolveComponentIs(condition, asgn);
 
            //case CONDITION_TYPE::COMPONENT_IN:
            //    return resolveComponentIn(condition, asgnComb);
@@ -355,11 +361,11 @@ const ID TranslatorZ3<ID>::getComponent(const z3::expr &variable) const {
 
 template<typename ID>
 z3::expr TranslatorZ3<ID>::resolveComponentIs(const std::shared_ptr<Condition <ID>> &condition,
-                                                        const std::vector<Assignment<ID>*> &asgnComb) {
+                                                        const Assignment<ID> *asgn) {
 
     auto c = std::dynamic_pointer_cast<ComponentIs<ID>>(condition);                                                        
     const z3::expr &component = getConstant(c->component);
-    const z3::expr &var = getVariable(asgnComb.at(0)->getID(), c->componentSlot);
+    const z3::expr &var = getVariable(asgn->getID(), c->componentSlot);
     return var == component;
 
 }

@@ -26,11 +26,12 @@ namespace omtsched {
         class Condition {
 
         public:
+            Condition(std::vector<std::shared_ptr<Condition<ID>>> v = {}) : subconditions{v} {}
             virtual const CONDITION_TYPE getType() const;
             virtual void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const = 0;
             //virtual returnType evaluate(std::vector<std::vector<Assignment<ID>*>>&) = 0;
             virtual void declareVariables(std::ostream &, const std::vector<Assignment<ID>*> &) const;
-            std::vector<std::shared_ptr<Condition<ID>>> subconditions;
+            std::vector<std::shared_ptr<Condition<ID>>> subconditions = {};
 
         protected:
             CONDITION_TYPE conditionType = CONDITION_TYPE::BASE;

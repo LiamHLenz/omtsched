@@ -14,9 +14,9 @@ namespace omtsched {
     class ComponentIs : public Condition<ID> {
 
     public:
-        static const CONDITION_TYPE type = CONDITION_TYPE::COMPONENT_IS;
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
         void declareVariables(std::ostream &) const;
+        const CONDITION_TYPE getType() const override;
 
         ComponentIs(ID componentSlot, ID component) : componentSlot{componentSlot},
         component{component} {};
@@ -28,6 +28,11 @@ namespace omtsched {
     template<typename ID>
     std::shared_ptr<Condition<ID>> componentIs(const ID &slot, const ID &component) {
         return std::make_shared<ComponentIs<ID>>(slot, component);
+    }
+
+    template<typename ID>
+    const CONDITION_TYPE ComponentIs<ID>::getType() const {
+        return CONDITION_TYPE::COMPONENT_IS;
     }
 
     // TODO: it should be possible to simply pass a newly constructed condition to addRule
@@ -60,14 +65,19 @@ namespace omtsched {
 
     public:
         InGroup(const ID &componentType, ID groupID) : slot{slot}, group{groupID} {}
-        static const CONDITION_TYPE type = CONDITION_TYPE::IN_GROUP;
         const ID slot;
         const ID group;
 
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
         void declareVariables(std::ostream &) const;
+        const CONDITION_TYPE getType() const override;
 
     };
+
+template<typename ID>
+const CONDITION_TYPE InGroup<ID>::getType() const {
+    return CONDITION_TYPE::IN_GROUP;
+}
 
     template<typename ID>
     void InGroup<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
@@ -90,12 +100,18 @@ template<typename ID>
 
     public:
         SameComponent(const ID &slotType) : slot{slotType} {}
-        static const CONDITION_TYPE type = CONDITION_TYPE::SAME_COMPONENT;
         const ID slot;
 
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
         void declareVariables(std::ostream &) const;
+        const CONDITION_TYPE getType() const override;
+
     };
+
+template<typename ID>
+const CONDITION_TYPE SameComponent<ID>::getType() const {
+    return CONDITION_TYPE::SAME_COMPONENT;
+}
 
     template<typename ID>
     void SameComponent<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
@@ -133,12 +149,11 @@ void ComponentIn<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>
     class Distinct : public Condition<ID> {
 
     public:
-        static const CONDITION_TYPE type = CONDITION_TYPE::DISTINCT;
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
         void declareVariables(std::ostream &) const;
         const CONDITION_TYPE getType() const override;
 
-        Distinct(ID componentSlot) : componentSlot{componentSlot} {};
+        Distinct(ID componentSlot) : Condition<ID>(), componentSlot{componentSlot} {};
 
         const ID componentSlot;
     };

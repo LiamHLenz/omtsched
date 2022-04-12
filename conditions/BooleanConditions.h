@@ -14,17 +14,17 @@ template<typename ID>
 class Not : public Condition<ID> {
 
 public:
-    Not(std::shared_ptr<Condition < ID>>
-
-    subcondition) : subcondition{ std::move(subcondition) } {}
-    static const CONDITION_TYPE type = CONDITION_TYPE::NOT;
+    Not(std::shared_ptr<Condition < ID>> subcondition) : subcondition{ std::move(subcondition) } {}
     const std::shared_ptr<Condition < ID>> subcondition;
 
-    void print(std::ostream &ostr, const std::vector<Assignment < ID> *
-
-    > &asgns)
-    const override;
+    void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
+    const CONDITION_TYPE getType() const override;
 };
+
+    template<typename ID>
+    const CONDITION_TYPE Not<ID>::getType() const {
+        return CONDITION_TYPE::NOT;
+    }
 
 template<typename ID>
 void Not<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *
@@ -46,18 +46,17 @@ template<typename ID>
 class And : public Condition<ID> {
 
 public:
-    And(std::vector<std::shared_ptr<Condition < ID>>
+    And(std::vector<std::shared_ptr<Condition < ID>>> subconditions) : subconditions{ std::move(subconditions) } {}
+    const std::vector<std::shared_ptr<Condition < ID>>> subconditions;
 
-    > subconditions) : subconditions{ std::move(subconditions) } {}
-    static const CONDITION_TYPE type = CONDITION_TYPE::AND;
-    const std::vector<std::shared_ptr<Condition < ID>>>
-    subconditions;
-
-    void print(std::ostream &ostr, const std::vector<Assignment < ID> *
-
-    > &asgns)
-    const override;
+    void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
+    const CONDITION_TYPE getType() const override;
 };
+
+template<typename ID>
+const CONDITION_TYPE And<ID>::getType() const {
+    return CONDITION_TYPE::AND;
+}
 
 template<typename ID>
 void And<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *
@@ -83,18 +82,17 @@ template<typename ID>
 class Or : public Condition<ID> {
 
 public:
-    Or(std::vector<std::shared_ptr<Condition < ID>>
+    Or(std::vector<std::shared_ptr<Condition < ID>>> subconditions) : subconditions{ std::move(subconditions) } {}
+    const std::vector<std::shared_ptr<Condition < ID>>> subconditions;
 
-    > subconditions) : subconditions{ std::move(subconditions) } {}
-    static const CONDITION_TYPE type = CONDITION_TYPE::OR;
-    const std::vector<std::shared_ptr<Condition < ID>>>
-    subconditions;
-
-    void print(std::ostream &ostr, const std::vector<Assignment < ID> *
-
-    > &asgns)
-    const override;
+    void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
+    const CONDITION_TYPE getType() const override;
 };
+
+template<typename ID>
+const CONDITION_TYPE Or<ID>::getType() const {
+    return CONDITION_TYPE::OR;
+}
 
 template<typename ID>
 void Or<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *
@@ -119,27 +117,23 @@ std::shared_ptr<Condition<ID>> orC(std::vector<std::shared_ptr<Condition<ID>>> s
 template<typename ID>
 class Implies : public Condition<ID> {
 public:
-    Implies(std::shared_ptr<Condition < ID>>
+    Implies(std::shared_ptr<Condition < ID>> antecedent, std::shared_ptr<Condition < ID>> consequent) : Condition<ID>({antecedent, consequent}) {}
 
-    antecedent, std::shared_ptr<Condition < ID>> consequent) : antecedent{
-        std::move(antecedent)
-    }, consequent{ std::move(consequent) } {}
-    static const CONDITION_TYPE type = CONDITION_TYPE::IMPLIES;
-    const std::shared_ptr<Condition < ID>> antecedent;
-    const std::shared_ptr<Condition < ID>> consequent;
-
-    void print(std::ostream &ostr, const std::vector<Assignment < ID> *
-
-    > &asgns)
-    const override;
+    void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
+    const CONDITION_TYPE getType() const override;
 };
+
+template<typename ID>
+const CONDITION_TYPE Implies<ID>::getType() const {
+    return CONDITION_TYPE::IMPLIES;
+}
 
 template<typename ID>
 void Implies<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgn) const {
 
     ostr << "(=> ";
-    antecedent->print(ostr, asgn);
-    consequent->print(ostr, asgn);
+    this->subconditions.at(0)->print(ostr, asgn);
+this->subconditions.at(1)->print(ostr, asgn);
     ostr << ") ";
 }
 
@@ -151,15 +145,18 @@ std::shared_ptr<Condition<ID>> implies(const std::shared_ptr<Condition < ID>> an
 template<typename ID>
 class Xor : public Condition<ID> {
 public:
-    Xor(std::shared_ptr<Condition < ID>>
-
-    first, std::shared_ptr<Condition < ID>> second) : first{ std::move(first) }, second{ std::move(second) } {}
-    static const CONDITION_TYPE type = CONDITION_TYPE::XOR;
+    Xor(std::shared_ptr<Condition < ID>> first, std::shared_ptr<Condition < ID>> second) : first{ std::move(first) }, second{ std::move(second) } {}
     const Condition <ID> first;
     const Condition <ID> second;
 
     void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+    const CONDITION_TYPE getType() const override;
 };
+
+template<typename ID>
+const CONDITION_TYPE Xor<ID>::getType() const {
+    return CONDITION_TYPE::XOR;
+}
 
 template<typename ID>
 void Xor<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgn) const {
@@ -178,18 +175,19 @@ std::shared_ptr<Condition<ID>> xorC(const std::shared_ptr<Condition < ID>> first
 template<typename ID>
 class Iff : public Condition<ID> {
 public:
-    Iff(std::shared_ptr<Condition < ID>>
-
-    first, std::shared_ptr<Condition < ID>> second) : first{ std::move(first) }, second{ std::move(second) } {}
+    Iff(std::shared_ptr<Condition < ID>> first, std::shared_ptr<Condition < ID>> second) : first{ std::move(first) }, second{ std::move(second) } {}
     static const CONDITION_TYPE type = CONDITION_TYPE::IFF;
     const std::shared_ptr<Condition < ID>> first;
     const std::shared_ptr<Condition < ID>> second;
 
-    void print(std::ostream &ostr, const std::vector<Assignment < ID> *
-
-    > &asgns)
-    const override;
+    void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
+    const CONDITION_TYPE getType() const override;
 };
+
+template<typename ID>
+const CONDITION_TYPE Iff<ID>::getType() const {
+    return CONDITION_TYPE::IFF;
+}
 
 template<typename ID>
 void Iff<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgn) const {
