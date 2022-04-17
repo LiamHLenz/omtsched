@@ -95,17 +95,12 @@ const CONDITION_TYPE Or<ID>::getType() const {
 }
 
 template<typename ID>
-void Or<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *
-
-> &asgn) const {
+void Or<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgn) const {
 
 ostr << "(or ";
-for(
-const auto &subcondition
-: subconditions)
-subcondition->
-print(ostr, asgn
-);
+for(const auto &subcondition : subconditions)
+    subcondition->print(ostr, asgn);
+
 ostr << ") ";
 }
 
@@ -133,7 +128,7 @@ void Implies<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &
 
     ostr << "(=> ";
     this->subconditions.at(0)->print(ostr, asgn);
-this->subconditions.at(1)->print(ostr, asgn);
+    this->subconditions.at(1)->print(ostr, asgn);
     ostr << ") ";
 }
 

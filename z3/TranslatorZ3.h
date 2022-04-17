@@ -8,6 +8,7 @@
 
 #include "../Translator.h"
 #include "maps.h"
+#include "../conditions/OrderedConditions.h"
 #include <z3.h>
 #include <z3++.h>
 #include <map>
@@ -60,6 +61,7 @@ namespace omtsched {
         z3::expr resolveInGroup(const std::shared_ptr<Condition <ID>> &, const std::vector<Assignment<ID>*> &asgnComb = {});
         //z3::expr resolveMaxAssignments(const std::shared_ptr<Condition <ID> &, const std::vector<Assignment<ID>*> &asgnComb);
         z3::expr resolveDistinct(const std::shared_ptr<Condition <ID>> &);
+        z3::expr resolveBlocked(const std::shared_ptr<Condition <ID>> &);
 
         const Problem<ID> &problem;
 
@@ -312,6 +314,12 @@ namespace omtsched {
            //case CONDITION_TYPE::MAX_ASSIGNMENTS:
            //    return resolveMaxAssignments(condition, asgnComb);
 
+           case CONDITION_TYPE::BLOCKED:
+               return resolveBlocked(condition);
+
+           default:
+               assert(false && "unresolved condition type in resolveCondition");
+
        }
 
    }
@@ -465,6 +473,48 @@ z3::expr TranslatorZ3::resolveMaxAssignments(const std::shared_ptr<MaxAssignment
 
 
         return dis;
+
+    }
+
+
+    template<typename ID>
+    z3::expr TranslatorZ3<ID>::resolveBlocked(const std::shared_ptr<Condition <ID>> &condition) {
+
+        auto c = std::dynamic_pointer_cast<Blocked<ID>>(condition);
+
+        // assuming total order (can be easily adjusted)
+        // order assignments
+        // needs fixed slot?
+
+        // get (value of ordered, id)
+        std::vector<std::pair<ID, ID>> order;
+        order.reserve(problem.getAssignments().size());
+        for(const auto &[id, asgn] : problem.getAssignments())
+            order.push_back(std::make_pair(asgn.getSlot(c->componentSlot).component, id));
+
+        std::sort(order.begin(), order.end());
+
+        z3::expr_vector v (context);
+
+        // for every assignment: fulfills condition => previous or following fulfills condition
+        for(auto it = order.begin(); it != order.end(); it++){
+
+            z3::expr prev (context, Z3_mk_true(context));
+            z3::expr next (context, Z3_mk_true(context));
+
+            auto subcon = andC(c->subconditions);
+
+            if(it != order.begin())
+                prev = resolveCondition(subcon, &problem.getAssignment((it-1)->second));
+
+            if((it+1) != order.end())
+                next = resolveCondition(subcon, &problem.getAssignment((it+1)->second));
+
+            z3::implies(resolveCondition(subcon, &problem.getAssignment(it->second)), prev && next);
+
+        }
+
+        return z3::mk_and(v);
 
     }
 

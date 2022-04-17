@@ -18,7 +18,8 @@ namespace omtsched {
         COMPONENT_IS, COMPONENT_IN, SAME_COMPONENT, DISTINCT,
         IN_GROUP,
         MAX_ASSIGNMENTS, MIN_ASSIGNMENTS,
-        MAX_IN_SEQUENCE
+        MAX_IN_SEQUENCE,
+        BLOCKED
 
     };
 
@@ -27,7 +28,7 @@ namespace omtsched {
 
         public:
             Condition(std::vector<std::shared_ptr<Condition<ID>>> v = {}) : subconditions{v} {}
-            virtual const CONDITION_TYPE getType() const;
+            virtual const CONDITION_TYPE getType() const = 0;
             virtual void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const = 0;
             //virtual returnType evaluate(std::vector<std::vector<Assignment<ID>*>>&) = 0;
             virtual void declareVariables(std::ostream &, const std::vector<Assignment<ID>*> &) const;
@@ -38,10 +39,7 @@ namespace omtsched {
 
         };
 
-        template<typename ID>
-        const CONDITION_TYPE Condition<ID>::getType() const {
-            return conditionType;
-        }
+
 
     template<typename ID>
     void Condition<ID>::declareVariables(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
@@ -64,10 +62,10 @@ namespace omtsched {
     */
 
     template<typename ID>
-    class NamedCondition : Condition<ID> {
+    class NamedCondition : public Condition<ID> {
 
     public:
-        NamedCondition() : id{counter++} {}
+        NamedCondition(std::vector<std::shared_ptr<Condition<ID>>> subconditions = {}) : Condition<ID>(subconditions), id{counter++} {}
 
     protected:
         static int counter;

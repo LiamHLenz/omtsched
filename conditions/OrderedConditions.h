@@ -5,7 +5,8 @@
 #ifndef OMTSCHED_ORDEREDCONDITIONS_H
 #define OMTSCHED_ORDEREDCONDITIONS_H
 
-#include "../Condition.h"
+#include <vector>
+#include "../omtsched.h"
 
 namespace omtsched {
 
@@ -15,29 +16,37 @@ namespace omtsched {
 
     public:
         void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
-        void declareVariables(std::ostream &ostr, std::vector<Assignment<ID>*> &asgns, const int n) const override;
+        void declareVariables(std::ostream &, const std::vector<Assignment<ID>*> &) const override;
+        virtual const CONDITION_TYPE getType() const override;
 
-        Blocked(ID componentSlot, std::shared_ptr<Condition<ID>> subconditions) : componentSlot{componentSlot},
-                                                      subconditions{subconditions}, n{0} {};
+        Blocked(ID componentSlot, std::vector<std::shared_ptr<Condition<ID>>> subconditions = {}) : NamedCondition<ID>(subconditions),
+                componentSlot{componentSlot}, n{0} {};
 
         const ID componentSlot;
-        const std::shared_ptr<Condition<ID>> subcondition;
         int n;
     };
 
     template<typename ID>
-    std::shared_ptr<Condition<ID>> blocked(ID componentSlot, std::shared_ptr<Condition<ID>> subcondition) {
-        return std::make_shared<Blocked<ID>>(componentSlot, subcondition);
+    std::shared_ptr<Condition<ID>> blocked(ID componentSlot, std::vector<std::shared_ptr<Condition<ID>>> subconditions) {
+        return std::make_shared<Blocked<ID>>(componentSlot, subconditions);
     }
 
-    void Blocked<ID>::declareVariables(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+template<typename ID>
+const omtsched::CONDITION_TYPE omtsched::Blocked<ID>::getType() const {
+    return omtsched::CONDITION_TYPE::BLOCKED;
+}
 
-        ostr << "(declare-fun block" << id << "n" << n << " () (_ BitVec " << asgns.size() << "))" << std::endl;
-        n++;
+
+template<typename ID>
+    void Blocked<ID>::declareVariables(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgn) const {
+
+        ostr << "(declare-fun block" << componentSlot << "n" << n << " () (_ BitVec " << asgn.size() << "))" << std::endl;
+
     }
+
 
     template<typename ID>
-    void Blocked<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) {
+    void Blocked<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
 
 
         // recognize 0*1*0*
