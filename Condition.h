@@ -19,7 +19,8 @@ namespace omtsched {
         IN_GROUP,
         MAX_ASSIGNMENTS, MIN_ASSIGNMENTS,
         MAX_IN_SEQUENCE,
-        BLOCKED
+        BLOCKED,
+        GREATER, SMALLER, EQUAL
 
     };
 
@@ -65,14 +66,21 @@ namespace omtsched {
     class NamedCondition : public Condition<ID> {
 
     public:
-        NamedCondition(std::vector<std::shared_ptr<Condition<ID>>> subconditions = {}) : Condition<ID>(subconditions), id{counter++} {}
+        NamedCondition(const ID &componentSlot, std::vector<std::shared_ptr<Condition<ID>>> subconditions = {}) : Condition<ID>(subconditions), componentSlot{componentSlot} {}
+
+        const ID getNamedSlot() const;
 
     protected:
         static int counter;
 
     private:
-        const int id;
+        const ID componentSlot;
     };
+
+    template<typename ID>
+    const ID NamedCondition<ID>::getNamedSlot() const {
+        return componentSlot;
+    }
 
     template<typename ID>
     int NamedCondition<ID>::counter = 0;

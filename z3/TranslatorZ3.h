@@ -42,6 +42,7 @@ namespace omtsched {
         void setupConstants();
         void setupUniqueness();
         void setupExistence();
+        void setupFixed();
 
         //std::vector<std::vector<Assignment<ID> *>> generateAllAsgn(const Rule<ID> &rule);
 
@@ -62,6 +63,7 @@ namespace omtsched {
         //z3::expr resolveMaxAssignments(const std::shared_ptr<Condition <ID> &, const std::vector<Assignment<ID>*> &asgnComb);
         z3::expr resolveDistinct(const std::shared_ptr<Condition <ID>> &);
         z3::expr resolveBlocked(const std::shared_ptr<Condition <ID>> &);
+        z3::expr resolveGreater(const std::shared_ptr<Condition <ID>> &condition);
 
         const Problem<ID> &problem;
 
@@ -88,6 +90,7 @@ namespace omtsched {
         
         setupExistence();
         setupUniqueness();
+        setupFixed();
         
         for(const Rule<ID> &rule : problem.getRules())
             resolveRule(rule);
@@ -163,7 +166,19 @@ namespace omtsched {
             }
         }
 
-    } 
+    }
+
+    template<typename ID>
+    void TranslatorZ3<ID>::setupFixed() {
+
+        for(const auto &[ida, asgn] : problem.getAssignments())
+            for(const auto &[ids, slot] : asgn.getComponentSlots())
+                if(slot.fixed){
+                    z3::expr eq = getVariable(ida, ids) == getConstant(slot.component);
+                    solver->add(eq);
+                }
+
+    }
 
     template<typename ID>
     void TranslatorZ3<ID>::setupVariables() {
@@ -316,6 +331,9 @@ namespace omtsched {
 
            case CONDITION_TYPE::BLOCKED:
                return resolveBlocked(condition);
+
+           case CONDITION_TYPE::GREATER:
+               return resolveGreater(condition);
 
            default:
                assert(false && "unresolved condition type in resolveCondition");
@@ -490,7 +508,7 @@ z3::expr TranslatorZ3::resolveMaxAssignments(const std::shared_ptr<MaxAssignment
         std::vector<std::pair<ID, ID>> order;
         order.reserve(problem.getAssignments().size());
         for(const auto &[id, asgn] : problem.getAssignments())
-            order.push_back(std::make_pair(asgn.getSlot(c->componentSlot).component, id));
+            order.push_back(std::make_pair(asgn.getSlot(c->getNamedSlot()).component, id));
 
         std::sort(order.begin(), order.end());
 
@@ -518,6 +536,26 @@ z3::expr TranslatorZ3::resolveMaxAssignments(const std::shared_ptr<MaxAssignment
 
     }
 
+    template<typename ID>
+    z3::expr TranslatorZ3<ID>::resolveGreater(const std::shared_ptr<Condition <ID>> &condition) {
+
+        auto c = std::dynamic_pointer_cast<Greater<ID>>(condition);
+
+        const ID &namedSlot = c->getNamedSlot();
+
+        auto &greaterCond = c->subconditions.at(0);
+        auto &smallerCond = c->subconditions.at(1);
+
+        z3::expr_vector v (context);
+
+        // limit search space: for all smaller => conditions must be false
+        for(const auto &[id1, asgn1] : problem.getAssignments())
+            for(const auto &[id2, asgn2] : problem.getAssignments())
+                if(asgn1.getSlot(namedSlot).component < asgn2.getSlot(namedSlot).component)
+                    v.push_back((!(resolveCondition(smallerCond, &asgn1))) || !(resolveCondition(greaterCond, &asgn2)));
+
+        return z3::mk_and(v);
+    }
 
     template<typename ID>
     void TranslatorZ3<ID>::print() const {

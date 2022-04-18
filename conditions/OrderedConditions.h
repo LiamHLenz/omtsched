@@ -19,11 +19,8 @@ namespace omtsched {
         void declareVariables(std::ostream &, const std::vector<Assignment<ID>*> &) const override;
         virtual const CONDITION_TYPE getType() const override;
 
-        Blocked(ID componentSlot, std::vector<std::shared_ptr<Condition<ID>>> subconditions = {}) : NamedCondition<ID>(subconditions),
-                componentSlot{componentSlot}, n{0} {};
-
-        const ID componentSlot;
-        int n;
+        Blocked(ID componentSlot, std::vector<std::shared_ptr<Condition<ID>>> subconditions = {}) :
+            NamedCondition<ID>(componentSlot, subconditions) {};
     };
 
     template<typename ID>
@@ -40,7 +37,7 @@ const omtsched::CONDITION_TYPE omtsched::Blocked<ID>::getType() const {
 template<typename ID>
     void Blocked<ID>::declareVariables(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgn) const {
 
-        ostr << "(declare-fun block" << componentSlot << "n" << n << " () (_ BitVec " << asgn.size() << "))" << std::endl;
+        ostr << "(declare-fun block" << this->getNamedSlot() << " () (_ BitVec " << asgn.size() << "))" << std::endl;
 
     }
 
@@ -66,6 +63,43 @@ template<typename ID>
 
     }
 
+
+    template<typename ID>
+    class Greater : public NamedCondition<ID> {
+
+    public:
+        void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
+        void declareVariables(std::ostream &, const std::vector<Assignment<ID>*> &) const override;
+        virtual const CONDITION_TYPE getType() const override;
+
+        Greater(ID componentSlot, std::vector<std::shared_ptr<Condition<ID>>> subconditions = {}) :
+            NamedCondition<ID>(componentSlot, subconditions) {};
+
+        const ID componentSlot;
+        int n;
+    };
+
+    template<typename ID>
+    std::shared_ptr<Condition<ID>> greater(ID componentSlot, std::shared_ptr<Condition<ID>> s1, std::shared_ptr<Condition<ID>> s2) {
+        return std::make_shared<Greater<ID>>(componentSlot, std::vector<std::shared_ptr<Condition<ID>>> {s1, s2});
+    }
+
+    template<typename ID>
+    const omtsched::CONDITION_TYPE omtsched::Greater<ID>::getType() const {
+        return omtsched::CONDITION_TYPE::GREATER;
+    }
+
+
+    template<typename ID>
+    void Greater<ID>::declareVariables(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgn) const {
+        //TODO
+    }
+
+
+    template<typename ID>
+    void Greater<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
+        //TODO
+    }
 
 }
 
