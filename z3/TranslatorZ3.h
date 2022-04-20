@@ -529,7 +529,6 @@ z3::expr TranslatorZ3::resolveMaxAssignments(const std::shared_ptr<MaxAssignment
                     auto if_first = resolveCondition(subcon, &problem.getAssignment(itf->second));
                     auto if_second = resolveCondition(subcon, &problem.getAssignment(itb->second));
                     auto then = resolveCondition(subcon, &problem.getAssignment(itbet->second));
-                    std::cout << z3::implies(if_first && if_second, then).to_string() << std::endl;
                     v.push_back(z3::implies(if_first && if_second, then));
                 }
 
@@ -573,7 +572,7 @@ z3::expr TranslatorZ3::resolveMaxAssignments(const std::shared_ptr<MaxAssignment
         for(const auto &[id1, asgn1] : problem.getAssignments())
             for(const auto &[id2, asgn2] : problem.getAssignments())
                 if(asgn1.getSlot(namedSlot).component < asgn2.getSlot(namedSlot).component)
-                    v.push_back((!(resolveCondition(smallerCond, &asgn1))) || !(resolveCondition(greaterCond, &asgn2)));
+                    v.push_back((!(resolveCondition(greaterCond, &asgn1))) || !(resolveCondition(smallerCond, &asgn2)));
 
         return z3::mk_and(v);
     }
