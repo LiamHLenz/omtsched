@@ -14,7 +14,7 @@ template<typename ID>
 class Not : public Condition<ID> {
 
 public:
-    Not(std::shared_ptr<Condition < ID>> subcondition) : Condition<ID>({ std::move(subcondition)}) {}
+    Not(std::shared_ptr<Condition < ID>> subcondition) : Condition<ID>({std::move(subcondition)}) {}
 
     void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
     const CONDITION_TYPE getType() const override;
@@ -129,9 +129,7 @@ std::shared_ptr<Condition<ID>> implies(const std::shared_ptr<Condition < ID>> an
 template<typename ID>
 class Xor : public Condition<ID> {
 public:
-    Xor(std::shared_ptr<Condition < ID>> first, std::shared_ptr<Condition < ID>> second) : first{ std::move(first) }, second{ std::move(second) } {}
-    const Condition <ID> first;
-    const Condition <ID> second;
+    Xor(std::shared_ptr<Condition < ID>> first, std::shared_ptr<Condition < ID>> second) : Condition<ID>({std::move(first), std::move(second)})  {}
 
     void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const override;
     const CONDITION_TYPE getType() const override;
@@ -146,8 +144,8 @@ template<typename ID>
 void Xor<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgn) const {
 
 ostr << "(=> ";
-first->print(ostr, asgn);
-second->print(ostr, asgn);
+this->subconditions.at(0)->print(ostr, asgn);
+    this->subconditions.at(1)->print(ostr, asgn);
 ostr << ") ";
 }
 
@@ -159,10 +157,7 @@ std::shared_ptr<Condition<ID>> xorC(const std::shared_ptr<Condition < ID>> first
 template<typename ID>
 class Iff : public Condition<ID> {
 public:
-    Iff(std::shared_ptr<Condition < ID>> first, std::shared_ptr<Condition < ID>> second) : first{ std::move(first) }, second{ std::move(second) } {}
-    static const CONDITION_TYPE type = CONDITION_TYPE::IFF;
-    const std::shared_ptr<Condition < ID>> first;
-    const std::shared_ptr<Condition < ID>> second;
+    Iff(std::shared_ptr<Condition < ID>> first, std::shared_ptr<Condition < ID>> second) : Condition<ID>({std::move(first), std::move(second) }) {}
 
     void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
     const CONDITION_TYPE getType() const override;
@@ -177,11 +172,11 @@ template<typename ID>
 void Iff<ID>::print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgn) const {
 
 ostr << "(and (=> ";
-first->print(ostr, asgn);
-second->print(ostr, asgn);
+this->subconditions.at(0)->print(ostr, asgn);
+    this->subconditions.at(1)->print(ostr, asgn);
 ostr << ") (=> ";
-second->print(ostr, asgn);
-first->print(ostr, asgn);
+    this->subconditions.at(1)->print(ostr, asgn);
+    this->subconditions.at(0)->print(ostr, asgn);
 ostr << ")) ";
 }
 
