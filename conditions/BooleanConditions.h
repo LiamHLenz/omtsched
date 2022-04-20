@@ -14,8 +14,7 @@ template<typename ID>
 class Not : public Condition<ID> {
 
 public:
-    Not(std::shared_ptr<Condition < ID>> subcondition) : subcondition{ std::move(subcondition) } {}
-    const std::shared_ptr<Condition < ID>> subcondition;
+    Not(std::shared_ptr<Condition < ID>> subcondition) : Condition<ID>({ std::move(subcondition)}) {}
 
     void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
     const CONDITION_TYPE getType() const override;
@@ -27,14 +26,11 @@ public:
     }
 
 template<typename ID>
-void Not<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *
+void Not<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgn) const {
 
-> &asgn) const {
-ostr << "(not ";
-subcondition->
-print(ostr, asgn
-);
-ostr << ") ";
+    ostr << "(not ";
+    this->subconditions.at(0)->print(ostr, asgn);
+    ostr << ") ";
 }
 
 template<typename ID>
@@ -46,8 +42,7 @@ template<typename ID>
 class And : public Condition<ID> {
 
 public:
-    And(std::vector<std::shared_ptr<Condition < ID>>> subconditions) : subconditions{ std::move(subconditions) } {}
-    const std::vector<std::shared_ptr<Condition < ID>>> subconditions;
+    And(std::vector<std::shared_ptr<Condition < ID>>> subconditions) : Condition<ID>(std::move(subconditions) ) {}
 
     void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
     const CONDITION_TYPE getType() const override;
@@ -59,18 +54,13 @@ const CONDITION_TYPE And<ID>::getType() const {
 }
 
 template<typename ID>
-void And<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *
+void And<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgn) const {
 
-> &asgn) const {
+    ostr << "(and ";
+    for(const auto &subcondition : this->subconditions)
+        subcondition->print(ostr, asgn);
 
-ostr << "(and ";
-for(
-const auto &subcondition
-: subconditions)
-subcondition->
-print(ostr, asgn
-);
-ostr << ") ";
+    ostr << ") ";
 }
 
 template<typename ID>
@@ -82,8 +72,7 @@ template<typename ID>
 class Or : public Condition<ID> {
 
 public:
-    Or(std::vector<std::shared_ptr<Condition < ID>>> subconditions) : subconditions{ std::move(subconditions) } {}
-    const std::vector<std::shared_ptr<Condition < ID>>> subconditions;
+    Or(std::vector<std::shared_ptr<Condition < ID>>> subconditions) : Condition<ID>(std::move(subconditions)) {}
 
     void print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgns) const override;
     const CONDITION_TYPE getType() const override;
@@ -98,7 +87,7 @@ template<typename ID>
 void Or<ID>::print(std::ostream &ostr, const std::vector<Assignment < ID> *> &asgn) const {
 
 ostr << "(or ";
-for(const auto &subcondition : subconditions)
+for(const auto &subcondition : this->subconditions)
     subcondition->print(ostr, asgn);
 
 ostr << ") ";

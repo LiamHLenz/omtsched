@@ -282,21 +282,21 @@ namespace omtsched {
                 assert(false && "Attempting to resolve a condition of a placeholder type.");
 
            case CONDITION_TYPE::NOT:
-               return !resolveCondition(condition->subconditions.at(0));
+               return !resolveCondition(condition->subconditions.at(0), asgn);
 
            case CONDITION_TYPE::OR:
                for (const auto s : condition->subconditions)
-                   z3args.push_back(resolveCondition(s));
+                   z3args.push_back(resolveCondition(s, asgn));
                return z3::mk_or(z3args);
 
            case CONDITION_TYPE::AND:
                for (const auto s : condition->subconditions)
-                   z3args.push_back(resolveCondition(s));
+                   z3args.push_back(resolveCondition(s, asgn));
                return z3::mk_and(z3args);
 
            case CONDITION_TYPE::XOR:
-               return (resolveCondition(condition->subconditions.at(0)) && !resolveCondition(condition->subconditions.at(1)))
-               || (!resolveCondition(condition->subconditions.at(0)) && resolveCondition(condition->subconditions.at(1)));
+               return (resolveCondition(condition->subconditions.at(0), asgn) && !resolveCondition(condition->subconditions.at(1), asgn))
+               || (!resolveCondition(condition->subconditions.at(0), asgn) && resolveCondition(condition->subconditions.at(1), asgn));
 
            case CONDITION_TYPE::IMPLIES:{
 
@@ -308,8 +308,8 @@ namespace omtsched {
            }
 
            case CONDITION_TYPE::IFF:
-               return z3::implies(resolveCondition(condition->subconditions.at(0)), resolveCondition(condition->subconditions.at(1)))
-               && z3::implies(resolveCondition(condition->subconditions.at(1)), resolveCondition(condition->subconditions.at(0)));
+               return z3::implies(resolveCondition(condition->subconditions.at(0), asgn), resolveCondition(condition->subconditions.at(1), asgn))
+               && z3::implies(resolveCondition(condition->subconditions.at(1), asgn), resolveCondition(condition->subconditions.at(0), asgn));
 
            case CONDITION_TYPE::COMPONENT_IS:
                return resolveComponentIs(condition, asgn);
@@ -514,8 +514,29 @@ z3::expr TranslatorZ3::resolveMaxAssignments(const std::shared_ptr<MaxAssignment
 
         z3::expr_vector v (context);
 
-        // for every assignment: fulfills condition => previous or following fulfills condition
-        for(auto it = order.begin(); it != order.end(); it++){
+
+        //1. list all illegal combinations (urgh)
+        //2. list all legal combinations (also bad)
+        //3. two fulfill conditions => all in between fulfill condition
+        //   add them all as implications....
+
+        auto subcon = orC(c->subconditions);
+
+        //forward iteration
+        for(auto itf = order.begin(); itf != order.end() - 2; itf++)
+            for(auto itb = order.end() - 1; itb > itf+1; itb--)
+                for(auto itbet = itf + 1; itbet != itb; itbet++) {
+                    auto if_first = resolveCondition(subcon, &problem.getAssignment(itf->second));
+                    auto if_second = resolveCondition(subcon, &problem.getAssignment(itb->second));
+                    auto then = resolveCondition(subcon, &problem.getAssignment(itbet->second));
+                    std::cout << z3::implies(if_first && if_second, then).to_string() << std::endl;
+                    v.push_back(z3::implies(if_first && if_second, then));
+                }
+
+
+
+        // for every assignment: fulfills condition => previous or following fulfills condition (wrong!)
+        /*for(auto it = order.begin(); it != order.end(); it++){
 
             z3::expr prev (context, Z3_mk_true(context));
             z3::expr next (context, Z3_mk_true(context));
@@ -531,7 +552,7 @@ z3::expr TranslatorZ3::resolveMaxAssignments(const std::shared_ptr<MaxAssignment
             z3::implies(resolveCondition(subcon, &problem.getAssignment(it->second)), prev && next);
 
         }
-
+        */
         return z3::mk_and(v);
 
     }

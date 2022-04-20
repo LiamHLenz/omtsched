@@ -52,6 +52,7 @@ void getZebra(omtsched::Problem<std::string> &simple) {
     simple.addRule(distinct < std::string > ("Smoke"));
     simple.addRule(distinct < std::string > ("Pet"));
 
+    std::string slot = "Position";
 
     // 2. The Englishman lives in the red house.
     simple.addRule(implies(componentIs < std::string > ("Nationality", "English"),
@@ -70,7 +71,6 @@ void getZebra(omtsched::Problem<std::string> &simple) {
                            componentIs < std::string > ("Drink", "Tea")));
 
     // 6. The green house is immediately to the right of the ivory house.
-    std::string slot = "Position";
     simple.addRule(blocked(slot, {orC<std::string>(
             {componentIs < std::string > ("Colour", "Green"), componentIs < std::string > ("Colour", "Ivory")})}));
     simple.addRule(greater(slot, componentIs<std::string>("Colour", "Green"), componentIs<std::string>("Colour", "Ivory")));
@@ -93,9 +93,14 @@ void getZebra(omtsched::Problem<std::string> &simple) {
 
     // 11. The man who "Smoke" Chesterfields lives in the house next to the man with the fox.
     simple.addRule(blocked(slot, {componentIs<std::string>("Smoke", "Chesterfields"), componentIs<std::string>("Pet", "Fox")}));
+    //simple.addRule(notC(andC<std::string>({componentIs<std::string>("Smoke", "Chesterfields"), componentIs<std::string>("Pet", "Fox")})));
+
+    simple.addRule(implies(componentIs<std::string>("Smoke", "Chesterfields"), notC(componentIs<std::string>("Pet", "Fox"))));
+
 
     // 12. Kools are "Smoke"d in the house next to the house where the horse is kept.
     simple.addRule(blocked(slot, {componentIs<std::string>("Smoke", "Kools"), componentIs<std::string>("Pet", "Horse")}));
+    simple.addRule(implies(componentIs<std::string>("Smoke", "Kools"), notC(componentIs<std::string>("Pet", "Horse"))));
 
     // 13. The Lucky Strike "Smoke"r "Drink" orange juice.
     simple.addRule(implies(componentIs < std::string > ("Smoke", "Lucky Strike"),
@@ -107,6 +112,7 @@ void getZebra(omtsched::Problem<std::string> &simple) {
 
     // 15. The Norwegian lives next to the blue house.
     simple.addRule(blocked(slot, {componentIs<std::string>("Nationality", "Norwegian"), componentIs<std::string>("Colour", "Blue")}));
+    simple.addRule(implies(componentIs<std::string>("Nationality", "Norwegian"), notC(componentIs<std::string>("Colour", "Blue"))));
 
 
 

@@ -35,9 +35,6 @@ namespace omtsched {
             virtual void declareVariables(std::ostream &, const std::vector<Assignment<ID>*> &) const;
             std::vector<std::shared_ptr<Condition<ID>>> subconditions = {};
 
-        protected:
-            CONDITION_TYPE conditionType = CONDITION_TYPE::BASE;
-
         };
 
 

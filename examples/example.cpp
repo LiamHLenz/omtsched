@@ -10,7 +10,7 @@ int main() {
     omtsched::Problem<std::string> problem;
     getZebra(problem);
     omtsched::TranslatorZ3<std::string> translatorZ3(problem);
-    translatorZ3.print();
+    //translatorZ3.print();
     translatorZ3.solve();
     omtsched::Model<std::string> mod = translatorZ3.getModel();
     mod.print(std::cout);
