@@ -26,7 +26,7 @@ namespace omtsched {
         /*
          * Constructor for a variable component slot
          */
-        ComponentSlot(ID componentType, bool optional) : type{componentType}, optional{optional}, fixed{false} {};
+        ComponentSlot(ID componentType, bool optional = false, bool fixed = false) : type{componentType}, optional{optional}, fixed{fixed} {};
 
         /*
          * Constructor for a fixed component slot
@@ -124,7 +124,7 @@ namespace omtsched {
     template<typename ID>
     void Assignment<ID>::setFixed(const ID &name, const Component<ID> &comps) {
 
-        componentSlots.emplace(std::piecewise_construct, std::make_tuple(name), std::make_tuple(comps.getType(), false));
+        componentSlots.emplace(std::piecewise_construct, std::make_tuple(name), std::make_tuple(comps));
     }
 
     template<typename ID>

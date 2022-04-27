@@ -18,7 +18,9 @@ namespace omtsched {
         COMPONENT_IS, COMPONENT_IN, SAME_COMPONENT, DISTINCT,
         IN_GROUP,
         MAX_ASSIGNMENTS, MIN_ASSIGNMENTS,
-        MAX_IN_SEQUENCE
+        MAX_IN_SEQUENCE,
+        BLOCKED,
+        GREATER, SMALLER, EQUAL
 
     };
 
@@ -26,21 +28,16 @@ namespace omtsched {
         class Condition {
 
         public:
-            const CONDITION_TYPE getType() const;
+            Condition(std::vector<std::shared_ptr<Condition<ID>>> v = {}) : subconditions{v} {}
+            virtual const CONDITION_TYPE getType() const = 0;
             virtual void print(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const = 0;
             //virtual returnType evaluate(std::vector<std::vector<Assignment<ID>*>>&) = 0;
             virtual void declareVariables(std::ostream &, const std::vector<Assignment<ID>*> &) const;
-            std::vector<std::shared_ptr<Condition<ID>>> subconditions;
-
-        protected:
-            CONDITION_TYPE conditionType = CONDITION_TYPE::BASE;
+            std::vector<std::shared_ptr<Condition<ID>>> subconditions = {};
 
         };
 
-        template<typename ID>
-        const CONDITION_TYPE Condition<ID>::getType() const {
-            return conditionType;
-        }
+
 
     template<typename ID>
     void Condition<ID>::declareVariables(std::ostream &ostr, const std::vector<Assignment<ID>*> &asgns) const {
@@ -63,17 +60,24 @@ namespace omtsched {
     */
 
     template<typename ID>
-    class NamedCondition : Condition<ID> {
+    class NamedCondition : public Condition<ID> {
 
     public:
-        NamedCondition() : id{counter++} {}
+        NamedCondition(const ID &componentSlot, std::vector<std::shared_ptr<Condition<ID>>> subconditions = {}) : Condition<ID>(subconditions), componentSlot{componentSlot} {}
+
+        const ID getNamedSlot() const;
 
     protected:
         static int counter;
 
     private:
-        const int id;
+        const ID componentSlot;
     };
+
+    template<typename ID>
+    const ID NamedCondition<ID>::getNamedSlot() const {
+        return componentSlot;
+    }
 
     template<typename ID>
     int NamedCondition<ID>::counter = 0;

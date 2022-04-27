@@ -15,9 +15,9 @@ namespace omtsched {
         // A model must assign a component to each component slot a component
         // TODO: empty assignments -> NONE component?
     public:
-        void setComponent(const ID &assignment, const std::string &slot, const ID &component);
+        void setComponent(const ID &assignment, const ID &slot, const ID &component);
 
-        const ID &getComponent(const ID &assignment, const std::string &slot);
+        const ID &getComponent(const ID &assignment, const ID &slot);
 
         void addPenalty(const int &);
 
@@ -32,12 +32,12 @@ namespace omtsched {
     };
 
     template<typename ID>
-    void Model<ID>::setComponent(const ID &assignment, const std::string &slot, const ID &component) {
+    void Model<ID>::setComponent(const ID &assignment, const ID &slot, const ID &component) {
         assignments[std::make_pair(assignment, slot)] = component;
     }
 
     template<typename ID>
-    const ID &Model<ID>::getComponent(const ID &assignment, const std::string &slot) {
+    const ID &Model<ID>::getComponent(const ID &assignment, const ID &slot) {
         return assignments.at(std::make_pair(assignment, slot));
     }
 

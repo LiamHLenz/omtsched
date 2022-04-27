@@ -29,7 +29,7 @@ namespace omtsched {
 
         const std::shared_ptr<Condition<ID>> &getTopCondition() const;
 
-        const std::vector<std::vector<Assignment<ID> *>> &getApplicableSets() const;
+        const std::vector<std::vector<Assignment<ID> *>> &getApplicableSets();
 
         bool isRestricted() const;
 
@@ -76,8 +76,15 @@ namespace omtsched {
     }
 
     template<typename ID>
-    const std::vector<std::vector<Assignment<ID> *>> &Rule<ID>::getApplicableSets() const {
-        return applicableSets;
+    const std::vector<std::vector<Assignment<ID> *>> &Rule<ID>::getApplicableSets() {
+
+        if(applicableSets.empty())
+            restrictedSet = false;
+        else
+            restrictedSet = true;
+
+       return applicableSets;
+
     }
 
     //template<typename ID>

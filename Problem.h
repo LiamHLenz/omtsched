@@ -76,6 +76,8 @@ namespace omtsched {
 	 */
         const std::map<ID, Assignment <ID>> &getAssignments() const;
 
+        const Assignment<ID> &getAssignment(const ID &id) const;
+
 	/**
 	 * @return All rules belonging to the problem
 	 */
@@ -216,6 +218,10 @@ namespace omtsched {
         return assignments;
     }
 
+    template<typename ID>
+    const Assignment<ID> &Problem<ID>::getAssignment(const ID &id) const {
+        return assignments.at(id);
+    }
 
     template<typename ID>
     void Problem<ID>::print(std::ostream &ostr) const {
