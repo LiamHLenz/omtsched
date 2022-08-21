@@ -4,11 +4,12 @@
 
 #include "../omtsched.h"
 #include "zebra.cpp"
+#include "itc21.cpp"
 
 int main() {
 
     omtsched::Problem<std::string> problem;
-    getZebra(problem);
+    getITC21(problem);
     omtsched::TranslatorZ3<std::string> translatorZ3(problem);
     //translatorZ3.print();
     translatorZ3.solve();

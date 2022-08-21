@@ -48,9 +48,7 @@ int fetchInt(const pt::ptree::value_type &node, const std::string &name) {
 }
 
 
-int main() {
-
-    omtsched::Problem<std::string> itc21;
+void getITC21(omtsched::Problem<std::string> &itc21) {
 
     const std::string gameType = itc21.addComponentType("G");
     const std::string slotType = itc21.addComponentType("S");
@@ -59,8 +57,9 @@ int main() {
     std::string problemPath;
 
     pt::ptree scenarioTree;
-    pt::read_xml("C:/Users/Betrieb-PC/Desktop/TestInstances_V3/ITC2021_Test3.xml", scenarioTree);
+    pt::read_xml("/home/liam/Documents/TestInstances_V3/ITC2021_Test1.xml", scenarioTree);
 
+	std::size_t numGames = 0;
 
     // Create Games
     // Create one game for every combination of teams (except identical)
@@ -79,6 +78,7 @@ int main() {
             std::string gameID = std::to_string(id1) + "_" + std::to_string(id2);
 
             auto &game = itc21.newComponent(gameID, gameType);
+			numGames++;
 
             game.addGroup("H" + std::to_string(id1));       // h: home
             game.addGroup("A" + std::to_string(id2));       // a: away
@@ -95,20 +95,27 @@ int main() {
         ts.addGroup(std::to_string(id));
 
         // Create game assignments as fixed timeslot assignments
-        auto &gameSlot = itc21.newAssignment();
+        auto &gameSlot = itc21.newAssignment(std::to_string(id));
         gameSlot.setFixed("s_" + std::to_string(id), ts);
-
-        gameSlot.setVariable("slot_" + std::to_string(id), gameType, omtsched::Number::ANY, true);
+		//void setVariable(const ID &name, ID componentType, bool optional);
+		for(auto i = 0; i <=numGames/2; i++)
+			gameSlot.setVariable("slot_" + std::to_string(id) + "_" + std::to_string(i), gameType, true);
     }
 
     // -----------------------------------------------
     //           Add Implicit Rules:
 
+
+	// each game must be assigned exactly once	
+	for(game)
+		itc21.addRule( AssignOnce(game) );
+
+
     // a team can only play one game simultaneously
-    //for(pt::ptree::value_type &team1: scenarioTree.get_child("Instance.Resources.Teams")){
-    //    itc21.addRule( Implies(SameComponent(slotType), Not(Overlap()) ) );
-
-
+    for(assignment)){
+        itc21.addRule( Unique(assignment, gameType) );
+		
+	
     // TODO: phasedness
     // Phased: season is split into two equally long 1RR intervals, where each pair plays
     // in one home-away configuration in both phases
@@ -121,10 +128,10 @@ int main() {
     // A timetable is time-constrained (also called compact) if it uses the
     // minimal number of time slots needed, and is time-relaxed otherwise.
     //
-    bool compact = scenarioTree.get<std::string>("Instance.Structure.Format.compactness") == "C";
-    if(compact){
+    //bool compact = scenarioTree.get<std::string>("Instance.Structure.Format.compactness") == "C";
+    //if(compact){
         //addRule();
-    }
+    //}
 
     // Set Objective: minimize number of violated soft constraints, equally weighted
 
