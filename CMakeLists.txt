@@ -20,8 +20,8 @@ find_package(Boost REQUIRED)
 
 find_package(Z3 CONFIG REQUIRED)
 
-find_package(wxWidgets REQUIRED)
-include(${wxWidgets_USE_FILE})
+#find_package(wxWidgets REQUIRED)
+#include(${wxWidgets_USE_FILE})
 
 #if(Boost_FOUND)
     include_directories(${BOOST_INCLUDE_DIRS})

@@ -1,0 +1,1476 @@
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.00 (  0%)   0.01 ( 48%)   0.01 ( 31%)    1242 kB ( 86%)
+ TOTAL                              :   0.00          0.03          0.03           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.01          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.00 (  0%)   0.00 (  0%)   0.01 ( 30%)    1242 kB ( 86%)
+ phase parsing                      :   0.01 (100%)   0.00 (  0%)   0.00 ( 15%)     183 kB ( 13%)
+ preprocessing                      :   0.01 (100%)   0.00 (  0%)   0.00 (  0%)      44 kB (  3%)
+ TOTAL                              :   0.01          0.00          0.02           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.01          0.01             10 kB
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.00 (  0%)   0.00 (  0%)   0.13 ( 10%)    1242 kB ( 86%)
+ phase parsing                      :   0.00 (  0%)   0.01 (100%)   0.69 ( 54%)     183 kB ( 13%)
+ phase opt and generate             :   0.00 (  0%)   0.00 (  0%)   0.38 ( 29%)       9 kB (  1%)
+ phase finalize                     :   0.00 (  0%)   0.00 (  0%)   0.04 (  3%)       0 kB (  0%)
+ callgraph construction             :   0.00 (  0%)   0.00 (  0%)   0.25 ( 19%)       0 kB (  0%)
+ ipa inheritance graph              :   0.00 (  0%)   0.00 (  0%)   0.06 (  5%)       0 kB (  0%)
+ lexical analysis                   :   0.00 (  0%)   0.01 (100%)   0.00 (  0%)       0 kB (  0%)
+ parser (global)                    :   0.00 (  0%)   0.00 (  0%)   0.50 ( 39%)     135 kB (  9%)
+ parser function body               :   0.00 (  0%)   0.00 (  0%)   0.17 ( 13%)       2 kB (  0%)
+ tree gimplify                      :   0.00 (  0%)   0.00 (  0%)   0.03 (  2%)       6 kB (  0%)
+ tree eh                            :   0.00 (  0%)   0.00 (  0%)   0.02 (  1%)       0 kB (  0%)
+ tree CFG construction              :   0.00 (  0%)   0.00 (  0%)   0.02 (  2%)       1 kB (  0%)
+ varconst                           :   0.00 (  0%)   0.00 (  0%)   0.01 (  1%)       0 kB (  0%)
+ TOTAL                              :   0.00          0.01          1.28           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.02          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.02          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.00 (  0%)   0.00 (  0%)   0.02 ( 51%)    1242 kB ( 86%)
+ TOTAL                              :   0.00          0.00          0.04           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.05             10 kB
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.01 (100%)   0.01 (100%)   2.01 ( 43%)    1242 kB ( 86%)
+ phase parsing                      :   0.00 (  0%)   0.00 (  0%)   0.45 ( 10%)     183 kB ( 13%)
+ phase opt and generate             :   0.00 (  0%)   0.00 (  0%)   1.15 ( 25%)       9 kB (  1%)
+ phase finalize                     :   0.00 (  0%)   0.00 (  0%)   0.04 (  1%)       0 kB (  0%)
+ callgraph construction             :   0.00 (  0%)   0.00 (  0%)   0.73 ( 16%)       0 kB (  0%)
+ parser (global)                    :   0.00 (  0%)   0.00 (  0%)   0.39 (  8%)     135 kB (  9%)
+ parser function body               :   0.00 (  0%)   0.00 (  0%)   0.06 (  1%)       2 kB (  0%)
+ tree gimplify                      :   0.00 (  0%)   0.00 (  0%)   0.15 (  3%)       6 kB (  0%)
+ tree eh                            :   0.00 (  0%)   0.00 (  0%)   0.10 (  2%)       0 kB (  0%)
+ tree CFG construction              :   0.00 (  0%)   0.00 (  0%)   0.15 (  3%)       1 kB (  0%)
+ TOTAL                              :   0.01          0.01          4.65           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.02             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.02             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.02             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.02 (100%)   0.00 (  0%)   0.03 ( 60%)    1242 kB ( 86%)
+ phase parsing                      :   0.00 (  0%)   0.00 (  0%)   0.01 ( 12%)     183 kB ( 13%)
+ TOTAL                              :   0.02          0.01          0.04           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.01          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.01          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.00 (  0%)   0.00 (  0%)   1.60 ( 64%)    1242 kB ( 86%)
+ phase parsing                      :   0.00 (  0%)   0.00 (  0%)   0.35 ( 14%)     183 kB ( 13%)
+ phase opt and generate             :   0.00 (  0%)   0.00 (  0%)   0.28 ( 11%)       9 kB (  1%)
+ callgraph construction             :   0.00 (  0%)   0.00 (  0%)   0.21 (  8%)       0 kB (  0%)
+ ipa inheritance graph              :   0.00 (  0%)   0.00 (  0%)   0.01 (  0%)       0 kB (  0%)
+ preprocessing                      :   0.00 (  0%)   0.00 (  0%)   0.01 (  0%)      44 kB (  3%)
+ parser (global)                    :   0.00 (  0%)   0.00 (  0%)   0.26 ( 10%)     135 kB (  9%)
+ parser function body               :   0.00 (  0%)   0.00 (  0%)   0.07 (  3%)       2 kB (  0%)
+ tree gimplify                      :   0.00 (  0%)   0.00 (  0%)   0.04 (  2%)       6 kB (  0%)
+ tree eh                            :   0.00 (  0%)   0.00 (  0%)   0.02 (  1%)       0 kB (  0%)
+ varconst                           :   0.00 (  0%)   0.00 (  0%)   0.01 (  0%)       0 kB (  0%)
+ TOTAL                              :   0.00          0.00          2.51           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.02             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.01          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.02             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.03             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.00 (  0%)   0.00 (  0%)   0.01 ( 22%)    1242 kB ( 86%)
+ TOTAL                              :   0.00          0.00          0.03           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.02             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.02             10 kB
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.01 (100%)   0.00 (  0%)   1.18 ( 44%)    1242 kB ( 86%)
+ phase parsing                      :   0.00 (  0%)   0.00 (  0%)   0.81 ( 30%)     183 kB ( 13%)
+ phase opt and generate             :   0.00 (  0%)   0.00 (  0%)   0.27 ( 10%)       9 kB (  1%)
+ callgraph construction             :   0.00 (  0%)   0.00 (  0%)   0.10 (  4%)       0 kB (  0%)
+ preprocessing                      :   0.00 (  0%)   0.00 (  0%)   0.04 (  1%)      44 kB (  3%)
+ parser (global)                    :   0.00 (  0%)   0.00 (  0%)   0.54 ( 20%)     135 kB (  9%)
+ parser function body               :   0.00 (  0%)   0.00 (  0%)   0.18 (  7%)       2 kB (  0%)
+ tree gimplify                      :   0.00 (  0%)   0.00 (  0%)   0.10 (  4%)       6 kB (  0%)
+ tree eh                            :   0.00 (  0%)   0.00 (  0%)   0.04 (  2%)       0 kB (  0%)
+ tree CFG construction              :   0.00 (  0%)   0.00 (  0%)   0.02 (  1%)       1 kB (  0%)
+ varconst                           :   0.00 (  0%)   0.00 (  0%)   0.05 (  2%)       0 kB (  0%)
+ TOTAL                              :   0.01          0.00          2.67           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.04             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.01 ( 48%)   0.00 (  0%)   0.01 ( 50%)    1242 kB ( 86%)
+ phase parsing                      :   0.02 ( 52%)   0.00 (  0%)   0.00 ( 14%)     183 kB ( 13%)
+ preprocessing                      :   0.02 ( 52%)   0.00 (  0%)   0.00 (  7%)      44 kB (  3%)
+ TOTAL                              :   0.03          0.00          0.03           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags:  
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -c 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -Aa 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: -D__CLASSIC_C__ 
+
+The output was:
+No such file or directory
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: CMAKE_C_COMPILER-NOTFOUND 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+No such file or directory
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.00 (  0%)   0.02 ( 34%)   2.91 ( 38%)    1242 kB ( 86%)
+ phase parsing                      :   0.00 (  0%)   0.00 (  0%)   1.57 ( 21%)     183 kB ( 13%)
+ phase opt and generate             :   0.00 (  0%)   0.02 ( 34%)   2.43 ( 32%)       9 kB (  1%)
+ phase finalize                     :   0.00 (  0%)   0.00 (  0%)   0.01 (  0%)       0 kB (  0%)
+ callgraph construction             :   0.00 (  0%)   0.02 ( 34%)   1.00 ( 13%)       0 kB (  0%)
+ ipa inheritance graph              :   0.00 (  0%)   0.00 (  0%)   0.02 (  0%)       0 kB (  0%)
+ preprocessing                      :   0.00 (  0%)   0.00 (  0%)   0.04 (  1%)      44 kB (  3%)
+ parser (global)                    :   0.00 (  0%)   0.00 (  0%)   0.78 ( 10%)     135 kB (  9%)
+ parser function body               :   0.00 (  0%)   0.00 (  0%)   0.71 (  9%)       2 kB (  0%)
+ tree gimplify                      :   0.00 (  0%)   0.00 (  0%)   1.09 ( 14%)       6 kB (  0%)
+ tree eh                            :   0.00 (  0%)   0.00 (  0%)   0.17 (  2%)       0 kB (  0%)
+ tree CFG construction              :   0.00 (  0%)   0.00 (  0%)   0.11 (  1%)       1 kB (  0%)
+ tree CFG cleanup                   :   0.00 (  0%)   0.00 (  0%)   0.04 (  1%)       0 kB (  0%)
+ varconst                           :   0.00 (  0%)   0.00 (  0%)   0.05 (  1%)       0 kB (  0%)
+ TOTAL                              :   0.00          0.05          7.64           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.02             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.03             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+CMakeCXXCompilerId.cpp:5:3: error: #error "A C compiler has been selected for C++."
+    5 | # error "A C compiler has been selected for C++."
+      |   ^~~~~
+ main
+Analyzing compilation unit
+
+Time variable                                   usr           sys          wall               GGC
+ phase setup                        :   0.00 (  0%)   0.02 (100%)   0.04 ( 67%)    1242 kB ( 86%)
+ phase parsing                      :   0.00 (  0%)   0.00 (  0%)   0.01 ( 10%)     183 kB ( 13%)
+ TOTAL                              :   0.00          0.02          0.05           1445 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: -c 
+
+The output was:
+1
+cc1: error: command-line option '-c' is valid for the driver but not for C
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --c++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--c++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.00          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --ec++ 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--ec++'
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.01          0.01             10 kB
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /usr/lib/gcc/x86_64-w64-mingw32/10/cc1.exe 
+Build flags: 
+Id flags: --target=arm-arm-none-eabi;-mcpu=cortex-m3 
+
+The output was:
+1
+cc1: error: unrecognized command-line option '--target=arm-arm-none-eabi'
+cc1: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+cc1: error: bad value ('cortex-m3') for '-mtune=' switch
+cc1: note: valid arguments to '-mtune=' switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client icelake-server cascadelake tigerlake cooperlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm intel x86-64 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 btver1 btver2 generic native
+
+Time variable                                   usr           sys          wall               GGC
+ TOTAL                              :   0.00          0.01          0.01             10 kB
+
+
