@@ -2,8 +2,8 @@
 // Created by hal on 05.11.21.
 //
 
-#include "../omtsched.h"
-#include "../conditions/OrderedConditions.h"
+#include "../src/omtsched.h"
+#include "../src/conditions/OrderedConditions.h"
 #include <initializer_list>
 #include <fstream>
 
