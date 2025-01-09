@@ -11,7 +11,7 @@ int main() {
     omtsched::Problem<std::string> example;
     getZebra(example);
 
-    Translator<std::string> trans {example};
+    omtsched::Translator<std::string> trans {example};
 
 
     trans.print();

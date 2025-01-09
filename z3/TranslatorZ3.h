@@ -6,16 +6,14 @@
 #define OMTSCHED_TRANSLATORZ3_H
 
 
-#include "../Translator.h"
+#include "../src/Translator.h"
 #include "maps.h"
-#include "../conditions/OrderedConditions.h"
+#include "../src/conditions/OrderedConditions.h"
 #include <z3.h>
 #include <z3++.h>
 #include <map>
-#include <boost/bimap.hpp>
 
-
-namespace omtsched {
+namespace omtsched { 
 
     template<typename ID>
     class TranslatorZ3 : public omtsched::Translator<ID> {
