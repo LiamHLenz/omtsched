@@ -30,11 +30,11 @@ void getZebra(omtsched::Problem<std::string> &simple) {
         simple.newComponent(str, PET);
 
     for (std::string str : {"1", "2", "3", "4", "5"})
-        simple.newOrderedComponent(str, positionT, std::stoi(str));
+        simple.newOrderedComponent(str, POSITION, std::stoi(str));
 
     simple.addRule(uniqueComponents(true)); // implicit
 
-    Assignment house;
+    AssignmentSet house;
     house.addComponent([POSITION, COLOUR, NATIONALITY, DRINK, SMOKE, PET]);
 
     simple.createAssignments(house, 5);
@@ -44,11 +44,15 @@ void getZebra(omtsched::Problem<std::string> &simple) {
     // Single assignment constraints
     //
 
+
     // The Englishman lives in the red house.
+    simple.addRule( 
+        same(componentIs<>(house, NATIONALITY, "English"), componentIs<>(house, COLOUR, "Red")));
+
     simple.addRule(
         same(componentIs<>(house, NATIONALITY, "English"), componentIs<>(house, COLOUR, "Red")));
 
-    // The Spaniard owns the dog.
+    // The Spaniard owns the dog
     simple.addRule(
         same(componentIs<>(house, NATIONALITY, "Spanish"), componentIs<>(house, PET, "Dog")));
 
@@ -74,28 +78,24 @@ void getZebra(omtsched::Problem<std::string> &simple) {
 
     // Kools are smoked in the yellow house.
     simple.addRule(
-        implies(componentIs<>("Smoke", "Kools"), componentIs<>("Colour", "Yellow")));
+        same(componentIs<>(house, SMOKE, "Kools"), componentIs<>(house, COLOUR, "Yellow")));
 
     // Milk is drunk in the middle house.
     simple.addRule(
-        implies(componentIs < std::string >("Drink", "Milk"), componentIs < std::string >("Position", "3")));
+        same(componentIs<>(house, DRINK, "Milk"), equals<>(house, POSITION, 3)));
 
     // The Norwegian lives in the first house.
-    simple.addRule(implies(componentIs < std::string >("Nationality", "Norwegian"),
-        componentIs < std::string >("Position", "1")));
+    simple.addRule(
+        same(componentIs<>(house, NATIONALITY, "Norwegian"), equals<>(house, POSITION, 1)));
 
+    
     //
     // multi assignment constraints 
     //
-
-    // The green house is immediately to the right of the ivory house.
-    simple.addRule(
-        implies(componentIs<>(COLOUR, "Green"), 
-            componentIs<>(POSITION, getComponent<>(componentIs<>(house, COLOUR, "Ivory"), POSITION) + 1 )));
-
+    
     // The man who smokes Chesterfields lives in the house next to the man with the fox.
     simple.addRule(
-        adjacent(orC(componentIs<>(SMOKE, "Chesterfields"), componentIs<>(PET, "Fox"))));
+        adjacent(any(componentIs<>(SMOKE, "Chesterfields"), componentIs<>(PET, "Fox")), POSITION);
 
     simple.addRule(
         implies(componentIs<>(SMOKE, "Chesterfields"), notC(componentIs<>(PET, "Fox"))));
@@ -113,6 +113,11 @@ void getZebra(omtsched::Problem<std::string> &simple) {
 
     simple.addRule(
         implies(componentIs<>(NATIONALITY, "Norwegian"), notC(componentIs<>(COLOUR, "Blue"))));
+
+    // The green house is immediately to the right of the ivory house.
+    simple.addRule(
+        implies(componentIs<>(house, COLOUR, "Green"),
+            componentIs<>(house, POSITION, getComponent<>(componentIs<>(house, COLOUR, "Ivory"), POSITION) + 1)));
 
 
     //std::fstream problemFile;
