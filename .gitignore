@@ -5,3 +5,4 @@ cmake-build-debug/*
 /src/out
 /build
 /out
+/src/.vs
