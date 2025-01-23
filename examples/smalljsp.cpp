@@ -7,7 +7,7 @@
 #include <initializer_list>
 #include <fstream>
 
-int main () {
+void getProblem(std:: )
 
     using namespace omtsched;
 

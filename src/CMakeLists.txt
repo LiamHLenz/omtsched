@@ -10,12 +10,12 @@ add_library(omtsched SHARED omtsched.h
         Model.h Problem.h Rule.h Translator.h
         conditions/BasicConditions.h conditions/BooleanConditions.h conditions/OrderedConditions.h
         ../z3/TranslatorZ3.h
-        )
+         "z3/ComponentConstraints.cpp")
 
 set_target_properties(omtsched PROPERTIES LINKER_LANGUAGE CXX)
 
 add_executable(examples
-    ../examples/example.cpp)
+    ../examples/example.cpp "z3/ComponentConstraints.cpp")
 
 target_link_libraries(examples omtsched)
 
